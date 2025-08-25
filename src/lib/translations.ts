@@ -85,10 +85,10 @@ export const translations: Record<'pl' | 'en', Translations> = {
       accountDetails: "Dane konta do wpłaty",
       passwordRequired: "Wymagane hasło administratora"
     },
-    firebaseErrors: {
+    supabaseErrors: {
       permissionDenied: "Brak uprawnień do wykonania tej operacji",
-      notFound: "Nie znaleziono dokumentu",
-      alreadyExists: "Dokument już istnieje",
+      notFound: "Nie znaleziono rekordu",
+      alreadyExists: "Rekord już istnieje",
       unauthenticated: "Nieautoryzowany dostęp",
       default: "Wystąpił błąd bazy danych"
     },
@@ -184,10 +184,10 @@ export const translations: Record<'pl' | 'en', Translations> = {
       accountDetails: "Account details for payment",
       passwordRequired: "Administrator password required"
     },
-    firebaseErrors: {
+    supabaseErrors: {
       permissionDenied: "Insufficient permissions to perform this operation",
-      notFound: "Document not found",
-      alreadyExists: "Document already exists",
+      notFound: "Record not found",
+      alreadyExists: "Record already exists",
       unauthenticated: "Unauthenticated access",
       default: "Database error occurred"
     },
