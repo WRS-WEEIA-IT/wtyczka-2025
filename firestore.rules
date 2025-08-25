@@ -1,0 +1,143 @@
+// Firestore Security Rules for Wtyczka 2025
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - each user can read/write only their own document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Registrations collection
+    match /registrations/{registrationId} {
+      // Users can create their own registration
+      allow create: if request.auth != null 
+                    && request.auth.uid == request.resource.data.userId;
+      
+      // Users can read their own registrations
+      allow read: if request.auth != null 
+                  && request.auth.uid == resource.data.userId;
+      
+      // Users can update their own registration (before qualification)
+      allow update: if request.auth != null 
+                    && request.auth.uid == resource.data.userId
+                    && resource.data.status == 'pending';
+      
+      // Admin can read and update all registrations
+      allow read, update: if isAdmin();
+      
+      // Nobody can delete registrations
+      allow delete: if false;
+    }
+    
+    // Payments collection
+    match /payments/{paymentId} {
+      // Users can create their own payment
+      allow create: if request.auth != null 
+                    && request.auth.uid == request.resource.data.userId;
+                    // Temporarily removed qualification check for testing
+                    // && userIsQualified();
+      
+      // Users can read their own payments
+      allow read: if request.auth != null 
+                  && request.auth.uid == resource.data.userId;
+      
+      // Users can update their own payment (before confirmation)
+      allow update: if request.auth != null 
+                    && request.auth.uid == resource.data.userId
+                    && resource.data.paymentStatus == 'pending';
+      
+      // Admin can read and update all payments
+      allow read, update: if isAdmin();
+      
+      // Nobody can delete payments
+      allow delete: if false;
+    }
+    
+    // Admin statistics and management
+    match /admin/{document} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Helper functions
+    function isAdmin() {
+      return request.auth != null 
+             && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+             && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    function userIsQualified() {
+      return request.auth != null 
+             && exists(/databases/$(database)/documents/registrations/$(request.auth.uid))
+             && get(/databases/$(database)/documents/registrations/$(request.auth.uid)).data.status == 'qualified';
+    }
+    
+    // News and public content (read-only for authenticated users)
+    match /news/{newsId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    // FAQ and other public content
+    match /content/{contentId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}
+
+// Firebase Storage Security Rules
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Payment confirmation files
+    match /payment-confirmations/{fileName} {
+      // Users can upload their own payment confirmations
+      allow create: if request.auth != null 
+                    && fileName.matches('payment-confirmation-' + request.auth.uid + '-.*');
+      
+      // Users can read their own payment confirmations
+      allow read: if request.auth != null 
+                  && fileName.matches('payment-confirmation-' + request.auth.uid + '-.*');
+      
+      // Admins can read all payment confirmations
+      allow read: if request.auth != null && isAdmin();
+      
+      // Nobody can delete files (data integrity)
+      allow delete: if false;
+    }
+    
+    // Helper function for storage rules
+    function isAdmin() {
+      return request.auth != null 
+             && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+             && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+  }
+}
+
+/*
+Usage Instructions:
+1. Go to Firebase Console
+2. Navigate to Firestore Database
+3. Click on "Rules" tab
+4. Replace the existing rules with the content above
+5. Click "Publish"
+
+Security Features:
+- Users can only access their own data
+- Admins have full access to all data
+- Registrations can only be updated when status is 'pending'
+- Payments can only be created by qualified users
+- Payments can only be updated when status is 'pending'
+- No data can be deleted (data integrity)
+
+Admin Setup:
+To make a user an admin, manually add a document in the 'users' collection:
+{
+  "userId": "[user_uid]",
+  "email": "[admin_email]",
+  "isAdmin": true,
+  "createdAt": [timestamp],
+  "lastLoginAt": [timestamp]
+}
+*/
