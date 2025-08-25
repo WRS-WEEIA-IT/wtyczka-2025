@@ -1,22 +1,13 @@
-import { storage } from './firebase';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { User } from 'firebase/auth';
-import { saveFileLocally, deleteFileLocally } from './localStorage';
+import { supabase } from './supabase';
+import type { AuthUser } from "@supabase/supabase-js";
 
-// Types for file upload
-export interface FileUploadResult {
+export interface FileUploadRecord {
   url: string;
   fileName: string;
   fileSize: number;
   fileType: string;
 }
 
-// Get storage type from environment
-const getStorageType = (): 'firebase' | 'local' => {
-  return (process.env.NEXT_PUBLIC_STORAGE_TYPE as 'firebase' | 'local') || 'firebase';
-};
-
-// Allowed file types for payment confirmation
 const ALLOWED_PAYMENT_FILE_TYPES = [
   'application/pdf',
   'image/png',
@@ -26,52 +17,39 @@ const ALLOWED_PAYMENT_FILE_TYPES = [
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-/**
- * Upload payment confirmation file to Firebase Storage
- */
-export const uploadPaymentConfirmation = async (
+export async function uploadPaymentConfirmation(
   file: File,
-  user: User
-): Promise<FileUploadResult> => {
+  user: AuthUser
+): Promise<FileUploadRecord> {
   try {
-    // Validate file type
     if (!ALLOWED_PAYMENT_FILE_TYPES.includes(file.type)) {
       throw new Error('Nieobsługiwany typ pliku. Dozwolone formaty: PDF, PNG, JPG, JPEG');
     }
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       throw new Error('Plik jest za duży. Maksymalny rozmiar to 5MB');
     }
 
-    const storageType = getStorageType();
+    const timestamp = Date.now();
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `wplata-${user.email}-${timestamp}.${fileExtension}`;
 
-    if (storageType === 'local') {
-      // Use local storage
-      return await saveFileLocally(file, user.uid);
-    } else {
-      // Use Firebase Storage (default)
-      // Generate unique filename
-      const timestamp = Date.now();
-      const fileExtension = file.name.split('.').pop();
-      const fileName = `payment-confirmation-${user.uid}-${timestamp}.${fileExtension}`;
+    const { error: uploadError } = await supabase.storage
+      .from('wtyczka-wplaty-2025')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+    if (uploadError) throw uploadError;
 
-      // Create storage reference
-      const storageRef = ref(storage, `payment-confirmations/${fileName}`);
+    const { data } = supabase.storage.from('wtyczka-wplaty-2025').getPublicUrl(fileName);
+    return {
+      url: data.publicUrl,
+      fileName: fileName,
+      fileSize: file.size,
+      fileType: file.type,
+    } as FileUploadRecord;
 
-      // Upload file
-      const uploadResult = await uploadBytes(storageRef, file);
-      
-      // Get download URL
-      const downloadURL = await getDownloadURL(uploadResult.ref);
-
-      return {
-        url: downloadURL,
-        fileName: fileName,
-        fileSize: file.size,
-        fileType: file.type
-      };
-    }
   } catch (error) {
     console.error('Error uploading payment confirmation:', error);
     if (error instanceof Error) {
@@ -81,31 +59,20 @@ export const uploadPaymentConfirmation = async (
   }
 };
 
-/**
- * Delete payment confirmation file from storage
- */
-export const deletePaymentConfirmation = async (fileName: string, userId: string): Promise<void> => {
+export async function deletePaymentConfirmation(fileName: string): Promise<void> {
   try {
-    const storageType = getStorageType();
-
-    if (storageType === 'local') {
-      // Delete from local storage
-      await deleteFileLocally(fileName, userId);
-    } else {
-      // Delete from Firebase Storage
-      const storageRef = ref(storage, `payment-confirmations/${fileName}`);
-      await deleteObject(storageRef);
-    }
+    const { error } = await supabase.storage
+      .from('wtyczka-wplaty-2025')
+      .remove([fileName]);
+    if (error) throw error;
   } catch (error) {
     console.error('Error deleting payment confirmation:', error);
     throw new Error('Błąd podczas usuwania pliku');
   }
 };
 
-/**
- * Validate file before upload
- */
-export const validatePaymentFile = (file: File): string | null => {
+
+export function validatePaymentFile(file: File): string | null {
   if (!ALLOWED_PAYMENT_FILE_TYPES.includes(file.type)) {
     return 'Nieobsługiwany typ pliku. Dozwolone formaty: PDF, PNG, JPG, JPEG';
   }
@@ -114,13 +81,10 @@ export const validatePaymentFile = (file: File): string | null => {
     return 'Plik jest za duży. Maksymalny rozmiar to 5MB';
   }
 
-  return null; // No errors
+  return null;
 };
 
-/**
- * Format file size for display
- */
-export const formatFileSize = (bytes: number): string => {
+export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B';
   
   const k = 1024;
