@@ -1,26 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Menu, X, LogOut, Users, Globe } from "lucide-react";
-import { UserProfile, getUserProfile } from "@/lib/firestore";
 import AuthModal from "./AuthModal";
 import Link from "next/link";
 
 export default function Navbar() {
   const { user, authLogout } = useAuth();
-  const [infoUser, setInfoUser] = useState<UserProfile | null>(null);
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (user) {
-        const profile = await getUserProfile(user.id);
-        setInfoUser(profile);
-      }
-    };
-    fetchUserProfile();
-  }, [user]);
 
   const { language, setLanguage, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -126,7 +114,12 @@ export default function Navbar() {
               {user ? (
                 <div className="flex items-center space-x-4">
                   <span className="text-amber-200">
-                    Witaj{`, ${infoUser?.firstName}` ? infoUser?.firstName : ""}
+                    Witaj,
+                    {` ${
+                      user.user_metadata.name
+                        ? user.user_metadata.name
+                        : user.email
+                    }`}
                   </span>
                   <button
                     onClick={handleLogout}
@@ -232,7 +225,11 @@ export default function Navbar() {
                   <div className="space-y-2">
                     <div className="text-amber-200">
                       Witaj
-                      {`, ${infoUser?.firstName}` ? infoUser?.firstName : ""}
+                      {` ${
+                        user.user_metadata.name
+                          ? user.user_metadata.name
+                          : user.email
+                      }`}
                     </div>
                     <button
                       onClick={handleLogout}
