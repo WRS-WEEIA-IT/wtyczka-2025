@@ -11,17 +11,14 @@ import {
   CreditCard,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  getRegistration,
-  getPayment,
-  ParticipantRecord,
-  PaymentRecord,
-} from "@/lib/firestore";
+import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
+
+import { getPayment, PaymentRecord } from "@/usecases/payments";
 
 export default function StatusPage() {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
-  const [registration, setRegistration] = useState<ParticipantRecord | null>(
+  const [registration, setRegistration] = useState<RegistrationRecord | null>(
     null
   );
   const [payment, setPayment] = useState<PaymentRecord | null>(null);

@@ -1,7 +1,7 @@
 import { AuthUser } from "@supabase/supabase-js";
-import { supabase } from './supabase';
+import { supabase } from '@/lib/supabase';
 
-export interface ParticipantRecord {
+export interface RegistrationRecord {
   id: number;
   userId: string;
 
@@ -38,39 +38,9 @@ export interface ParticipantRecord {
   updatedAt: Date;
 }
 
-export interface PaymentRecord {
-  id?: string;
-  userId: string;
-  registrationId: string;
-  
-  studentStatus: 'politechnika' | 'other' | 'not-student';
-  emergencyContactNameSurname: string;
-  emergencyContactPhone: string;
-  emergencyContactRelation: string;
-
-  needsTransport: boolean;
-  medicalConditions?: string;
-  medications?: string;
-
-  paymentConfirmationFile: {
-    url: string;
-    fileName: string;
-    fileSize: number;
-    fileType: string;
-    uploadedAt: Date;
-  };
-  
-  transferConfirmation: boolean;
-  ageConfirmation: boolean;
-  cancellationPolicy: boolean;
-  
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export const createRegistration = async (
   user: AuthUser,
-  registrationData: Omit<ParticipantRecord, 'id' | 'userId' | 'email' | 'createdAt' | 'updatedAt'>
+  registrationData: Omit<RegistrationRecord, 'id' | 'userId' | 'email' | 'createdAt' | 'updatedAt'>
 ): Promise<string> => {
   try {
     const { data, error } = await supabase.from('registrations').insert([
@@ -124,7 +94,7 @@ export const createRegistration = async (
   }
 };
 
-export const getRegistration = async (userId: string): Promise<ParticipantRecord | null> => {
+export const getRegistration = async (userId: string): Promise<RegistrationRecord | null> => {
   try {
     const { data, error } = await supabase
       .from('registrations')
@@ -139,7 +109,7 @@ export const getRegistration = async (userId: string): Promise<ParticipantRecord
       dob: new Date(data.dob),
       createdAt: new Date(data.createdAt),
       updatedAt: new Date(data.updatedAt),
-    } as ParticipantRecord;
+    } as RegistrationRecord;
   } catch (error) {
     console.error('Error getting registration:', error);
     throw new Error('Failed to get registration');
@@ -148,7 +118,7 @@ export const getRegistration = async (userId: string): Promise<ParticipantRecord
 
 export const updateRegistration = async (
   registrationId: string,
-  updates: Partial<ParticipantRecord>
+  updates: Partial<RegistrationRecord>
 ): Promise<void> => {
   try {
     const { error } = await supabase
@@ -162,48 +132,5 @@ export const updateRegistration = async (
   } catch (error) {
     console.error('Error updating registration:', error);
     throw new Error('Failed to update registration');
-  }
-};
-
-export async function createPayment(
-  user: AuthUser,
-  registrationId: number,
-  paymentData: Omit<PaymentRecord, 'id' | 'userId' | 'registrationId' | 'createdAt' | 'updatedAt'>
-): Promise<string> {
-  try {
-    const { data, error } = await supabase.from('payments').insert([
-      {
-        ...paymentData,
-        userId: user.id,
-        registrationId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ]).select();
-    if (error || !data || !data[0]) throw error || new Error('No payment created');
-    return data[0].id;
-  } catch (error) {
-    console.error('Error creating payment:', error);
-    throw new Error('Failed to create payment');
-  }
-}
-
-export const getPayment = async (userId: string): Promise<PaymentRecord | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('userId', userId)
-      .limit(1)
-      .single();
-    if (error || !data) return null;
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-      updatedAt: new Date(data.updatedAt),
-    } as PaymentRecord;
-  } catch (error) {
-    console.error('Error getting payment:', error);
-    throw new Error('Failed to get payment');
   }
 };

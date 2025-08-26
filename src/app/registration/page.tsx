@@ -12,8 +12,8 @@ import Link from "next/link";
 import {
   createRegistration,
   getRegistration,
-  ParticipantRecord,
-} from "@/lib/firestore";
+  RegistrationRecord,
+} from "@/usecases/registrations";
 import { handleSupabaseError } from "@/lib/supabase";
 
 // Schema walidacji dla formularza
@@ -67,7 +67,7 @@ export default function RegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRegulations, setShowRegulations] = useState(false);
   const [existingRegistration, setExistingRegistration] =
-    useState<ParticipantRecord | null>(null);
+    useState<RegistrationRecord | null>(null);
 
   const {
     register,
@@ -140,7 +140,7 @@ export default function RegistrationPage() {
         studentNumber: parseInt(data.studentNumber),
         studyYear: parseInt(data.studyYear),
       } as Omit<
-        ParticipantRecord,
+        RegistrationRecord,
         "id" | "userId" | "email" | "createdAt" | "updatedAt"
       >;
       await createRegistration(user, formData);

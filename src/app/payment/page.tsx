@@ -19,13 +19,10 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import {
-  createPayment,
-  getPayment,
-  getRegistration,
-  PaymentRecord,
-  ParticipantRecord,
-} from "@/lib/firestore";
+import { createPayment, getPayment, PaymentRecord } from "@/usecases/payments";
+
+import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
+
 import { handleSupabaseError } from "@/lib/supabase";
 import {
   uploadPaymentConfirmation,
@@ -72,7 +69,7 @@ export default function PaymentPage() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userRegistration, setUserRegistration] =
-    useState<ParticipantRecord | null>(null);
+    useState<RegistrationRecord | null>(null);
   const [existingPayment, setExistingPayment] = useState<PaymentRecord | null>(
     null
   );
