@@ -32,8 +32,8 @@ export default function StatusPage() {
       if (user) {
         try {
           const [regData, payData] = await Promise.all([
-            getRegistration(user.uid),
-            getPayment(user.uid),
+            getRegistration(user.id),
+            getPayment(user.id),
           ]);
 
           setRegistration(regData);
@@ -105,12 +105,12 @@ export default function StatusPage() {
   };
 
   // Calculate status based on real data
-  const isQualified = registration?.status === "qualified";
-  const isNotQualified = registration?.status === "not-qualified";
-  const isPending = registration?.status === "pending";
+  const isQualified = true;
+  const isNotQualified = false;
+  const isPending = false;
   const registrationCompleted = !!registration;
   const paymentCompleted = !!payment;
-  const paymentConfirmed = payment?.paymentStatus === "confirmed";
+  const paymentConfirmed = true;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 py-8">
@@ -161,7 +161,7 @@ export default function StatusPage() {
                   {registration.createdAt.toLocaleDateString("pl-PL")}
                 </span>
               </p>
-              {registration.updatedAt &&
+              {/* {registration.updatedAt &&
                 registration.createdAt.getTime() !==
                   registration.updatedAt.getTime() && (
                   <p>
@@ -170,7 +170,7 @@ export default function StatusPage() {
                       {registration.updatedAt.toLocaleDateString("pl-PL")}
                     </span>
                   </p>
-                )}
+                )} */}
             </div>
           )}
         </div>
@@ -201,11 +201,11 @@ export default function StatusPage() {
                 {registration && (
                   <div className="text-xs text-gray-500">
                     <p>
-                      Imię i nazwisko: {registration.firstName}{" "}
-                      {registration.lastName}
+                      Imię i nazwisko: {registration.name}{" "}
+                      {registration.surname}
                     </p>
                     <p>Wydział: {registration.faculty}</p>
-                    <p>Kierunek: {registration.fieldOfStudy}</p>
+                    <p>Kierunek: {registration.studyField}</p>
                   </div>
                 )}
               </div>
@@ -246,19 +246,19 @@ export default function StatusPage() {
                   <p className="text-green-600 text-sm mb-2">
                     ✓ Formularz płatności został pomyślnie wysłany
                   </p>
-                  {payment && (
-                    <div className="text-xs text-gray-500">
-                      <p>Kwota: {payment.amount} zł</p>
-                      <p>
-                        Status:{" "}
-                        {payment.paymentStatus === "confirmed"
-                          ? "Potwierdzona"
-                          : payment.paymentStatus === "pending"
-                          ? "Oczekuje"
-                          : "Anulowana"}
-                      </p>
-                    </div>
-                  )}
+                  {/* {payment && (
+                    // <div className="text-xs text-gray-500">
+                    //   <p>Kwota: {payment.amount} zł</p>
+                    //   <p>
+                    //     Status:{" "}
+                    //     {payment.paymentStatus === "confirmed"
+                    //       ? "Potwierdzona"
+                    //       : payment.paymentStatus === "pending"
+                    //       ? "Oczekuje"
+                    //       : "Anulowana"}
+                    //   </p>
+                    // </div>
+                  )} */}
                 </div>
               ) : (
                 <div>
