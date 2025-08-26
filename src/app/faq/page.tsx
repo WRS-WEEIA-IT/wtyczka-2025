@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
@@ -11,8 +11,18 @@ import {
   Phone,
 } from "lucide-react";
 
+import { getFAQByCategory, QuestionRecord } from "@/usecases/faq";
+
 export default function FAQPage() {
   const [openSections, setOpenSections] = useState<string[]>([]);
+
+  const [faqGeneral, setFaqGeneral] = useState<QuestionRecord[]>([]);
+  const [faqPayments, setFaqPayments] = useState<QuestionRecord[]>([]);
+  const [faqTransport, setFaqTransport] = useState<QuestionRecord[]>([]);
+  const [faqAccommodation, setFaqAccommodation] = useState<QuestionRecord[]>(
+    []
+  );
+  const [faqContact, setFaqContact] = useState<QuestionRecord[]>([]);
 
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) =>
@@ -22,146 +32,61 @@ export default function FAQPage() {
     );
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [general, payments, transport, accommodation, contact] =
+          await Promise.all([
+            getFAQByCategory("general"),
+            getFAQByCategory("payments"),
+            getFAQByCategory("transport"),
+            getFAQByCategory("accommodation"),
+            getFAQByCategory("contact"),
+          ]);
+
+        setFaqGeneral(general);
+        setFaqPayments(payments);
+        setFaqTransport(transport);
+        setFaqAccommodation(accommodation);
+        setFaqContact(contact);
+      } catch (error) {
+        console.error("Error fetching FAQ data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const faqData = [
     {
       id: "general",
       title: "Informacje ogólne",
       icon: <HelpCircle className="h-5 w-5" />,
-      questions: [
-        {
-          question: "Czym jest Wtyczka 2025?",
-          answer:
-            "Wtyczka 2025 to coroczne wydarzenie integracyjno-szkoleniowe organizowane przez studentów wydziału EEIA Politechniki Łódzkiej. W tym roku odbywa się w klimacie Western i będzie pełne atrakcji, warsztatów oraz integracji.",
-        },
-        {
-          question: "Kto może uczestniczyć w wydarzeniu?",
-          answer:
-            "W wydarzeniu mogą uczestniczyć przede wszystkim studenci wydziału EEIA, ale zapraszamy również studentów z innych wydziałów i uczelni. Każdy uczestnik musi być pełnoletni.",
-        },
-        {
-          question: "Kiedy i gdzie odbywa się Wtyczka 2025?",
-          answer:
-            "Wydarzenie odbędzie się w maju 2025 roku. Szczegółowe informacje o lokalizacji i dokładnych datach będą przekazane uczestnikom po zakwalifikowaniu.",
-        },
-        {
-          question: "Czy wydarzenie jest obowiązkowe?",
-          answer:
-            "Nie, Wtyczka 2025 jest wydarzeniem całkowicie dobrowolnym. To świetna okazja na integrację, naukę i zabawę w gronie innych studentów.",
-        },
-      ],
+      questions: faqGeneral,
     },
     {
       id: "payments",
       title: "Płatności i faktury",
       icon: <CreditCard className="h-5 w-5" />,
-      questions: [
-        {
-          question: "Ile kosztuje udział w wydarzeniu?",
-          answer:
-            "Koszt udziału wynosi 350 PLN dla studentów Politechniki Łódzkiej i 450 PLN dla pozostałych uczestników. Cena obejmuje zakwaterowanie, wyżywienie, materiały szkoleniowe oraz wszystkie aktywności.",
-        },
-        {
-          question: "Jak dokonać płatności?",
-          answer:
-            "Płatność należy dokonać przelewem bankowym na konto podane w formularzu płatności. Po dokonaniu przelewu należy potwierdzić wpłatę w systemie.",
-        },
-        {
-          question: "Czy mogę otrzymać fakturę?",
-          answer:
-            "Tak, istnieje możliwość wystawienia faktury. Odpowiednią opcję należy zaznaczyć w formularzu rejestracji. Faktura będzie wystawiona na dane podane w formularzu.",
-        },
-        {
-          question: "Czy wpłata zostanie zwrócona w przypadku rezygnacji?",
-          answer:
-            "Wpłata może zostać zwrócona tylko w przypadku rezygnacji na więcej niż 10 dni przed wydarzeniem. Rezygnacja w późniejszym terminie nie uprawnia do zwrotu wpłaty.",
-        },
-        {
-          question: "Do kiedy należy dokonać wpłaty?",
-          answer:
-            "Wpłaty należy dokonać w ciągu 7 dni od otrzymania informacji o zakwalifikowaniu. Brak wpłaty w terminie może skutkować utratą miejsca.",
-        },
-      ],
+      questions: faqPayments,
     },
     {
       id: "transport",
       title: "Transport",
       icon: <Bus className="h-5 w-5" />,
-      questions: [
-        {
-          question: "Czy transport jest zapewniony?",
-          answer:
-            "Tak, organizujemy wspólny transport autokarem z Łodzi na miejsce wydarzenia. Transport jest wliczony w cenę udziału.",
-        },
-        {
-          question: "Skąd odjeżdża autokar?",
-          answer:
-            "Autokar odjeżdża sprzed głównego budynku Politechniki Łódzkiej przy ul. Żeromskiego. Szczegółowe informacje o miejscu i godzinie odjazdu otrzymają uczestnicy przed wydarzeniem.",
-        },
-        {
-          question: "Czy mogę dojechać własnym samochodem?",
-          answer:
-            "Tak, istnieje możliwość dojazdu własnym transportem. Należy zaznaczyć tę opcję w formularzu i skontaktować się z organizatorami w celu otrzymania szczegółów dotyczących dojazdu i parkowania.",
-        },
-        {
-          question: "Co zrobić jeśli spóźnię się na odjazd autokaru?",
-          answer:
-            "W przypadku spóźnienia prosimy o natychmiastowy kontakt z organizatorami. Autokar może poczekać tylko kilka minut, dlatego bardzo prosimy o punktualność.",
-        },
-      ],
+      questions: faqTransport,
     },
     {
       id: "accommodation",
       title: "Zakwaterowanie i wyżywienie",
       icon: <Utensils className="h-5 w-5" />,
-      questions: [
-        {
-          question: "Gdzie będziemy nocować?",
-          answer:
-            "Uczestnicy będą zakwaterowani w komfortowych pokojach 2-3 osobowych w ośrodku wypoczynkowym. Wszystkie pokoje posiadają łazienki i podstawowe udogodnienia.",
-        },
-        {
-          question: "Co z wyżywieniem?",
-          answer:
-            "Zapewniamy pełne wyżywienie - śniadania, obiady, kolacje oraz przekąski podczas przerw. Uwzględniamy diety specjalne zgłoszone w formularzu rejestracji.",
-        },
-        {
-          question: "Czy są uwzględniane diety specjalne?",
-          answer:
-            "Tak, uwzględniamy diety wegetariańskie, wegańskie, bezglutenowe oraz inne ograniczenia żywieniowe. Bardzo ważne jest zgłoszenie tego w formularzu rejestracji.",
-        },
-        {
-          question: "Co zabrać ze sobą?",
-          answer:
-            'Szczegółową listę rzeczy do zabrania znajdziesz w sekcji "Niezbędnik uczestnika". Podstawowe rzeczy to odzież, przybory higieniczne, wygodne buty i strój na imprezę tematyczną.',
-        },
-      ],
+      questions: faqAccommodation,
     },
     {
       id: "contact",
       title: "Kontakt i pomoc",
       icon: <Phone className="h-5 w-5" />,
-      questions: [
-        {
-          question: "Jak skontaktować się z organizatorami?",
-          answer:
-            'Dane kontaktowe organizatorów znajdziesz w sekcji "Kontakty" (dostępnej po zalogowaniu i zakwalifikowaniu). Możesz również napisać na adres email podany na stronie.',
-        },
-        {
-          question: "Co zrobić w przypadku problemów technicznych ze stroną?",
-          answer:
-            "W przypadku problemów ze stroną internetową prosimy o kontakt mailowy z opisem problemu. Postaramy się rozwiązać go jak najszybciej.",
-        },
-        {
-          question: "Czy będzie możliwość kontaktu podczas wydarzenia?",
-          answer:
-            "Tak, organizatorzy będą dostępni przez całe wydarzenie. Otrzymasz również numery kontaktowe kadry na wypadek nagłych sytuacji.",
-        },
-        {
-          question: "Co w przypadku nagłej choroby lub kontuzji?",
-          answer:
-            "Na miejscu będzie podstawowa opieka medyczna. W razie potrzeby zapewnimy transport do najbliższego szpitala. Dlatego ważne jest podanie danych osoby kontaktowej w nagłych przypadkach.",
-        },
-      ],
+      questions: faqContact,
     },
   ];
 
