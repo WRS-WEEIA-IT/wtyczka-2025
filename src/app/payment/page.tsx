@@ -26,7 +26,7 @@ import {
   PaymentRecord,
   ParticipantRecord,
 } from "@/lib/firestore";
-import { handleFirestoreError } from "@/lib/firebase";
+import { handleSupabaseError } from "@/lib/supabase";
 import {
   uploadPaymentConfirmation,
   validatePaymentFile,
@@ -37,16 +37,19 @@ import {
 // Schema walidacji dla formularza płatności
 const paymentSchema = z.object({
   adminPassword: z.string().min(1, "Hasło administratora jest wymagane"),
+
   studentStatus: z.enum(["politechnika", "other", "none"]),
-  emergencyContactName: z.string().min(2, "Imię i nazwisko jest wymagane"),
+  emergencyContactNameSurname: z
+    .string()
+    .min(2, "Imię i nazwisko jest wymagane"),
   emergencyContactPhone: z.string().min(9, "Numer telefonu jest wymagany"),
   emergencyContactRelation: z
     .string()
     .min(1, "Stopień pokrewieństwa jest wymagany"),
-  transportProvided: z.boolean(),
+  needsTransport: z.boolean(),
   medicalConditions: z.string().optional(),
   medications: z.string().optional(),
-  transferConfirmed: z.boolean().refine((val) => val === true, {
+  transferConfirmation: z.boolean().refine((val) => val === true, {
     message: "Musisz potwierdzić wykonanie przelewu",
   }),
   ageConfirmation: z.boolean().refine((val) => val === true, {
@@ -84,12 +87,11 @@ export default function PaymentPage() {
       if (user) {
         try {
           const [registration, payment] = await Promise.all([
-            getRegistration(user.uid),
-            getPayment(user.uid),
+            getRegistration(user.id),
+            getPayment(user.id),
           ]);
 
           console.log("User registration:", registration);
-          console.log("Registration status:", registration?.status);
           setUserRegistration(registration);
           setExistingPayment(payment);
         } catch (error) {
@@ -209,47 +211,48 @@ export default function PaymentPage() {
       return;
     }
 
+    if (!uploadedFile) {
+      toast.error("Musisz przesłać potwierdzenie płatności");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Remove admin password from data before saving
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { adminPassword: _, ...paymentData } = data;
 
-      // Map form data to payment structure
       const mappedPaymentRecord = {
-        studentStatus: paymentData.studentStatus as
-          | "politechnika"
-          | "other"
-          | "not-student",
-        emergencyContactName: paymentData.emergencyContactName,
+        studentStatus: paymentData.studentStatus,
+        emergencyContactNameSurname: paymentData.emergencyContactNameSurname,
         emergencyContactPhone: paymentData.emergencyContactPhone,
-        needsTransport: paymentData.transportProvided,
-        medicalConditions: paymentData.medicalConditions || "",
-        medications: paymentData.medications || "",
-        transferConfirmation: paymentData.transferConfirmed,
+        emergencyContactRelation: paymentData.emergencyContactRelation,
+        needsTransport: paymentData.needsTransport,
+        medicalConditions: paymentData.medicalConditions,
+        medications: paymentData.medications,
+        transferConfirmation: paymentData.transferConfirmation,
         ageConfirmation: paymentData.ageConfirmation,
         cancellationPolicy: paymentData.cancellationPolicy,
-        // Add uploaded file information
-        ...(uploadedFile && {
-          paymentConfirmationFile: {
-            url: uploadedFile.url,
-            fileName: uploadedFile.fileName,
-            fileSize: uploadedFile.fileSize,
-            fileType: uploadedFile.fileType,
-            uploadedAt: new Date(),
-          },
-        }),
-      };
 
-      await createPayment(user, userRegistration.id!, mappedPaymentRecord);
+        paymentConfirmationFile: {
+          url: uploadedFile.url,
+          fileName: uploadedFile.fileName,
+          fileSize: uploadedFile.fileSize,
+          fileType: uploadedFile.fileType,
+          uploadedAt: new Date(),
+        },
+      } as Omit<
+        PaymentRecord,
+        "id" | "userId" | "registrationId" | "createdAt" | "updatedAt"
+      >;
+
+      await createPayment(user, userRegistration.id, mappedPaymentRecord);
       toast.success("Formularz płatności został wysłany pomyślnie!");
 
       // Refresh payment data
-      const payment = await getPayment(user.uid);
+      const payment = await getPayment(user.id);
       setExistingPayment(payment);
     } catch (error) {
       console.error("Submit error:", error);
-      const errorMessage = handleFirestoreError(error, realLang);
+      const errorMessage = handleSupabaseError(error, realLang);
       toast.error(`Wystąpił błąd: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
@@ -263,30 +266,6 @@ export default function PaymentPage() {
     transferTitle: `Wtyczka 2025 - ${user.email}`,
     amount: `${process.env.PAYMENT_AMOUNT}zł`,
   };
-
-  // Check if user is qualified - temporarily disabled for testing
-  if (userRegistration && userRegistration.status !== "qualified" && false) {
-    return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-white rounded-lg shadow-lg">
-          <div className="text-6xl mb-4">⏳</div>
-          <h1 className="text-2xl font-bold text-amber-900 mb-4">
-            Formularz płatności niedostępny
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Formularz płatności jest dostępny tylko dla zakwalifikowanych
-            uczestników.
-          </p>
-          <Link
-            href="/status"
-            className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-md font-semibold transition-colors"
-          >
-            Sprawdź swój status
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   // Show existing payment if already submitted
   if (existingPayment) {
@@ -313,7 +292,7 @@ export default function PaymentPage() {
                 </h2>
                 <p className="text-gray-600">
                   Status:{" "}
-                  <span
+                  {/* <span
                     className={`font-semibold ${
                       existingPayment.paymentStatus === "confirmed"
                         ? "text-green-600"
@@ -327,7 +306,7 @@ export default function PaymentPage() {
                       : existingPayment.paymentStatus === "pending"
                       ? "Oczekuje"
                       : "Anulowana"}
-                  </span>
+                  </span> */}
                 </p>
               </div>
             </div>
@@ -337,9 +316,7 @@ export default function PaymentPage() {
                 <h3 className="font-semibold text-gray-800 mb-2">
                   Szczegóły płatności
                 </h3>
-                <p className="text-sm text-gray-600">
-                  Kwota: {existingPayment.amount} zł
-                </p>
+                <p className="text-sm text-gray-600">Kwota: 500 zł</p>
                 <p className="text-sm text-gray-600">
                   Status studenta:{" "}
                   {existingPayment.studentStatus === "politechnika"
@@ -358,7 +335,7 @@ export default function PaymentPage() {
                   Kontakt awaryjny
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Imię: {existingPayment.emergencyContactName}
+                  Imię: {existingPayment.emergencyContactNameSurname}
                 </p>
                 <p className="text-sm text-gray-600">
                   Telefon: {existingPayment.emergencyContactPhone}
@@ -633,12 +610,12 @@ export default function PaymentPage() {
                   </label>
                   <input
                     type="text"
-                    {...register("emergencyContactName")}
+                    {...register("emergencyContactNameSurname")}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
-                  {errors.emergencyContactName && (
+                  {errors.emergencyContactNameSurname && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.emergencyContactName.message}
+                      {errors.emergencyContactNameSurname.message}
                     </p>
                   )}
                 </div>
@@ -689,7 +666,7 @@ export default function PaymentPage() {
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
-                      {...register("transportProvided")}
+                      {...register("needsTransport")}
                       className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                     />
                     <label className="text-sm text-gray-700">
@@ -830,16 +807,16 @@ export default function PaymentPage() {
                 <div className="flex items-start space-x-2">
                   <input
                     type="checkbox"
-                    {...register("transferConfirmed")}
+                    {...register("transferConfirmation")}
                     className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                   />
                   <label className="text-sm text-gray-700">
                     {t.payment.transferConfirmation}
                   </label>
                 </div>
-                {errors.transferConfirmed && (
+                {errors.transferConfirmation && (
                   <p className="text-red-500 text-sm">
-                    {errors.transferConfirmed.message}
+                    {errors.transferConfirmation.message}
                   </p>
                 )}
               </div>
