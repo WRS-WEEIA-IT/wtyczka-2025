@@ -14,40 +14,45 @@ import {
   getRegistration,
   ParticipantRecord,
 } from "@/lib/firestore";
-import { handleFirestoreError } from "@/lib/firebase";
+import { handleSupabaseError } from "@/lib/supabase";
 
 // Schema walidacji dla formularza
 const registrationSchema = z.object({
-  // Dane uczestnika
-  firstName: z.string().min(2, "Imię musi mieć co najmniej 2 znaki"),
-  lastName: z.string().min(2, "Nazwisko musi mieć co najmniej 2 znaki"),
-  birthDate: z.string().min(1, "Data urodzenia jest wymagana"),
-  phone: z.string().min(9, "Numer telefonu musi mieć co najmniej 9 cyfr"),
+  name: z.string().min(2, "Imię musi mieć co najmniej 2 znaki"),
+  surname: z.string().min(2, "Nazwisko musi mieć co najmniej 2 znaki"),
+  dob: z.string().min(1, "Data urodzenia jest wymagana"),
+  phoneNumber: z.string().min(9, "Numer telefonu musi mieć co najmniej 9 cyfr"),
   pesel: z.string().length(11, "PESEL musi mieć 11 cyfr"),
   gender: z.enum(["male", "female", "other"]),
 
-  // Dane studenta
-  faculty: z.string().min(1, "Wydział jest wymagany"),
+  faculty: z.enum(["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"]),
   studentNumber: z.string().min(1, "Numer indeksu jest wymagany"),
-  fieldOfStudy: z.string().min(1, "Kierunek studiów jest wymagany"),
+  studyField: z.string().min(1, "Kierunek studiów jest wymagany"),
   studyLevel: z.enum(["bachelor", "master", "phd"]),
-  studyYear: z.string().min(1, "Rok studiów jest wymagany"),
+  studyYear: z.enum(["1", "2", "3", "4"]),
 
-  // Dodatkowe informacje
-  diet: z.string().optional(),
+  dietName: z.enum(["standard", "vegetarian"]),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"]),
-  invoice: z.boolean(),
-  howDidYouKnow: z.string().min(1, "To pole jest wymagane"),
+  aboutWtyczka: z.enum([
+    "social-media",
+    "akcja-integracja",
+    "friend",
+    "stands",
+    "other",
+  ]),
+  aboutWtyczkaInfo: z.string().optional(),
 
-  // Zgody
-  acceptRegulations: z.boolean().refine((val) => val === true, {
+  invoice: z.boolean(),
+  invoiceName: z.string().optional(),
+  invoiceSurname: z.string().optional(),
+  invoiceId: z.string().optional(),
+  invoiceAddress: z.string().optional(),
+
+  regAccept: z.boolean().refine((val) => val === true, {
     message: "Musisz zaakceptować regulamin",
   }),
-  dataProcessingConsent: z.boolean().refine((val) => val === true, {
+  rodoAccept: z.boolean().refine((val) => val === true, {
     message: "Musisz wyrazić zgodę na przetwarzanie danych",
-  }),
-  privacyPolicy: z.boolean().refine((val) => val === true, {
-    message: "Musisz zapoznać się z klauzurą informacyjną",
   }),
 });
 
@@ -77,7 +82,7 @@ export default function RegistrationPage() {
     const checkExistingRegistration = async () => {
       if (user) {
         try {
-          const registration = await getRegistration(user.uid);
+          const registration = await getRegistration(user.id);
           setExistingRegistration(registration);
         } catch (error) {
           console.error("Error checking existing registration:", error);
@@ -127,22 +132,26 @@ export default function RegistrationPage() {
 
     setIsSubmitting(true);
     try {
-      // Convert form data to the format expected by Firestore
-      const registrationData = {
+      const dobDate = new Date(data.dob);
+      const formData = {
         ...data,
+        dob: dobDate,
+        pesel: parseInt(data.pesel),
+        studentNumber: parseInt(data.studentNumber),
         studyYear: parseInt(data.studyYear),
-        diet: data.diet || "", // Ensure diet is always a string
-      };
-
-      await createRegistration(user, registrationData);
+      } as Omit<
+        ParticipantRecord,
+        "id" | "userId" | "email" | "createdAt" | "updatedAt"
+      >;
+      await createRegistration(user, formData);
       toast.success("Formularz został wysłany pomyślnie!");
 
       // Refresh the existing registration
-      const registration = await getRegistration(user.uid);
+      const registration = await getRegistration(user.id);
       setExistingRegistration(registration);
     } catch (error) {
       console.error("Submit error:", error);
-      const errorMessage = handleFirestoreError(error, realLang);
+      const errorMessage = handleSupabaseError(error, realLang);
       toast.error(`Wystąpił błąd: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
@@ -170,10 +179,9 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {existingRegistration.firstName}{" "}
-                  {existingRegistration.lastName}
+                  {existingRegistration.name} {existingRegistration.surname}
                 </h2>
-                <p className="text-gray-600">
+                {/* <p className="text-gray-600">
                   Status:{" "}
                   <span
                     className={`font-semibold ${
@@ -192,7 +200,7 @@ export default function RegistrationPage() {
                       ? "Niezakwalifikowany"
                       : "Wycofany"}
                   </span>
-                </p>
+                </p> */}
               </div>
             </div>
 
@@ -205,10 +213,11 @@ export default function RegistrationPage() {
                   Email: {existingRegistration.email}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Telefon: {existingRegistration.phone}
+                  Telefon: {existingRegistration.phoneNumber}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Data urodzenia: {existingRegistration.birthDate}
+                  Data urodzenia:{" "}
+                  {existingRegistration.dob.toLocaleDateString("pl-PL")}
                 </p>
               </div>
 
@@ -223,7 +232,7 @@ export default function RegistrationPage() {
                   Nr indeksu: {existingRegistration.studentNumber}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Kierunek: {existingRegistration.fieldOfStudy}
+                  Kierunek: {existingRegistration.studyField}
                 </p>
               </div>
             </div>
@@ -242,14 +251,14 @@ export default function RegistrationPage() {
                   Sprawdź status
                 </Link>
 
-                {existingRegistration.status === "qualified" && (
+                {/* {existingRegistration.status === "qualified" && (
                   <Link
                     href="/payment"
                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md font-semibold transition-colors"
                   >
                     Przejdź do płatności
                   </Link>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -291,12 +300,12 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
-                  {...register("firstName")}
+                  {...register("name")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {errors.firstName && (
+                {errors.name && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.firstName.message}
+                    {errors.name.message}
                   </p>
                 )}
               </div>
@@ -307,12 +316,12 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
-                  {...register("lastName")}
+                  {...register("surname")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {errors.lastName && (
+                {errors.surname && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.lastName.message}
+                    {errors.surname.message}
                   </p>
                 )}
               </div>
@@ -323,12 +332,12 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="date"
-                  {...register("birthDate")}
+                  {...register("dob")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {errors.birthDate && (
+                {errors.dob && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.birthDate.message}
+                    {errors.dob.message}
                   </p>
                 )}
               </div>
@@ -339,12 +348,12 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="tel"
-                  {...register("phone")}
+                  {...register("phoneNumber")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {errors.phone && (
+                {errors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.phone.message}
+                    {errors.phoneNumber.message}
                   </p>
                 )}
               </div>
@@ -407,8 +416,27 @@ export default function RegistrationPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Wybierz wydział</option>
-                  <option value="eeia">EEIA</option>
-                  <option value="other">Inny wydział</option>
+                  <option value="w1">Mechaniczny W1</option>
+                  <option value="w2">
+                    Elektrotechniki, Elektroniki, Informatyki i Automatyki W2
+                  </option>
+                  <option value="w3">Chemiczny W3</option>
+                  <option value="w4">
+                    Technologii Materiałowych i Wzornictwa Tekstyliów W4
+                  </option>
+                  <option value="w5">
+                    Biotechnologii i Nauk o Żywności W5
+                  </option>
+                  <option value="w6">
+                    Budownictwa, Architektury i Inżynierii Środowiska W6
+                  </option>
+                  <option value="w7">
+                    Fizyki Technicznej, Informatyki i Matematyki Stosowanej W7
+                  </option>
+                  <option value="w8">Organizacji i Zarządzania W8</option>
+                  <option value="w9">
+                    Inżynierii Procesowej i Ochrony Środowiska W9
+                  </option>
                 </select>
                 {errors.faculty && (
                   <p className="text-red-500 text-sm mt-1">
@@ -439,12 +467,12 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
-                  {...register("fieldOfStudy")}
+                  {...register("studyField")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
-                {errors.fieldOfStudy && (
+                {errors.studyField && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.fieldOfStudy.message}
+                    {errors.studyField.message}
                   </p>
                 )}
               </div>
@@ -458,9 +486,9 @@ export default function RegistrationPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Wybierz stopień</option>
-                  <option value="bachelor">Licencjat</option>
-                  <option value="master">Magister</option>
-                  <option value="phd">Doktorat</option>
+                  <option value="bachelor">I (Licencjat / Inżynier)</option>
+                  <option value="master">II (Magisterskie)</option>
+                  <option value="phd">III (Doktorskie)</option>
                 </select>
                 {errors.studyLevel && (
                   <p className="text-red-500 text-sm mt-1">
@@ -482,7 +510,6 @@ export default function RegistrationPage() {
                   <option value="2">2 rok</option>
                   <option value="3">3 rok</option>
                   <option value="4">4 rok</option>
-                  <option value="5">5 rok</option>
                 </select>
                 {errors.studyYear && (
                   <p className="text-red-500 text-sm mt-1">
@@ -507,12 +534,19 @@ export default function RegistrationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t.forms.diet}
                 </label>
-                <input
-                  type="text"
-                  placeholder="np. wegetariańska, wegańska, bezglutenowa"
-                  {...register("diet")}
+                <select
+                  {...register("dietName")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
+                >
+                  <option value="">Wybierz diete</option>
+                  <option value="standard">Standardowa</option>
+                  <option value="vegetarian">Wegetariańska (+30zł)</option>
+                </select>
+                {errors.dietName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.dietName.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -555,14 +589,20 @@ export default function RegistrationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t.forms.howDidYouKnow} *
                 </label>
-                <textarea
-                  {...register("howDidYouKnow")}
-                  rows={3}
+                <select
+                  {...register("aboutWtyczka")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-                {errors.howDidYouKnow && (
+                >
+                  <option value="">Wybierz skąd wiesz</option>
+                  <option value="social-media">Social Media</option>
+                  <option value="akcja-integracja">Akcja Integracja</option>
+                  <option value="friend">Od znajomych</option>
+                  <option value="stands">Standy</option>
+                  <option value="other">Inne</option>
+                </select>
+                {errors.aboutWtyczka && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.howDidYouKnow.message}
+                    {errors.aboutWtyczka.message}
                   </p>
                 )}
               </div>
@@ -579,7 +619,7 @@ export default function RegistrationPage() {
               <div className="flex items-start space-x-2">
                 <input
                   type="checkbox"
-                  {...register("acceptRegulations")}
+                  {...register("regAccept")}
                   className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                 />
                 <label className="text-sm text-gray-700">
@@ -592,41 +632,25 @@ export default function RegistrationPage() {
                   </button>
                 </label>
               </div>
-              {errors.acceptRegulations && (
+              {errors.regAccept && (
                 <p className="text-red-500 text-sm">
-                  {errors.acceptRegulations.message}
+                  {errors.regAccept.message}
                 </p>
               )}
 
               <div className="flex items-start space-x-2">
                 <input
                   type="checkbox"
-                  {...register("dataProcessingConsent")}
+                  {...register("rodoAccept")}
                   className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                 />
                 <label className="text-sm text-gray-700">
                   {t.forms.dataProcessingConsent}
                 </label>
               </div>
-              {errors.dataProcessingConsent && (
+              {errors.rodoAccept && (
                 <p className="text-red-500 text-sm">
-                  {errors.dataProcessingConsent.message}
-                </p>
-              )}
-
-              <div className="flex items-start space-x-2">
-                <input
-                  type="checkbox"
-                  {...register("privacyPolicy")}
-                  className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                />
-                <label className="text-sm text-gray-700">
-                  {t.forms.privacyPolicy}
-                </label>
-              </div>
-              {errors.privacyPolicy && (
-                <p className="text-red-500 text-sm">
-                  {errors.privacyPolicy.message}
+                  {errors.rodoAccept.message}
                 </p>
               )}
             </div>
