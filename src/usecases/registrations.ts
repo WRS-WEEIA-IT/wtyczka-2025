@@ -2,7 +2,6 @@ import { AuthUser } from "@supabase/supabase-js";
 import { supabase } from '@/lib/supabase';
 
 export interface RegistrationRecord {
-  id: number;
   userId: string;
 
   name: string;

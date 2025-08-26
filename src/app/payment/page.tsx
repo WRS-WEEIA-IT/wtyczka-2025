@@ -241,7 +241,7 @@ export default function PaymentPage() {
         "id" | "userId" | "registrationId" | "createdAt" | "updatedAt"
       >;
 
-      await createPayment(user, userRegistration.id, mappedPaymentRecord);
+      await createPayment(user, mappedPaymentRecord);
       toast.success("Formularz płatności został wysłany pomyślnie!");
 
       // Refresh payment data

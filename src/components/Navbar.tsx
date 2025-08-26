@@ -28,16 +28,10 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-amber-900 text-white shadow-lg sticky top-0 z-50">
+      <nav className="bg-black text-white shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="text-2xl font-bold text-amber-100">
-                  🤠 Wtyczka 2025
-                </div>
-              </Link>
-            </div>
+            <div className="flex items-center"></div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
@@ -145,7 +139,7 @@ export default function Navbar() {
             <div className="md:hidden flex items-center">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white hover:text-amber-200"
+                className="text-[#E7A801] hover:text-amber-200"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -154,7 +148,7 @@ export default function Navbar() {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-amber-800">
+            <div className="md:hidden py-4 border-t border-[#E7A801]">
               <div className="flex flex-col space-y-3">
                 <Link
                   href="/"

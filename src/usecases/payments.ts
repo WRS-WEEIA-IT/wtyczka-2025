@@ -2,9 +2,7 @@ import { AuthUser } from "@supabase/supabase-js";
 import { supabase } from '@/lib/supabase';
 
 export interface PaymentRecord {
-  id?: string;
   userId: string;
-  registrationId: string;
   
   studentStatus: 'politechnika' | 'other' | 'not-student';
   emergencyContactNameSurname: string;
@@ -33,15 +31,13 @@ export interface PaymentRecord {
 
 export async function createPayment(
   user: AuthUser,
-  registrationId: number,
-  paymentData: Omit<PaymentRecord, 'id' | 'userId' | 'registrationId' | 'createdAt' | 'updatedAt'>
+  paymentData: Omit<PaymentRecord, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
   try {
     const { data, error } = await supabase.from('payments').insert([
       {
         ...paymentData,
         userId: user.id,
-        registrationId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
