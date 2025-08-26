@@ -1,80 +1,58 @@
-import { db } from './firebase';
-import { 
-  collection, 
-  addDoc, 
-  doc, 
-  getDoc, 
-  updateDoc, 
-  setDoc,
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  getDocs,
-  FirestoreError 
-} from 'firebase/firestore';
-import { User } from 'firebase/auth';
+import { AuthUser } from "@supabase/supabase-js";
+import { supabase } from './supabase';
 
 export interface UserProfile {
   id?: string;
   userId: string;
   email: string;
-  displayName?: string;
-  photoURL?: string;
   
-  // Profile data
   firstName?: string;
   lastName?: string;
   phone?: string;
   
-  // System fields
   createdAt: Date;
   lastLoginAt: Date;
-  isAdmin: boolean;
   
-  // Registration status
   hasRegistration: boolean;
   hasPayment: boolean;
   applicationStatus: 'none' | 'submitted' | 'qualified' | 'not-qualified' | 'withdrawn';
 }
 
 export interface ParticipantRecord {
-  id?: string;
+  id: number;
   userId: string;
+
+  name: string;
+  surname: string;
+  dob: Date;
   email: string;
-  
-  // Participant Data
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-  phone: string;
-  pesel: string;
+  phoneNumber: string;
+  pesel: number;
   gender: 'male' | 'female' | 'other';
-  
-  // Student Data
-  faculty: string;
-  studentNumber: string;
-  fieldOfStudy: string;
+
+  faculty: 'w1' | 'w2' | 'w3' | 'w4' | 'w5' | 'w6' | 'w7' | 'w8' | 'w9';
+  studentNumber: number;
+  studyField: string;
   studyLevel: 'bachelor' | 'master' | 'phd';
-  studyYear: number;
-  
-  // Additional Info
-  diet: string;
+  studyYear: 1 | 2 | 3 | 4;
+
+  dietName: 'standard' | 'vegetarian';
   tshirtSize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
+  
   invoice: boolean;
-  howDidYouKnow: string;
-  
-  // Consents
-  acceptRegulations: boolean;
-  dataProcessingConsent: boolean;
-  privacyPolicy: boolean;
-  
-  // System fields
+  invoiceName?: string;
+  invoiceSurname?: string;
+  invoiceId?: string;
+  invoiceAddress?: string;
+
+  aboutWtyczka: 'social-media' | 'akcja-integracja' | 'friend' | 'stands' | 'other';
+  aboutWtyczkaInfo?: string;
+
+  regAccept: boolean;
+  rodoAccept: boolean;
+
   createdAt: Date;
   updatedAt: Date;
-  status: 'pending' | 'qualified' | 'not-qualified' | 'withdrawn';
-  qualificationScore?: number;
-  notes?: string;
 }
 
 export interface PaymentRecord {
@@ -109,29 +87,35 @@ export interface PaymentRecord {
 }
 
 // User profile functions
-export const createUserProfile = async (user: User): Promise<void> => {
+export const createUserProfile = async (user: AuthUser): Promise<void> => {
   try {
-    const userRef = doc(db, 'users', user.uid);
-    const userDoc = await getDoc(userRef);
-    
-    if (!userDoc.exists()) {
-      await updateDoc(userRef, {
-        userId: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        createdAt: new Date(),
-        lastLoginAt: new Date(),
-        isAdmin: false,
-        hasRegistration: false,
-        hasPayment: false,
-        applicationStatus: 'none',
-      });
+    const { data, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('userId', user.id)
+      .single();
+    if (!data) {
+      const { error: insertError } = await supabase.from('users').insert([
+        {
+          userId: user.id,
+          email: user.email,
+          displayName: user.user_metadata?.displayName,
+          photoURL: user.user_metadata?.photoURL,
+          createdAt: new Date().toISOString(),
+          lastLoginAt: new Date().toISOString(),
+          isAdmin: false,
+          hasRegistration: false,
+          hasPayment: false,
+          applicationStatus: 'none',
+        },
+      ]);
+      if (insertError) throw insertError;
     } else {
-      // Update last login
-      await updateDoc(userRef, {
-        lastLoginAt: new Date(),
-      });
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ lastLoginAt: new Date().toISOString() })
+        .eq('userId', user.id);
+      if (updateError) throw updateError;
     }
   } catch (error) {
     console.error('Error creating/updating user profile:', error);
@@ -141,18 +125,17 @@ export const createUserProfile = async (user: User): Promise<void> => {
 
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
   try {
-    const docRef = doc(db, 'users', userId);
-    const docSnap = await getDoc(docRef);
-    
-    if (!docSnap.exists()) {
-      return null;
-    }
-    
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('userId', userId)
+      .single();
+    if (error || !data) return null;
     return {
-      id: docSnap.id,
-      ...docSnap.data(),
-      createdAt: docSnap.data().createdAt?.toDate() || new Date(),
-      lastLoginAt: docSnap.data().lastLoginAt?.toDate() || new Date(),
+      id: data.id,
+      ...data,
+      createdAt: new Date(data.createdAt),
+      lastLoginAt: new Date(data.lastLoginAt),
     } as UserProfile;
   } catch (error) {
     console.error('Error getting user profile:', error);
@@ -161,23 +144,18 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
 };
 
 export const updateUserProfile = async (
-  userId: string, 
+  userId: string,
   updates: Partial<UserProfile>
 ): Promise<void> => {
   try {
-    const docRef = doc(db, 'users', userId);
-    
-    // Use setDoc with merge to create or update the document
-    await setDoc(docRef, {
-      userId: userId,
-      createdAt: new Date(),
-      lastLoginAt: new Date(),
-      isAdmin: false,
-      hasRegistration: false,
-      hasPayment: false,
-      applicationStatus: 'none',
-      ...updates
-    }, { merge: true });
+    const { error } = await supabase
+      .from('users')
+      .update({
+        ...updates,
+        lastLoginAt: new Date().toISOString(),
+      })
+      .eq('userId', userId);
+    if (error) throw error;
   } catch (error) {
     console.error('Error updating user profile:', error);
     throw new Error('Failed to update user profile');
@@ -185,27 +163,50 @@ export const updateUserProfile = async (
 };
 
 export const createRegistration = async (
-  user: User, 
-  registrationData: Omit<ParticipantRecord, 'id' | 'userId' | 'email' | 'createdAt' | 'updatedAt' | 'status'>
+  user: AuthUser,
+  registrationData: Omit<ParticipantRecord, 'id' | 'userId' | 'email' | 'createdAt' | 'updatedAt'>
 ): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, 'registrations'), {
-      ...registrationData,
-      userId: user.uid,
-      email: user.email,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      status: 'pending',
-    });
-    
-    // Update user profile
-    await updateUserProfile(user.uid, { 
-      email: user.email || '',
-      hasRegistration: true,
-      applicationStatus: 'submitted'
-    });
-    
-    return docRef.id;
+    const { data, error } = await supabase.from('registrations').insert([
+      {
+        over18: true, // TODO: zrobić check do tego.
+        userId: user.id,
+
+        name: registrationData.name,
+        surname: registrationData.surname,
+        dob: registrationData.dob,
+        email: user.email,
+        phoneNumber: registrationData.phoneNumber,
+        pesel: registrationData.pesel,
+        gender: registrationData.gender,
+
+        faculty: registrationData.faculty,
+        studentNumber: registrationData.studentNumber,
+        studyField: registrationData.studyField,
+        studyLevel: registrationData.studyLevel,
+        studyYear: registrationData.studyYear,
+
+        dietName: registrationData.dietName,
+        tshirtSize: registrationData.tshirtSize,
+
+        invoice: registrationData.invoice,
+        invoiceName: registrationData.invoiceName,
+        invoiceSurname: registrationData.invoiceSurname,
+        invoiceId: registrationData.invoiceId,
+        invoiceAddress: registrationData.invoiceAddress,
+
+        aboutWtyczka: registrationData.aboutWtyczka,
+        aboutWtyczkaInfo: registrationData.aboutWtyczkaInfo,
+
+        regAccept: registrationData.regAccept,
+        rodoAccept: registrationData.rodoAccept,
+
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ]).select();
+    if (error || !data || !data[0]) throw error || new Error('No registration created');
+    return data[0].id;
   } catch (error) {
     console.error('Error creating registration:', error);
     throw new Error('Failed to create registration');
@@ -214,23 +215,18 @@ export const createRegistration = async (
 
 export const getRegistration = async (userId: string): Promise<ParticipantRecord | null> => {
   try {
-    const q = query(
-      collection(db, 'registrations'), 
-      where('userId', '==', userId),
-      limit(1)
-    );
-    const querySnapshot = await getDocs(q);
-    
-    if (querySnapshot.empty) {
-      return null;
-    }
-    
-    const doc = querySnapshot.docs[0];
+    const { data, error } = await supabase
+      .from('registrations')
+      .select('*')
+      .eq('userId', userId)
+      .limit(1)
+      .single();
+    if (error || !data) return null;
     return {
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate() || new Date(),
-      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+      id: data.id,
+      ...data,
+      createdAt: new Date(data.createdAt),
+      updatedAt: new Date(data.updatedAt),
     } as ParticipantRecord;
   } catch (error) {
     console.error('Error getting registration:', error);
@@ -239,15 +235,18 @@ export const getRegistration = async (userId: string): Promise<ParticipantRecord
 };
 
 export const updateRegistration = async (
-  registrationId: string, 
+  registrationId: string,
   updates: Partial<ParticipantRecord>
 ): Promise<void> => {
   try {
-    const docRef = doc(db, 'registrations', registrationId);
-    await updateDoc(docRef, {
-      ...updates,
-      updatedAt: new Date(),
-    });
+    const { error } = await supabase
+      .from('registrations')
+      .update({
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      })
+      .eq('id', registrationId);
+    if (error) throw error;
   } catch (error) {
     console.error('Error updating registration:', error);
     throw new Error('Failed to update registration');
@@ -255,50 +254,44 @@ export const updateRegistration = async (
 };
 
 export async function createPayment(
-  user: User,
-  registrationId: string,
+  user: AuthUser,
+  registrationId: number,
   paymentData: Omit<PaymentRecord, 'id' | 'userId' | 'registrationId' | 'createdAt' | 'updatedAt' | 'paymentStatus' | 'amount'>
 ): Promise<string> {
-  try {    
-    const docRef = await addDoc(collection(db, 'payments'), {
-      ...paymentData,
-      userId: user.uid,
-      registrationId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      paymentStatus: 'pending',
-      amount: 400,
-    });
-    
-    // Update user profile
-    //await updateUserProfile(user.uid, { hasPayment: true });
-    
-    return docRef.id;
+  try {
+    const { data, error } = await supabase.from('payments').insert([
+      {
+        ...paymentData,
+        userId: user.id,
+        registrationId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        paymentStatus: 'pending',
+        amount: 400,
+      },
+    ]).select();
+    if (error || !data || !data[0]) throw error || new Error('No payment created');
+    return data[0].id;
   } catch (error) {
     console.error('Error creating payment:', error);
     throw new Error('Failed to create payment');
   }
-};
+}
 
 export const getPayment = async (userId: string): Promise<PaymentRecord | null> => {
   try {
-    const queryResult = query(
-      collection(db, 'payments'), 
-      where('userId', '==', userId),
-      limit(1)
-    );
-    const querySnapshot = await getDocs(queryResult);
-    
-    if (querySnapshot.empty) {
-      return null;
-    }
-    
-    const doc = querySnapshot.docs[0];
+    const { data, error } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('userId', userId)
+      .limit(1)
+      .single();
+    if (error || !data) return null;
     return {
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt.toDate(),
-      updatedAt: doc.data().updatedAt.toDate(),
+      id: data.id,
+      ...data,
+      createdAt: new Date(data.createdAt),
+      updatedAt: new Date(data.updatedAt),
     } as PaymentRecord;
   } catch (error) {
     console.error('Error getting payment:', error);
