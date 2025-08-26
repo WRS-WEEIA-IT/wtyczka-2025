@@ -152,33 +152,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sponsors Section */}
-      <section className="py-16 bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4">
-              {t.home.sponsors}
-            </h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {sponsors.map((sponsor, index) => (
-              <div
-                key={index}
-                className="bg-gray-700 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow flex items-center justify-center border border-amber-600"
-              >
-                <div className="w-24 h-16 bg-gray-600 rounded flex items-center justify-center">
-                  <span className="text-amber-400 text-xs text-center">
-                    {sponsor.name}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Call to Action */}
       <section className="py-16 bg-gradient-to-r from-amber-800 to-orange-800 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
