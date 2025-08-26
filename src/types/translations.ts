@@ -84,7 +84,7 @@ export interface Translations {
     accountDetails: string;
     passwordRequired: string;
   };
-  firebaseErrors: {
+  supabaseErrors: {
     permissionDenied: string;
     notFound: string;
     alreadyExists: string;

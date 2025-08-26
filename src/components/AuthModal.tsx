@@ -12,7 +12,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const { login, register, loginWithGoogle } = useAuth();
+  const { authLogin, authRegister, authLoginWithGoogle } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
@@ -33,12 +33,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     try {
       if (isLogin) {
-        await login(formData.email, formData.password);
+        await authLogin(formData.email, formData.password);
       } else {
         if (formData.password !== formData.confirmPassword) {
           throw new Error(t.errors.passwordsDontMatch);
         }
-        await register(formData.email, formData.password);
+        await authRegister(formData.email, formData.password);
       }
       onClose();
       router.push("/");
@@ -52,7 +52,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      await loginWithGoogle();
+      await authLoginWithGoogle();
       onClose();
       router.push("/");
     } catch (error) {

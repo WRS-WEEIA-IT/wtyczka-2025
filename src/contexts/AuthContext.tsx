@@ -7,110 +7,105 @@ import {
   useState,
   ReactNode,
 } from "react";
-import {
-  User,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { updateUserProfile } from "@/lib/firestore";
+import { supabase } from "@/lib/supabase";
+import type { AuthUser } from "@supabase/supabase-js";
+
 import toast from "react-hot-toast";
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  logout: () => Promise<void>;
+  authLogin: (email: string, password: string) => Promise<void>;
+  authRegister: (email: string, password: string) => Promise<void>;
+  authLoginWithGoogle: () => Promise<void>;
+  authLogout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-
-      // If user is logged in, ensure their profile exists
-      if (user) {
-        try {
-          await updateUserProfile(user.uid, {
-            email: user.email || "",
-            displayName: user.displayName || "",
-            photoURL: user.photoURL || "",
-          });
-        } catch (error) {
-          console.error("Error updating user profile:", error);
-          // Don't show error to user as this is background operation
-        }
-      }
-
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
       setLoading(false);
     });
-
-    return unsubscribe;
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
   }, []);
 
-  const login = async (email: string, password: string) => {
+  async function authLogin(email: string, password: string) {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
       toast.success("Zalogowano pomyślnie!");
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Błąd logowania");
       throw error;
     }
-  };
+  }
 
-  const register = async (email: string, password: string) => {
+  async function authRegister(email: string, password: string) {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const { error } = await supabase.auth.signUp({ email, password });
+
+      if (error) throw error;
       toast.success("Zarejestrowano pomyślnie!");
     } catch (error) {
       console.error("Registration error:", error);
       toast.error("Błąd rejestracji");
       throw error;
     }
-  };
+  }
 
-  const loginWithGoogle = async () => {
+  async function authLoginWithGoogle() {
     try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+      });
+
+      if (error) throw error;
       toast.success("Zalogowano pomyślnie!");
     } catch (error) {
       console.error("Google login error:", error);
       toast.error("Błąd logowania przez Google");
       throw error;
     }
-  };
+  }
 
-  const logout = async () => {
+  async function authLogout() {
     try {
-      await signOut(auth);
+      const { error } = await supabase.auth.signOut();
+
+      if (error) throw error;
       toast.success("Wylogowano pomyślnie!");
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Błąd wylogowania");
       throw error;
     }
-  };
+  }
 
   const value = {
     user,
     loading,
-    login,
-    register,
-    loginWithGoogle,
-    logout,
+    authLogin,
+    authRegister,
+    authLoginWithGoogle,
+    authLogout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
