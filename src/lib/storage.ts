@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 import type { AuthUser } from "@supabase/supabase-js";
 
-export interface FileUploadRecord {
+export interface FileUploadResult {
   url: string;
   fileName: string;
   fileSize: number;
@@ -20,7 +20,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export async function uploadPaymentConfirmation(
   file: File,
   user: AuthUser
-): Promise<FileUploadRecord> {
+): Promise<FileUploadResult> {
   try {
     if (!ALLOWED_PAYMENT_FILE_TYPES.includes(file.type)) {
       throw new Error('Nieobsługiwany typ pliku. Dozwolone formaty: PDF, PNG, JPG, JPEG');
@@ -48,7 +48,7 @@ export async function uploadPaymentConfirmation(
       fileName: fileName,
       fileSize: file.size,
       fileType: file.type,
-    } as FileUploadRecord;
+    } as FileUploadResult;
 
   } catch (error) {
     console.error('Error uploading payment confirmation:', error);
