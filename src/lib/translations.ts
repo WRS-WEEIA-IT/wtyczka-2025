@@ -16,12 +16,12 @@ export const translations: Record<'pl' | 'en', Translations> = {
     },
     home: {
       title: "Wtyczka 2025",
-      subtitle: "Wyjazd integracyjno-szkoleniowy EEIA",
+      subtitle: "Wyjazd integracyjno-szkoleniowy",
       theme: "Motyw: Western",
       countdown: "Dni do wydarzenia",
       latestNews: "Najnowsze aktualności",
       viewAllNews: "Zobacz wszystkie aktualności",
-      sponsors: "Nasi sponsorzy",
+      sponsors: "Sponsorzy wydarzenia",
       welcomeMessage: "Witamy na oficjalnej stronie wydarzenia Wtyczka 2025!",
       eventDescription: "Dołącz do nas na niezapomnianym wyjeździe integracyjno-szkoleniowym w klimacie Dzikiego Zachodu!"
     },

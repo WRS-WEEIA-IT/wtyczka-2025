@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { ABeeZee } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const abeeZee = ABeeZee({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
-  title: "Wtyczka 2025 - Wyjazd integracyjno-szkoleniowy EEIA",
-  description: "Oficjalna strona wydarzenia Wtyczka 2025 w klimacie Western",
+  title: "Wtyczka 2025 - Wyjazd integracyjno-szkoleniowy",
+  description: "Oficjalna strona wydarzenia Wtyczka 2025",
 };
 
 export default function RootLayout({
@@ -28,9 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${abeeZee.className} antialiased`}>
         <LanguageProvider>
           <AuthProvider>
             <Navbar />

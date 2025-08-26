@@ -2,7 +2,15 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect } from "react";
-import { Calendar, Users, Award, Facebook } from "lucide-react";
+import {
+  Calendar,
+  Users,
+  Award,
+  Facebook,
+  MapPin,
+  UserRound,
+} from "lucide-react";
+import Image from "next/image";
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -62,67 +70,74 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-amber-900 to-orange-900">
+    <div className="min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-gray-800 via-amber-800 to-orange-800 text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <div className="absolute inset-0">
-          <div className="text-[200px] opacity-10 font-bold absolute -top-10 -left-10 transform rotate-12">
-            🤠
-          </div>
-          <div className="text-[150px] opacity-10 font-bold absolute top-32 right-20 transform -rotate-12">
-            🌵
-          </div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-shadow-lg">
-            {t.home.title}
-          </h1>
-          <p className="text-xl md:text-2xl mb-4 text-amber-100">
-            {t.home.subtitle}
-          </p>
-          <p className="text-lg md:text-xl mb-8 text-orange-200">
-            {t.home.theme}
-          </p>
-
-          {/* Countdown */}
-          <div className="bg-black bg-opacity-30 rounded-lg p-6 inline-block backdrop-blur-sm">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Calendar className="h-6 w-6" />
-              <span className="text-lg font-semibold">{t.home.countdown}</span>
-            </div>
-            <div className="text-4xl md:text-6xl font-bold text-amber-300">
-              {daysUntilEvent}
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <p className="text-lg text-amber-100 max-w-3xl mx-auto">
-              {t.home.welcomeMessage}
+      <section className="relative bg-black text-white overflow-hidden">
+        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
+          <div className="flex flex-col items-center">
+            <Image
+              src="/logo_czarne_tło.jpg"
+              alt="Logo wtyczka"
+              width={400}
+              height={150}
+              className="m-0 p-0 leading-none"
+              style={{ display: "block", marginBottom: "-15px" }}
+            />
+            <p
+              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
+              style={{ marginTop: "-4px" }}
+            >
+              {t.home.subtitle}
             </p>
-            <p className="text-xl text-orange-200 max-w-3xl mx-auto mt-4">
-              {t.home.eventDescription}
-            </p>
+          </div>
+
+          <div className="flex flex-row gap-3 w-full justify-center items-stretch mt-4 mb-2 overflow-x-auto">
+            <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 flex items-center justify-center backdrop-blur-sm">
+              <Calendar className="h-5 w-5 mr-1" />
+              <span className="text-base">{daysUntilEvent} dni</span>
+            </div>
+            <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 flex items-center justify-center backdrop-blur-sm">
+              <MapPin className="h-5 w-5 mr-1" />
+              <span className="text-base">Murzasichle</span>
+            </div>
+            <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm">
+              <UserRound className="h-5 w-5 mr-1" />
+              <span className="text-base">Studenci</span>
+            </div>
+          </div>
+
+          <div className="flex flex-row gap-3 w-full justify-center items-stretch mb-2 mt-2 overflow-x-auto">
+            <a
+              href="/registration"
+              className="bg-[#E7A801] hover:bg-amber-700 min-w-[180px] border-[#262626] border rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center font-semibold transition-colors backdrop-blur-sm"
+            >
+              <span className="text-base text-black">Zapisz się</span>
+            </a>
+            <a
+              href="/essentials"
+              className="bg-[#0F0F0F] min-w-[180px] border-[#262626] border bg-opacity-30 rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm"
+            >
+              <span className="text-base">Dowiedz się więcej</span>
+            </a>
           </div>
         </div>
       </section>
 
       {/* Latest News Section */}
-      <section className="py-16 bg-gray-800">
+      <section className="py-16 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {t.home.latestNews}
             </h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto"></div>
+            <div className="w-24 h-1 bg-[#E7A801] mx-auto"></div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             {mockNews.map((news) => (
               <div
                 key={news.id}
-                className="bg-gray-700 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-amber-600"
+                className="bg-[#0F0F0F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-[#262626]"
               >
                 <div className="h-48 bg-amber-800 flex items-center justify-center">
                   <span className="text-amber-400 text-6xl">📰</span>
@@ -143,39 +158,10 @@ export default function HomePage() {
           <div className="text-center">
             <a
               href="/news"
-              className="inline-flex items-center space-x-2 bg-amber-600 text-white px-6 py-3 rounded-md hover:bg-amber-700 transition-colors"
+              className="inline-flex items-center space-x-2 bg-[#E7A801] text-black px-6 py-3 rounded-xl hover:bg-amber-700 transition-colors"
             >
               <Facebook className="h-5 w-5" />
               <span>{t.home.viewAllNews}</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-amber-800 to-orange-800 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Gotowy na przygodę w stylu Western? 🏜️
-          </h2>
-          <p className="text-xl mb-8 text-amber-100">
-            Dołącz do nas i przeżyj niezapomniane chwile pełne nauki, zabawy i
-            integracji!
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/registration"
-              className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-md font-semibold transition-colors inline-flex items-center justify-center space-x-2"
-            >
-              <Users className="h-5 w-5" />
-              <span>Zapisz się już dziś!</span>
-            </a>
-            <a
-              href="/essentials"
-              className="bg-transparent border-2 border-white hover:bg-white hover:text-amber-800 text-white px-8 py-3 rounded-md font-semibold transition-colors inline-flex items-center justify-center space-x-2"
-            >
-              <Award className="h-5 w-5" />
-              <span>Dowiedz się więcej</span>
             </a>
           </div>
         </div>
