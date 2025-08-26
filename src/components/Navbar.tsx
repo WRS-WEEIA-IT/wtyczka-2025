@@ -61,7 +61,9 @@ export default function Navbar() {
                     </button>
                     <div className="absolute top-full left-0 mt-1 bg-amber-800 rounded-md shadow-lg py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                       <Link
-                        href="/regulations"
+                        href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="block px-4 py-2 hover:bg-amber-700"
                       >
                         {t.nav.regulations}
@@ -175,8 +177,10 @@ export default function Navbar() {
                         {t.nav.participantInfo}:
                       </div>
                       <Link
-                        href="/regulations"
-                        className="block hover:text-amber-200"
+                        href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-4 py-2 hover:bg-amber-700"
                       >
                         {t.nav.regulations}
                       </Link>
