@@ -42,7 +42,9 @@ import {
 const paymentSchema = z.object({
   adminPassword: z.string().min(1, "Hasło administratora jest wymagane"),
 
-  studentStatus: z.enum(["politechnika", "other", "not-student"]),
+  studentStatus: z.string().min(1, "Status studenta jest wymagany").refine(val => ["politechnika", "other", "not-student"].includes(val), {
+    message: "Status studenta jest wymagany"
+  }),
   emergencyContactNameSurname: z
     .string()
     .min(2, "Imię i nazwisko jest wymagane"),
@@ -119,15 +121,18 @@ export default function PaymentPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, touchedFields },
     watch,
     setError,
     trigger,
     getValues
   } = useForm<PaymentFormData>({
-    resolver: zodResolver(paymentSchema),
-    defaultValues: { needsTransport: false },
+  resolver: zodResolver(paymentSchema),
+  defaultValues: { needsTransport: false, studentStatus: "" },
+  mode: "onChange"
   });
+
+  const [showErrorTooltip, setShowErrorTooltip] = useState(false);
 
   const adminPassword = watch("adminPassword");
 
@@ -645,36 +650,42 @@ export default function PaymentPage() {
               {/* Upload payment confirmation */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Potwierdzenie przelewu <span className="text-red-500">*</span>
+                  Potwierdzenie przelewu (max 5MB)<span className="text-red-500">*</span>
                 </label>
                 {!uploadedFile ? (
-                  <div className="border-2 border-dashed border-[#262626] rounded-xl p-6 text-center">
-                    <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-400 mb-4">
-                      Prześlij potwierdzenie płatności (PDF, JPG, PNG)
-                    </p>
-                    <div className="relative">
-                      <input
-                        type="file"
-                        onChange={handleFileUpload}
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      />
-                      <button
-                        type="button"
-                        className="bg-[#E7A801] hover:bg-amber-700 text-black py-2 px-6 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center mx-auto"
-                        disabled={isFileUploading}
-                      >
-                        {isFileUploading ? (
-                          "Przesyłanie..."
-                        ) : (
-                          <>
-                            <Upload className="h-4 w-4 mr-2" /> Wybierz plik
-                          </>
-                        )}
-                      </button>
+                  <>
+                    <div className="border-2 border-dashed border-[#262626] rounded-xl p-6 text-center">
+                      <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-400 mb-4">
+                        Prześlij potwierdzenie płatności (PDF, JPG, PNG)
+                      </p>
+                      <div className="relative">
+                        <input
+                          type="file"
+                          onChange={handleFileUpload}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          className="bg-[#E7A801] hover:bg-amber-700 text-black py-2 px-6 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center mx-auto"
+                          disabled={isFileUploading}
+                        >
+                          {isFileUploading ? (
+                            "Przesyłanie..."
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4 mr-2" /> Wybierz plik
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                    {/* Error message for missing file below the box */}
+                    {errors.transferConfirmation && (
+                      <p className="mt-2 text-red-500 text-sm">Potwierdzenie przelewu jest wymagane</p>
+                    )}
+                  </>
                 ) : (
                   <div className="bg-[#0F0F0F] rounded-xl p-4 border border-[#262626]">
                     <div className="flex justify-between items-center">
@@ -720,34 +731,36 @@ export default function PaymentPage() {
                     {...register("studentStatus")}
                     className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                   >
+                    <option value="">Wybierz...</option>
                     <option value="politechnika">Politechnika Łódzka</option>
                     <option value="other">Inna uczelnia</option>
                     <option value="not-student">Nie jestem studentem</option>
                   </select>
                   {errors.studentStatus && (
                     <p className="mt-1 text-red-500 text-sm">
-                      {errors.studentStatus.message}
+                      Status studenta jest wymagany
                     </p>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Czy dojeżdżasz na wydarzenie we własnym zakresie? <span className="text-red-500">*</span>
+                    Czy dojeżdżasz na wydarzenie we własnym zakresie? {/*<span className="text-red-500">*</span>*/}
                   </label>
                   <div className="flex items-center space-x-2 h-10">
-                    <span className="relative inline-flex items-center">
-                      <input
-                        type="checkbox"
-                        id="needsTransport"
-                        {...register("needsTransport", { setValueAs: v => !v })}
-                        className="peer h-5 w-5 aspect-square text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
-                      />
-                        <svg className="pointer-events-none absolute left-0 top-0 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="5 10 9 14 15 7" />
-                      </svg>
-                    </span>
-                    <span className="text-white text-sm">Tak, dojeżdżam samodzielnie</span>
+          <label className="flex items-center cursor-pointer gap-2 select-none">
+            <span className="relative inline-flex items-center">
+              <input
+                type="checkbox"
+                {...register("needsTransport", { setValueAs: v => !v })}
+                className="peer h-5 w-5 aspect-square text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+              />
+              <svg className="pointer-events-none absolute left-0 top-0 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="5 10 9 14 15 7" />
+              </svg>
+            </span>
+            <span className="text-white text-sm">Tak, dojeżdżam samodzielnie</span>
+          </label>
                   </div>
                 </div>
               </div>
@@ -859,23 +872,21 @@ export default function PaymentPage() {
 
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <span className="relative inline-block">
-                    <input
-                      type="checkbox"
-                      id="transferConfirmation"
-                      {...register("transferConfirmation")}
-                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
-                    />
-                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="5 10 9 14 15 7" />
-                    </svg>
-                  </span>
-                  <label
-                    htmlFor="transferConfirmation"
-                    className="ml-3 text-gray-300"
-                  >
-                    Potwierdzam, że wykonałem/am przelew na wskazane konto bankowe
-                    i załączyłem/am jego potwierdzenie. <span className="text-red-500">*</span>
+                  <label className="flex items-center cursor-pointer select-none">
+                    <span className="relative inline-block">
+                      <input
+                        type="checkbox"
+                        {...register("transferConfirmation")}
+                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      />
+                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="5 10 9 14 15 7" />
+                      </svg>
+                    </span>
+                    <span className="ml-3 text-gray-300">
+                      Potwierdzam, że wykonałem/am przelew na wskazane konto bankowe
+                      i załączyłem/am jego potwierdzenie. <span className="text-red-500">*</span>
+                    </span>
                   </label>
                 </div>
                 {errors.transferConfirmation && (
@@ -885,23 +896,21 @@ export default function PaymentPage() {
                 )}
 
                 <div className="flex items-start">
-                  <span className="relative inline-block">
-                    <input
-                      type="checkbox"
-                      id="ageConfirmation"
-                      {...register("ageConfirmation")}
-                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
-                    />
-                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="5 10 9 14 15 7" />
-                    </svg>
-                  </span>
-                  <label
-                    htmlFor="ageConfirmation"
-                    className="ml-3 text-gray-300"
-                  >
-                    Oświadczam, że mam ukończone 18 lat w dniu wyjazdu lub będę pod
-                    opieką osoby dorosłej. <span className="text-red-500">*</span>
+                  <label className="flex items-center cursor-pointer select-none">
+                    <span className="relative inline-block">
+                      <input
+                        type="checkbox"
+                        {...register("ageConfirmation")}
+                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      />
+                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="5 10 9 14 15 7" />
+                      </svg>
+                    </span>
+                    <span className="ml-3 text-gray-300">
+                      Oświadczam, że mam ukończone 18 lat w dniu wyjazdu lub będę pod
+                      opieką osoby dorosłej. <span className="text-red-500">*</span>
+                    </span>
                   </label>
                 </div>
                 {errors.ageConfirmation && (
@@ -911,23 +920,21 @@ export default function PaymentPage() {
                 )}
 
                 <div className="flex items-start">
-                  <span className="relative inline-block">
-                    <input
-                      type="checkbox"
-                      id="cancellationPolicy"
-                      {...register("cancellationPolicy")}
-                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
-                    />
-                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="5 10 9 14 15 7" />
-                    </svg>
-                  </span>
-                  <label
-                    htmlFor="cancellationPolicy"
-                    className="ml-3 text-gray-300"
-                  >
-                    Rozumiem i akceptuję politykę anulowania, zgodnie z którą zwrot
-                    pieniędzy jest możliwy tylko do 30 dni przed wydarzeniem. <span className="text-red-500">*</span>
+                  <label className="flex items-center cursor-pointer select-none">
+                    <span className="relative inline-block">
+                      <input
+                        type="checkbox"
+                        {...register("cancellationPolicy")}
+                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      />
+                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="5 10 9 14 15 7" />
+                      </svg>
+                    </span>
+                    <span className="ml-3 text-gray-300">
+                      Rozumiem i akceptuję politykę anulowania, zgodnie z którą zwrot
+                      pieniędzy jest możliwy tylko do 30 dni przed wydarzeniem. <span className="text-red-500">*</span>
+                    </span>
                   </label>
                 </div>
                 {errors.cancellationPolicy && (
@@ -942,11 +949,11 @@ export default function PaymentPage() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={isSubmitting || !uploadedFile}
-                className={`inline-flex items-center bg-[#E7A801] hover:bg-amber-700 text-black px-8 py-3 rounded-xl font-semibold transition-colors shadow-md ${
-                  (isSubmitting || !uploadedFile) &&
-                  "opacity-60 cursor-not-allowed"
-                }`}
+                className={`inline-flex items-center px-8 py-3 rounded-xl font-semibold transition-colors shadow-md
+                  ${isSubmitting ? "opacity-60 cursor-not-allowed" : ""}
+                  ${(!uploadedFile || !isValid) ? "bg-amber-700 text-black" : "bg-[#E7A801] hover:bg-amber-700 text-black"}
+                `}
+                disabled={isSubmitting}
               >
                 <Save className="h-5 w-5 mr-2" />
                 {isSubmitting ? "Wysyłanie..." : "Wyślij formularz płatności"}
