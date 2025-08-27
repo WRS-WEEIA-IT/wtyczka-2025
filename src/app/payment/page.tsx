@@ -735,13 +735,19 @@ export default function PaymentPage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Czy dojeżdżasz na wydarzenie we własnym zakresie? <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      {...register("needsTransport", { setValueAs: v => !v })}
-                      className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-500 bg-[#232323]"
-                    />
-                    <span className="ml-2 text-white">Tak, dojeżdżam samodzielnie</span>
+                  <div className="flex items-center space-x-2 h-10">
+                    <span className="relative inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        id="needsTransport"
+                        {...register("needsTransport", { setValueAs: v => !v })}
+                        className="peer h-5 w-5 aspect-square text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      />
+                        <svg className="pointer-events-none absolute left-0 top-0 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="5 10 9 14 15 7" />
+                      </svg>
+                    </span>
+                    <span className="text-white text-sm">Tak, dojeżdżam samodzielnie</span>
                   </div>
                 </div>
               </div>
@@ -853,12 +859,17 @@ export default function PaymentPage() {
 
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <input
-                    type="checkbox"
-                    id="transferConfirmation"
-                    {...register("transferConfirmation")}
-                    className="h-5 w-5 mt-0.5 text-amber-600 focus:ring-amber-500 border-gray-500 rounded bg-[#232323]"
-                  />
+                  <span className="relative inline-block">
+                    <input
+                      type="checkbox"
+                      id="transferConfirmation"
+                      {...register("transferConfirmation")}
+                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                    />
+                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="5 10 9 14 15 7" />
+                    </svg>
+                  </span>
                   <label
                     htmlFor="transferConfirmation"
                     className="ml-3 text-gray-300"
@@ -874,12 +885,17 @@ export default function PaymentPage() {
                 )}
 
                 <div className="flex items-start">
-                  <input
-                    type="checkbox"
-                    id="ageConfirmation"
-                    {...register("ageConfirmation")}
-                    className="h-5 w-5 mt-0.5 text-amber-600 focus:ring-amber-500 border-gray-500 rounded bg-[#232323]"
-                  />
+                  <span className="relative inline-block">
+                    <input
+                      type="checkbox"
+                      id="ageConfirmation"
+                      {...register("ageConfirmation")}
+                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                    />
+                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="5 10 9 14 15 7" />
+                    </svg>
+                  </span>
                   <label
                     htmlFor="ageConfirmation"
                     className="ml-3 text-gray-300"
@@ -895,12 +911,17 @@ export default function PaymentPage() {
                 )}
 
                 <div className="flex items-start">
-                  <input
-                    type="checkbox"
-                    id="cancellationPolicy"
-                    {...register("cancellationPolicy")}
-                    className="h-5 w-5 mt-0.5 text-amber-600 focus:ring-amber-500 border-gray-500 rounded bg-[#232323]"
-                  />
+                  <span className="relative inline-block">
+                    <input
+                      type="checkbox"
+                      id="cancellationPolicy"
+                      {...register("cancellationPolicy")}
+                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                    />
+                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="5 10 9 14 15 7" />
+                    </svg>
+                  </span>
                   <label
                     htmlFor="cancellationPolicy"
                     className="ml-3 text-gray-300"
