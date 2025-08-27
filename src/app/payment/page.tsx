@@ -42,7 +42,7 @@ import {
 const paymentSchema = z.object({
   adminPassword: z.string().min(1, "Hasło administratora jest wymagane"),
 
-  studentStatus: z.enum(["politechnika", "other", "none"]),
+  studentStatus: z.enum(["politechnika", "other", "not-student"]),
   emergencyContactNameSurname: z
     .string()
     .min(2, "Imię i nazwisko jest wymagane"),
@@ -122,8 +122,11 @@ export default function PaymentPage() {
     formState: { errors },
     watch,
     setError,
+    trigger,
+    getValues
   } = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema),
+    defaultValues: { needsTransport: false },
   });
 
   const adminPassword = watch("adminPassword");
@@ -180,6 +183,7 @@ export default function PaymentPage() {
   };
 
   const onSubmit = async (data: PaymentFormData) => {
+    // Wymuszenie konwersji needsTransport na boolean
     if (!isAuthorized) {
       toast.error("Musisz najpierw aktywować dostęp do formularza");
       return;
@@ -231,10 +235,11 @@ export default function PaymentPage() {
       setExistingPayment(payment);
     } catch (error) {
       console.error("Submit error:", error);
+      alert('Błąd wysyłki: ' + (error instanceof Error ? error.message : String(error)));
       const errorMessage = handleSupabaseError(error, realLang);
       toast.error(`Wystąpił błąd: ${errorMessage}`);
     } finally {
-      setIsSubmitting(false);
+    setIsSubmitting(false);
     }
   };
 
@@ -622,7 +627,14 @@ export default function PaymentPage() {
 
         {/* Payment form - visible only when authorized */}
         {isAuthorized && (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const valid = await trigger();
+            if (!valid) {
+              return;
+            }
+            handleSubmit(onSubmit)(e);
+          }} className="space-y-8">
             <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
               <div className="flex items-center space-x-2 mb-6 pb-4 border-b border-[#262626]">
                 <CreditCard className="h-6 w-6 text-amber-400" />
@@ -745,7 +757,7 @@ export default function PaymentPage() {
                   >
                     <option value="politechnika">Politechnika Łódzka</option>
                     <option value="other">Inna uczelnia</option>
-                    <option value="none">Nie jestem studentem</option>
+                    <option value="not-student">Nie jestem studentem</option>
                   </select>
                   {errors.studentStatus && (
                     <p className="mt-1 text-red-500 text-sm">
@@ -756,28 +768,15 @@ export default function PaymentPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Potrzebujesz transportu? *
+                    Czy dojeżdżasz na wydarzenie we własnym zakresie? *
                   </label>
-                  <div className="flex items-center space-x-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        value="true"
-                        {...register("needsTransport")}
-                        className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-500 bg-[#232323]"
-                      />
-                      <span className="ml-2 text-white">Tak</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        value="false"
-                        {...register("needsTransport")}
-                        className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-500 bg-[#232323]"
-                        defaultChecked
-                      />
-                      <span className="ml-2 text-white">Nie</span>
-                    </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      {...register("needsTransport", { setValueAs: v => !v })}
+                      className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-500 bg-[#232323]"
+                    />
+                    <span className="ml-2 text-white">Tak, dojeżdżam samodzielnie</span>
                   </div>
                 </div>
               </div>
@@ -813,7 +812,7 @@ export default function PaymentPage() {
                       </label>
                       <input
                         type="tel"
-                        {...register("emergencyContactPhone")}
+                        {...register("emergencyContactPhone", { setValueAs: v => String(v) })}
                         className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                       />
                       {errors.emergencyContactPhone && (
