@@ -1,8 +1,10 @@
 "use client";
 
+
 import { useAuth } from "@/contexts/AuthContext";
 import { Phone, Mail, MessageCircle, Clock, MapPin, Users } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ContactsPage() {
   const { user, loading } = useAuth();
@@ -12,10 +14,10 @@ export default function ContactsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🤠</div>
-          <div className="text-xl text-amber-800">Ładowanie...</div>
+          <div className="text-xl text-amber-400">Ładowanie...</div>
         </div>
       </div>
     );
@@ -23,18 +25,18 @@ export default function ContactsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-white rounded-lg shadow-lg">
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center p-8 bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg">
           <div className="text-6xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-amber-900 mb-4">
+          <h1 className="text-2xl font-bold text-amber-400 mb-4">
             Dostęp ograniczony
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-300 mb-6">
             Aby zobaczyć kontakty, musisz się najpierw zalogować.
           </p>
           <Link
             href="/"
-            className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-md font-semibold transition-colors"
+            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-md font-semibold transition-colors"
           >
             Wróć do strony głównej
           </Link>
@@ -45,19 +47,18 @@ export default function ContactsPage() {
 
   if (!isQualified) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-white rounded-lg shadow-lg">
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center p-8 bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg">
           <div className="text-6xl mb-4">⏳</div>
-          <h1 className="text-2xl font-bold text-amber-900 mb-4">
+          <h1 className="text-2xl font-bold text-amber-400 mb-4">
             Kontakty niedostępne
           </h1>
-          <p className="text-gray-600 mb-6">
-            Kontakty do koordynatorów są dostępne tylko dla zakwalifikowanych
-            uczestników.
+          <p className="text-gray-300 mb-6">
+            Kontakty do koordynatorów są dostępne tylko dla zakwalifikowanych uczestników.
           </p>
           <Link
             href="/status"
-            className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-md font-semibold transition-colors"
+            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-md font-semibold transition-colors"
           >
             Sprawdź swój status
           </Link>
@@ -121,20 +122,29 @@ export default function ContactsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#18181b]">
-      {/* Header */}
-  <section className="bg-[#232323] border-b border-[#262626] text-white py-16">
-  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="text-6xl mb-4">📞</div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
-            Kontakty do organizatorów
-          </h1>
-          <p className="text-xl text-gray-200">
-            Dane kontaktowe kadry i koordynatorów Wtyczki 2025
-          </p>
-          <p className="text-sm text-amber-300 mt-2">
-            Dostępne dla zakwalifikowanych uczestników
-          </p>
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <section className="relative bg-black text-white overflow-hidden">
+        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
+          <div className="flex flex-col items-center">
+            <Image
+              src="/logo_czarne_tło.jpg"
+              alt="Logo wtyczka"
+              width={400}
+              height={150}
+              className="m-0 p-0 leading-none"
+              style={{ display: "block", marginBottom: "-15px" }}
+            />
+            <p
+              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
+              style={{ marginTop: "-4px" }}
+            >
+              Kontakty do organizatorów
+            </p>
+            <p className="text-sm text-amber-300 mt-2">
+              Dostępne dla zakwalifikowanych uczestników
+            </p>
+          </div>
         </div>
       </section>
 
