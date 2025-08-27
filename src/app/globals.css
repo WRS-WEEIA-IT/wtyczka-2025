@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer base {
+  .site-container {
+    @apply px-8 md:px-20 lg:px-32 xl:px-52;
+  }
+
+  .site-container-wide {
+    @apply px-6 md:px-16 lg:px-24 xl:px-36;
+  }
+}
