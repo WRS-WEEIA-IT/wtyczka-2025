@@ -121,18 +121,18 @@ export default function ContactsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100">
+    <div className="min-h-screen bg-[#18181b]">
       {/* Header */}
-      <section className="bg-gradient-to-r from-amber-800 to-orange-800 text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+  <section className="bg-[#232323] border-b border-[#262626] text-white py-16">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-6xl mb-4">📞</div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
             Kontakty do organizatorów
           </h1>
-          <p className="text-xl text-amber-100">
+          <p className="text-xl text-gray-200">
             Dane kontaktowe kadry i koordynatorów Wtyczki 2025
           </p>
-          <p className="text-sm text-amber-200 mt-2">
+          <p className="text-sm text-amber-300 mt-2">
             Dostępne dla zakwalifikowanych uczestników
           </p>
         </div>
@@ -141,33 +141,33 @@ export default function ContactsPage() {
       {/* General Contact Info */}
       <section className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-[#232323] border border-[#262626] rounded-xl p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <MessageCircle className="h-6 w-6 text-blue-600" />
-              <h3 className="text-xl font-bold text-blue-900">
+              <MessageCircle className="h-6 w-6 text-amber-400" />
+              <h3 className="text-xl font-bold text-amber-300">
                 Ogólne informacje kontaktowe
               </h3>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <p className="text-blue-800">
+                <p className="text-gray-200">
                   <strong>Email główny:</strong>
                   <br />
                   <a
                     href="mailto:wtyczka2025@example.com"
-                    className="text-blue-600 hover:underline"
+                    className="text-amber-400 hover:underline"
                   >
                     wtyczka2025@example.com
                   </a>
                 </p>
               </div>
               <div>
-                <p className="text-blue-800">
+                <p className="text-gray-200">
                   <strong>Telefon biura:</strong>
                   <br />
                   <a
                     href="tel:+48123000000"
-                    className="text-blue-600 hover:underline"
+                    className="text-amber-400 hover:underline"
                   >
                     +48 123 000 000
                   </a>
@@ -181,65 +181,65 @@ export default function ContactsPage() {
       {/* Coordinators */}
       <section className="py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-amber-900 text-center mb-8">
+          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
             Koordynatorzy wydarzenia
           </h2>
 
           <div className="grid md:grid-cols-2 gap-6">
             {coordinators.map((coordinator, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6">
+              <div key={index} className="bg-[#232323] rounded-xl shadow-lg p-6 border border-[#262626]">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="bg-amber-100 rounded-full p-3">
-                    <Users className="h-6 w-6 text-amber-600" />
+                  <div className="bg-[#18181b] rounded-full p-3">
+                    <Users className="h-6 w-6 text-amber-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-amber-900">
+                    <h3 className="text-xl font-bold text-amber-300">
                       {coordinator.name}
                     </h3>
-                    <p className="text-amber-700 text-sm">{coordinator.role}</p>
+                    <p className="text-amber-400 text-sm">{coordinator.role}</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2">
-                    <Mail className="h-4 w-4 text-gray-500" />
+                    <Mail className="h-4 w-4 text-gray-400" />
                     <a
                       href={`mailto:${coordinator.email}`}
-                      className="text-blue-600 hover:underline text-sm"
+                      className="text-amber-400 hover:underline text-sm"
                     >
                       {coordinator.email}
                     </a>
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Phone className="h-4 w-4 text-gray-500" />
+                    <Phone className="h-4 w-4 text-gray-400" />
                     <a
                       href={`tel:${coordinator.phone}`}
-                      className="text-blue-600 hover:underline text-sm"
+                      className="text-amber-400 hover:underline text-sm"
                     >
                       {coordinator.phone}
                     </a>
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-gray-500" />
-                    <span className="text-gray-600 text-sm">
+                    <Clock className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-300 text-sm">
                       {coordinator.availability}
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <h4 className="font-semibold text-gray-800 text-sm mb-2">
+                <div className="mt-4 pt-4 border-t border-[#262626]">
+                  <h4 className="font-semibold text-gray-200 text-sm mb-2">
                     Obszar odpowiedzialności:
                   </h4>
                   <ul className="space-y-1">
                     {coordinator.responsibilities.map((resp, respIndex) => (
                       <li
                         key={respIndex}
-                        className="text-gray-600 text-xs flex items-start space-x-1"
+                        className="text-gray-300 text-xs flex items-start space-x-1"
                       >
-                        <span className="text-amber-600">•</span>
+                        <span className="text-amber-400">•</span>
                         <span>{resp}</span>
                       </li>
                     ))}
@@ -252,9 +252,9 @@ export default function ContactsPage() {
       </section>
 
       {/* Emergency Contacts */}
-      <section className="py-16 bg-red-50">
+  <section className="py-16 bg-[#232323] border-t border-[#262626]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-red-900 text-center mb-8">
+          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
             Kontakty w nagłych przypadkach
           </h2>
 
@@ -262,15 +262,15 @@ export default function ContactsPage() {
             {emergencyContacts.map((contact, index) => (
               <div
                 key={index}
-                className="bg-white border-l-4 border-red-500 rounded-lg p-6"
+                className="bg-[#18181b] border-l-4 border-amber-400 rounded-xl p-6"
               >
                 <div className="flex items-start space-x-4">
-                  <div className="bg-red-100 rounded-full p-3">
-                    <Phone className="h-6 w-6 text-red-600" />
+                  <div className="bg-[#232323] rounded-full p-3">
+                    <Phone className="h-6 w-6 text-amber-400" />
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-red-900 mb-2">
+                    <h3 className="text-xl font-bold text-amber-300 mb-2">
                       {contact.title}
                     </h3>
 
@@ -278,20 +278,20 @@ export default function ContactsPage() {
                       <div>
                         <a
                           href={`tel:${contact.phone}`}
-                          className="text-2xl font-bold text-red-600 hover:underline"
+                          className="text-2xl font-bold text-amber-400 hover:underline"
                         >
                           {contact.phone}
                         </a>
                       </div>
 
                       <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600 text-sm">
+                        <Clock className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-300 text-sm">
                           {contact.availability}
                         </span>
                       </div>
 
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-300 text-sm">
                         {contact.description}
                       </p>
                     </div>
@@ -304,24 +304,24 @@ export default function ContactsPage() {
       </section>
 
       {/* Office Location */}
-      <section className="py-16 bg-white">
+  <section className="py-16 bg-[#232323] border-t border-[#262626]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-amber-900 text-center mb-8">
+          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
             Biuro organizatorów
           </h2>
 
-          <div className="bg-amber-50 rounded-lg p-6">
+          <div className="bg-[#18181b] rounded-xl p-6 border border-[#262626]">
             <div className="flex items-start space-x-4">
-              <div className="bg-amber-100 rounded-full p-3">
-                <MapPin className="h-6 w-6 text-amber-600" />
+              <div className="bg-[#232323] rounded-full p-3">
+                <MapPin className="h-6 w-6 text-amber-400" />
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-amber-900 mb-2">
+                <h3 className="text-xl font-bold text-amber-300 mb-2">
                   Lokalizacja biura
                 </h3>
 
-                <div className="space-y-2 text-gray-700">
+                <div className="space-y-2 text-gray-300">
                   <p>
                     <strong>Adres:</strong>
                     <br />
@@ -340,7 +340,7 @@ export default function ContactsPage() {
                     Sobota - Niedziela: Zamknięte
                   </p>
 
-                  <p className="text-sm text-amber-700">
+                  <p className="text-sm text-amber-400">
                     💡 Przed wizytą zalecamy wcześniejszy kontakt telefoniczny
                     lub mailowy
                   </p>
@@ -352,14 +352,14 @@ export default function ContactsPage() {
       </section>
 
       {/* Response Times */}
-      <section className="py-16 bg-gradient-to-r from-amber-800 to-orange-800 text-white">
+      <section className="py-16 bg-[#232323] border-t border-[#262626] text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-2xl font-bold mb-6">Czas odpowiedzi</h3>
+          <h3 className="text-2xl font-bold mb-6 text-amber-400">Czas odpowiedzi</h3>
 
           <div className="grid md:grid-cols-3 gap-6">
             <div>
               <div className="text-4xl mb-2">📧</div>
-              <h4 className="font-bold mb-2">Email</h4>
+              <h4 className="font-bold mb-2 text-amber-300">Email</h4>
               <p className="text-amber-200 text-sm">
                 Do 24 godzin w dni robocze
               </p>
@@ -367,7 +367,7 @@ export default function ContactsPage() {
 
             <div>
               <div className="text-4xl mb-2">📱</div>
-              <h4 className="font-bold mb-2">Telefon</h4>
+              <h4 className="font-bold mb-2 text-amber-300">Telefon</h4>
               <p className="text-amber-200 text-sm">
                 Natychmiastowo w godzinach pracy
               </p>
@@ -375,7 +375,7 @@ export default function ContactsPage() {
 
             <div>
               <div className="text-4xl mb-2">🚨</div>
-              <h4 className="font-bold mb-2">Nagłe przypadki</h4>
+              <h4 className="font-bold mb-2 text-amber-300">Nagłe przypadki</h4>
               <p className="text-amber-200 text-sm">Natychmiastowo 24/7</p>
             </div>
           </div>

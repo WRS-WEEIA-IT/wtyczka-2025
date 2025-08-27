@@ -430,56 +430,55 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 py-8">
+    <div className="min-h-screen bg-black py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-amber-900 mb-4">
+          <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
             {t.payment.title}
           </h1>
-          <p className="text-lg text-amber-700">
+          <p className="text-lg text-amber-400">
             Wypełnij formularz płatności aby sfinalizować rejestrację
           </p>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-400 mt-2">
             Zalogowany jako: <span className="font-semibold">{user.email}</span>
           </p>
         </div>
 
         {/* Admin Password Section */}
         {!isAuthorized && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 mb-8 border border-[#262626]">
             <div className="flex items-center space-x-2 mb-4">
-              <Lock className="h-6 w-6 text-red-600" />
-              <h2 className="text-2xl font-bold text-red-900">
+              <Lock className="h-6 w-6 text-amber-400" />
+              <h2 className="text-2xl font-bold text-white">
                 Autoryzacja administratora
               </h2>
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+            <div className="bg-[#232323] border border-[#262626] rounded-md p-4 mb-6">
               <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-                <p className="text-red-800 text-sm">
-                  <strong>Uwaga:</strong> Dostęp do tego formularza wymaga hasła
-                  administratora.
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
+                <p className="text-amber-300 text-sm">
+                  <strong>Uwaga:</strong> Dostęp do tego formularza wymaga hasła administratora.
                 </p>
               </div>
             </div>
 
             <div className="max-w-md">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 {t.payment.passwordRequired}
               </label>
               <div className="relative">
                 <input
                   type={isPasswordVisible ? "text" : "password"}
                   {...register("adminPassword")}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 pr-10 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   placeholder="Wprowadź hasło administratora"
                 />
                 <button
                   type="button"
                   onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-3 text-gray-400 hover:text-amber-400"
                 >
                   {isPasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -493,7 +492,7 @@ export default function PaymentPage() {
               <button
                 type="button"
                 onClick={checkAdminPassword}
-                className="mt-4 bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-md font-semibold transition-colors"
+                className="mt-4 bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-2 rounded-xl font-semibold transition-colors"
               >
                 Aktywuj dostęp
               </button>
@@ -503,15 +502,15 @@ export default function PaymentPage() {
 
         {/* Bank Account Details */}
         {isAuthorized && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <h3 className="text-xl font-bold text-blue-900 mb-4">
+          <div className="bg-[#18181b] border border-[#262626] rounded-2xl p-6 mb-8">
+            <h3 className="text-xl font-bold text-white mb-4">
               {t.payment.accountDetails}
             </h3>
-            <div className="grid md:grid-cols-2 gap-4 text-sm">
+            <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
               <div>
                 <strong>Numer konta:</strong>
                 <br />
-                <span className="font-mono">
+                <span className="font-mono text-amber-400">
                   {bankAccountDetails.accountNumber}
                 </span>
               </div>
@@ -528,12 +527,12 @@ export default function PaymentPage() {
               <div>
                 <strong>Kwota:</strong>
                 <br />
-                {bankAccountDetails.amount}
+                <span className="text-amber-400">{bankAccountDetails.amount}</span>
               </div>
               <div className="md:col-span-2">
                 <strong>Tytuł przelewu:</strong>
                 <br />
-                <span className="font-mono bg-yellow-100 px-2 py-1 rounded">
+                <span className="font-mono bg-[#232323] text-amber-400 px-2 py-1 rounded">
                   {bankAccountDetails.transferTitle}
                 </span>
               </div>
@@ -545,16 +544,15 @@ export default function PaymentPage() {
         {isAuthorized && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Student Status */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 border border-[#262626]">
               <div className="flex items-center space-x-2 mb-6">
-                <CreditCard className="h-6 w-6 text-amber-600" />
-                <h2 className="text-2xl font-bold text-amber-900">
+                <CreditCard className="h-6 w-6 text-amber-400" />
+                <h2 className="text-2xl font-bold text-white">
                   Status studenta
                 </h2>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-300 mb-3">
                   {t.payment.studentStatus} *
                 </label>
                 <div className="space-y-2">
@@ -563,27 +561,27 @@ export default function PaymentPage() {
                       type="radio"
                       value="politechnika"
                       {...register("studentStatus")}
-                      className="text-amber-600 focus:ring-amber-500"
+                      className="text-amber-400 focus:ring-amber-500"
                     />
-                    <span>{t.payment.politechnika}</span>
+                    <span className="text-gray-300">{t.payment.politechnika}</span>
                   </label>
                   <label className="flex items-center space-x-2">
                     <input
                       type="radio"
                       value="other"
                       {...register("studentStatus")}
-                      className="text-amber-600 focus:ring-amber-500"
+                      className="text-amber-400 focus:ring-amber-500"
                     />
-                    <span>{t.payment.otherUniversity}</span>
+                    <span className="text-gray-300">{t.payment.otherUniversity}</span>
                   </label>
                   <label className="flex items-center space-x-2">
                     <input
                       type="radio"
                       value="none"
                       {...register("studentStatus")}
-                      className="text-amber-600 focus:ring-amber-500"
+                      className="text-amber-400 focus:ring-amber-500"
                     />
-                    <span>{t.payment.noStudent}</span>
+                    <span className="text-gray-300">{t.payment.noStudent}</span>
                   </label>
                 </div>
                 {errors.studentStatus && (
@@ -593,22 +591,20 @@ export default function PaymentPage() {
                 )}
               </div>
             </div>
-
             {/* Emergency Contact */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold text-amber-900 mb-4">
+            <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 border border-[#262626]">
+              <h3 className="text-xl font-bold text-white mb-4">
                 {t.payment.emergencyContact}
               </h3>
-
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Imię i nazwisko *
                   </label>
                   <input
                     type="text"
                     {...register("emergencyContactNameSurname")}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                   {errors.emergencyContactNameSurname && (
                     <p className="text-red-500 text-sm mt-1">
@@ -616,15 +612,14 @@ export default function PaymentPage() {
                     </p>
                   )}
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Numer telefonu *
                   </label>
                   <input
                     type="tel"
                     {...register("emergencyContactPhone")}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                   {errors.emergencyContactPhone && (
                     <p className="text-red-500 text-sm mt-1">
@@ -632,16 +627,15 @@ export default function PaymentPage() {
                     </p>
                   )}
                 </div>
-
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Stopień pokrewieństwa *
                   </label>
                   <input
                     type="text"
                     placeholder="np. matka, ojciec, rodzeństwo"
                     {...register("emergencyContactRelation")}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                   {errors.emergencyContactRelation && (
                     <p className="text-red-500 text-sm mt-1">
@@ -651,66 +645,59 @@ export default function PaymentPage() {
                 </div>
               </div>
             </div>
-
             {/* Additional Information */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold text-amber-900 mb-4">
+            <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 border border-[#262626]">
+              <h3 className="text-xl font-bold text-white mb-4">
                 Dodatkowe informacje
               </h3>
-
               <div className="space-y-6">
                 <div>
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       {...register("needsTransport")}
-                      className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                      className="rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
                     />
-                    <label className="text-sm text-gray-700">
+                    <label className="text-sm text-gray-300">
                       {t.payment.transport}
                     </label>
                   </div>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     {t.payment.medicalConditions}
                   </label>
                   <textarea
                     {...register("medicalConditions")}
                     rows={3}
                     placeholder="Opisz ewentualne schorzenia, alergie pokarmowe, itp."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     {t.payment.medications}
                   </label>
                   <textarea
                     {...register("medications")}
                     rows={3}
                     placeholder="Wymień przyjmowane leki (jeśli dotyczy)"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                 </div>
               </div>
             </div>
-
             {/* Payment Confirmation Upload */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold text-amber-900 mb-4">
+            <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 border border-[#262626]">
+              <h3 className="text-xl font-bold text-white mb-4">
                 Potwierdzenie płatności
               </h3>
-
               <div className="space-y-4">
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-400 text-sm">
                   Prześlij potwierdzenie przelewu (PDF, PNG, JPG - max 5MB)
                 </p>
-
                 {!uploadedFile ? (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <div className="border-2 border-dashed border-[#262626] rounded-lg p-6 text-center">
                     <input
                       type="file"
                       accept=".pdf,.png,.jpg,.jpeg"
@@ -725,8 +712,8 @@ export default function PaymentPage() {
                         isFileUploading ? "opacity-50" : ""
                       }`}
                     >
-                      <Upload className="h-8 w-8 text-gray-400" />
-                      <span className="text-gray-600">
+                      <Upload className="h-8 w-8 text-amber-400" />
+                      <span className="text-gray-300">
                         {isFileUploading
                           ? "Przesyłanie..."
                           : "Kliknij aby wybrać plik lub przeciągnij tutaj"}
@@ -737,14 +724,14 @@ export default function PaymentPage() {
                     </label>
                   </div>
                 ) : (
-                  <div className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+                  <div className="border border-[#262626] rounded-lg p-4 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <FileText className="h-6 w-6 text-green-600" />
+                      <FileText className="h-6 w-6 text-amber-400" />
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-white">
                           {uploadedFile.fileName.split("-").slice(2).join("-")}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-400">
                           {formatFileSize(uploadedFile.fileSize)}
                         </p>
                       </div>
@@ -752,7 +739,7 @@ export default function PaymentPage() {
                     <button
                       type="button"
                       onClick={handleFileRemove}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-400 hover:text-red-500"
                       disabled={isFileUploading}
                     >
                       <X className="h-5 w-5" />
@@ -761,21 +748,19 @@ export default function PaymentPage() {
                 )}
               </div>
             </div>
-
             {/* Confirmations */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold text-amber-900 mb-4">
+            <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 border border-[#262626]">
+              <h3 className="text-xl font-bold text-white mb-4">
                 Potwierdzenia
               </h3>
-
               <div className="space-y-4">
                 <div className="flex items-start space-x-2">
                   <input
                     type="checkbox"
                     {...register("ageConfirmation")}
-                    className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                    className="mt-1 rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
                   />
-                  <label className="text-sm text-gray-700">
+                  <label className="text-sm text-gray-300">
                     {t.payment.ageConfirmation}
                   </label>
                 </div>
@@ -784,14 +769,13 @@ export default function PaymentPage() {
                     {errors.ageConfirmation.message}
                   </p>
                 )}
-
                 <div className="flex items-start space-x-2">
                   <input
                     type="checkbox"
                     {...register("cancellationPolicy")}
-                    className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                    className="mt-1 rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
                   />
-                  <label className="text-sm text-gray-700">
+                  <label className="text-sm text-gray-300">
                     {t.payment.cancellationPolicy}
                   </label>
                 </div>
@@ -800,14 +784,13 @@ export default function PaymentPage() {
                     {errors.cancellationPolicy.message}
                   </p>
                 )}
-
                 <div className="flex items-start space-x-2">
                   <input
                     type="checkbox"
                     {...register("transferConfirmation")}
-                    className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                    className="mt-1 rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
                   />
-                  <label className="text-sm text-gray-700">
+                  <label className="text-sm text-gray-300">
                     {t.payment.transferConfirmation}
                   </label>
                 </div>
@@ -818,13 +801,12 @@ export default function PaymentPage() {
                 )}
               </div>
             </div>
-
             {/* Submit Button */}
             <div className="text-center">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-12 py-4 rounded-md font-semibold text-lg transition-colors inline-flex items-center space-x-2"
+                className="bg-[#E7A801] hover:bg-amber-700 disabled:opacity-50 text-black px-12 py-4 rounded-xl font-semibold text-lg transition-colors inline-flex items-center space-x-2 shadow-md"
               >
                 <Save className="h-5 w-5" />
                 <span>
