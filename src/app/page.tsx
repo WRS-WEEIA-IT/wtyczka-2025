@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import {
   Calendar,
   Users,
@@ -11,10 +11,20 @@ import {
   UserRound,
 } from "lucide-react";
 import Image from "next/image";
+import {
+  FacebookPost,
+  getFacebookPostsInQuantity,
+} from "@/usecases/facebookPosts";
+import {
+  FacebookCard,
+  FacebookCardSkeleton,
+} from "@/components/ui/FacebookCard";
+import Link from "next/link";
 
 export default function HomePage() {
   const { t } = useLanguage();
   const [daysUntilEvent, setDaysUntilEvent] = useState(0);
+  const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([]);
 
   useEffect(() => {
     // Przykładowa data wydarzenia - można zmienić
@@ -27,47 +37,21 @@ export default function HomePage() {
       setDaysUntilEvent(daysDiff > 0 ? daysDiff : 0);
     };
 
+    const fetchFacebookPosts = async () => {
+      try {
+        const posts = await getFacebookPostsInQuantity(2);
+        setFacebookPosts(posts);
+      } catch (error) {
+        console.error("Error fetching Facebook posts:", error);
+      }
+    };
+
     calculateDaysUntilEvent();
+    fetchFacebookPosts();
     const interval = setInterval(calculateDaysUntilEvent, 86400000); // Update daily
 
     return () => clearInterval(interval);
   }, []);
-
-  const mockNews = [
-    {
-      id: 1,
-      title: "Rozpoczęcie rejestracji na Wtyczkę 2025",
-      excerpt:
-        "Zapraszamy wszystkich studentów EEIA do zapisów na niezapomniany wyjazd w klimacie Dzikiego Zachodu!",
-      date: "2025-01-15",
-      image: "/api/placeholder/300/200",
-    },
-    {
-      id: 2,
-      title: "Program wydarzenia już dostępny",
-      excerpt:
-        "Sprawdź bogaty program szkoleń, warsztatów i integracji przygotowany specjalnie dla uczestników.",
-      date: "2025-01-20",
-      image: "/api/placeholder/300/200",
-    },
-    {
-      id: 3,
-      title: "Sponsorzy wydarzenia",
-      excerpt:
-        "Poznaj naszych partnerów, którzy wspierają organizację Wtyczki 2025.",
-      date: "2025-01-25",
-      image: "/api/placeholder/300/200",
-    },
-  ];
-
-  const sponsors = [
-    { name: "Sponsor 1", logo: "/api/placeholder/150/80" },
-    { name: "Sponsor 2", logo: "/api/placeholder/150/80" },
-    { name: "Sponsor 3", logo: "/api/placeholder/150/80" },
-    { name: "Sponsor 4", logo: "/api/placeholder/150/80" },
-    { name: "Sponsor 5", logo: "/api/placeholder/150/80" },
-    { name: "Sponsor 6", logo: "/api/placeholder/150/80" },
-  ];
 
   return (
     <div className="min-h-screen bg-black">
@@ -107,18 +91,18 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-row gap-3 w-full justify-center items-stretch mb-2 mt-2 overflow-x-auto">
-            <a
+            <Link
               href="/registration"
               className="bg-[#E7A801] hover:bg-amber-700 min-w-[180px] border-[#262626] border rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center font-semibold transition-colors backdrop-blur-sm"
             >
               <span className="text-base text-black">Zapisz się</span>
-            </a>
-            <a
-              href="/essentials"
+            </Link>
+            <Link
+              href="/faq"
               className="bg-[#0F0F0F] min-w-[180px] border-[#262626] border bg-opacity-30 rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm"
             >
               <span className="text-base">Dowiedz się więcej</span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -133,36 +117,26 @@ export default function HomePage() {
             <div className="w-24 h-1 bg-[#E7A801] mx-auto"></div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            {mockNews.map((news) => (
-              <div
-                key={news.id}
-                className="bg-[#0F0F0F] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-[#262626]"
-              >
-                <div className="h-48 bg-amber-800 flex items-center justify-center">
-                  <span className="text-amber-400 text-6xl">📰</span>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-amber-400 mb-2">
-                    {news.title}
-                  </h3>
-                  <p className="text-gray-300 mb-4">{news.excerpt}</p>
-                  <div className="text-sm text-amber-500 font-medium">
-                    {news.date}
-                  </div>
-                </div>
+          <div className="flex flex-col gap-6 site-container">
+            <div className="flex flex-col gap-8 readable-width">
+              <div className="grid grid-cols-1 gap-8">
+                <Suspense fallback={<FacebookCardSkeleton />}>
+                  {facebookPosts.map((post) => (
+                    <FacebookCard {...post} key={post.id} />
+                  ))}
+                </Suspense>
               </div>
-            ))}
+            </div>
           </div>
 
-          <div className="text-center">
-            <a
+          <div className="text-center mt-8">
+            <Link
               href="/news"
               className="inline-flex items-center space-x-2 bg-[#E7A801] text-black px-6 py-3 rounded-xl hover:bg-amber-700 transition-colors"
             >
               <Facebook className="h-5 w-5" />
               <span>{t.home.viewAllNews}</span>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
