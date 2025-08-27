@@ -13,6 +13,8 @@ import {
 
 import { getFAQByCategory, QuestionRecord } from "@/usecases/faq";
 
+import Image from "next/image";
+
 export default function FAQPage() {
   const [openSections, setOpenSections] = useState<string[]>([]);
 
@@ -90,17 +92,28 @@ export default function FAQPage() {
     },
   ];
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100">
-      {/* Header */}
-      <section className="bg-gradient-to-r from-amber-800 to-orange-800 text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Najczęściej zadawane pytania
-          </h1>
-          <p className="text-xl text-amber-100">
-            Znajdź odpowiedzi na pytania dotyczące Wtyczki 2025
-          </p>
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <section className="relative bg-black text-white overflow-hidden">
+        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
+          <div className="flex flex-col items-center">
+            <Image
+              src="/logo_czarne_tło.jpg"
+              alt="Logo wtyczka"
+              width={400}
+              height={150}
+              className="m-0 p-0 leading-none"
+              style={{ display: "block", marginBottom: "-15px" }}
+            />
+            <p
+              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
+              style={{ marginTop: "-4px" }}
+            >
+              Najczęściej zadawane pytania
+            </p>
+          </div>
         </div>
       </section>
 
@@ -111,19 +124,19 @@ export default function FAQPage() {
             {faqData.map((section) => (
               <div
                 key={section.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden"
+                className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-md overflow-hidden"
               >
                 <button
                   onClick={() => toggleSection(section.id)}
-                  className="w-full px-6 py-4 bg-amber-100 hover:bg-amber-200 transition-colors flex items-center justify-between text-left"
+                  className="w-full px-6 py-4 bg-[#1a1a1a] hover:bg-[#232323] transition-colors flex items-center justify-between text-left"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="text-amber-600">{section.icon}</div>
-                    <h2 className="text-xl font-bold text-amber-900">
+                    <div className="text-amber-400">{section.icon}</div>
+                    <h2 className="text-xl font-bold text-amber-400">
                       {section.title}
                     </h2>
                   </div>
-                  <div className="text-amber-600">
+                  <div className="text-amber-400">
                     {openSections.includes(section.id) ? (
                       <ChevronDown className="h-5 w-5" />
                     ) : (
@@ -137,12 +150,12 @@ export default function FAQPage() {
                     {section.questions.map((qa, index) => (
                       <div
                         key={index}
-                        className="border-b border-gray-200 last:border-b-0 pb-4 last:pb-0"
+                        className="border-b border-[#262626] last:border-b-0 pb-4 last:pb-0"
                       >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        <h3 className="text-lg font-semibold text-amber-300 mb-2">
                           {qa.question}
                         </h3>
-                        <p className="text-gray-600 leading-relaxed">
+                        <p className="text-gray-200 leading-relaxed">
                           {qa.answer}
                         </p>
                       </div>
@@ -154,16 +167,16 @@ export default function FAQPage() {
           </div>
 
           {/* Contact Info */}
-          <div className="mt-12 bg-gradient-to-r from-amber-800 to-orange-800 text-white rounded-lg p-8 text-center">
+          <div className="mt-12 bg-[#0F0F0F] border border-[#262626] text-white rounded-lg p-8 text-center">
             <h3 className="text-2xl font-bold mb-4">
               Nie znalazłeś odpowiedzi na swoje pytanie?
             </h3>
-            <p className="text-amber-100 mb-6">
+            <p className="text-amber-200 mb-6">
               Skontaktuj się z nami - chętnie pomożemy!
             </p>
             <div className="space-y-2">
-              <p className="text-amber-200">
-                📧 Email:{" "}
+              <p className="text-amber-300">
+                📧 Email: {" "}
                 <a
                   href="mailto:wtyczka2025@example.com"
                   className="underline hover:text-white"
@@ -171,8 +184,8 @@ export default function FAQPage() {
                   wtyczka2025@example.com
                 </a>
               </p>
-              <p className="text-amber-200">
-                📱 Telefon:{" "}
+              <p className="text-amber-300">
+                📱 Telefon: {" "}
                 <a
                   href="tel:+48123456789"
                   className="underline hover:text-white"

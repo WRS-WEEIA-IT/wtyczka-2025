@@ -65,14 +65,14 @@ export default function NewsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <section className="bg-gradient-to-r from-amber-800 to-orange-800 text-white py-16">
+      <section className="bg-black border-b border-[#262626] text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
             {t.home.latestNews}
           </h1>
-          <p className="text-xl text-amber-100">
+          <p className="text-xl text-gray-200">
             Śledź najnowsze informacje o wydarzeniu Wtyczka 2025
           </p>
           <div className="mt-6 flex justify-center">
@@ -80,7 +80,7 @@ export default function NewsPage() {
               href="https://facebook.com/wtyczka2025"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors"
+              className="inline-flex items-center space-x-2 bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-semibold transition-colors"
             >
               <ExternalLink className="h-5 w-5" />
               <span>Obserwuj nas na Facebooku</span>
@@ -96,32 +96,32 @@ export default function NewsPage() {
             {allNews.map((news) => (
               <article
                 key={news.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-[#18181b] rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow border border-[#262626]"
               >
                 <div className="p-8">
-                  <div className="flex items-center text-amber-600 text-sm mb-4">
+                  <div className="flex items-center text-amber-400 text-sm mb-4">
                     <Calendar className="h-4 w-4 mr-2" />
                     <span>{news.date}</span>
                     <span className="mx-2">•</span>
                     <span>{news.author}</span>
                   </div>
 
-                  <h2 className="text-2xl font-bold text-amber-900 mb-4">
+                  <h2 className="text-2xl font-bold text-amber-400 mb-4">
                     {news.title}
                   </h2>
 
-                  <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                  <p className="text-gray-200 text-lg leading-relaxed mb-6">
                     {news.content}
                   </p>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between pt-4 border-t border-[#262626]">
                     <div className="flex items-center space-x-4">
-                      <span className="text-sm text-gray-500">Udostępnij:</span>
+                      <span className="text-sm text-gray-400">Udostępnij:</span>
                       <a
                         href={news.facebookUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700 transition-colors"
+                        className="text-amber-400 hover:text-amber-300 transition-colors"
                       >
                         Facebook
                       </a>
@@ -135,7 +135,7 @@ export default function NewsPage() {
 
           {/* Load More Button */}
           <div className="text-center mt-12">
-            <button className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-md font-semibold transition-colors">
+            <button className="bg-[#E7A801] hover:bg-amber-700 text-black px-8 py-3 rounded-xl font-semibold transition-colors">
               Załaduj więcej postów
             </button>
           </div>
@@ -143,12 +143,12 @@ export default function NewsPage() {
       </section>
 
       {/* Subscribe to Updates */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-[#18181b] border-t border-[#262626]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-amber-900 mb-4">
+          <h2 className="text-3xl font-bold text-amber-400 mb-4">
             Nie przegap żadnych aktualności!
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-200 mb-8">
             Obserwuj naszą stronę na Facebooku, aby być na bieżąco z wszystkimi
             informacjami dotyczącymi Wtyczki 2025.
           </p>
@@ -156,7 +156,7 @@ export default function NewsPage() {
             href="https://facebook.com/wtyczka2025"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-semibold transition-colors"
+            className="inline-flex items-center space-x-2 bg-[#E7A801] hover:bg-amber-700 text-black px-8 py-3 rounded-xl font-semibold transition-colors"
           >
             <ExternalLink className="h-5 w-5" />
             <span>Odwiedź naszego Facebooka</span>
