@@ -84,66 +84,32 @@ export default function EssentialsPage() {
     },
   ];
 
-  const scheduleInfo = [
-    {
-      title: "Odprawa przed wyjazdem",
-      time: "Dzień przed wyjazdem, 18:00",
-      location: "Aula A1, Budynek A1 PŁ",
-      details: [
-        "Omówienie programu wydarzenia",
-        "Informacje praktyczne o transporcie",
-        "Przekazanie materiałów szkoleniowych",
-        "Odpowiedzi na pytania uczestników",
-        "Podział na grupy robocze",
-      ],
-    },
-    {
-      title: "Dzień wyjazdu",
-      time: "7:00 - Zbiórka",
-      location: "Przed głównym budynkiem PŁ",
-      details: [
-        "Sprawdzenie obecności",
-        "Załadowanie bagaży",
-        "Ostatnie instrukcje organizatorów",
-        "Odjazd o 7:30 PUNKTUALNIE!",
-      ],
-    },
-  ];
+
 
 
   return (
     <div className="min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative bg-black text-white overflow-hidden">
-        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/logo_czarne_tło.jpg"
-              alt="Logo wtyczka"
-              width={400}
-              height={150}
-              className="m-0 p-0 leading-none"
-              style={{ display: "block", marginBottom: "-15px" }}
-            />
-            <p
-              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-              style={{ marginTop: "-4px" }}
-            >
-              Niezbędnik uczestnika
-            </p>
-          </div>
-          <div className="flex flex-row gap-3 w-full justify-center items-stretch mt-4 mb-2 overflow-x-auto">
+      <section className="bg-black border-b border-[#262626] text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+            Niezbędnik uczestnika
+          </h1>
+          <p className="text-xl text-gray-200">
+            Lista rzeczy, które warto zabrać na Wtyczkę 2025
+          </p>
+          <div className="mt-6 flex justify-center">
             <a
               href="/registration"
-              className="bg-[#E7A801] hover:bg-amber-700 min-w-[180px] border-[#262626] border rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center font-semibold transition-colors backdrop-blur-sm"
+              className="bg-[#E7A801] hover:bg-amber-700 min-w-[180px] border-[#262626] border rounded-2xl px-6 py-3 font-semibold transition-colors backdrop-blur-sm text-black"
             >
-              <span className="text-base text-black">Zapisz się</span>
+              Zapisz się
             </a>
             <a
               href="/news"
-              className="bg-[#0F0F0F] min-w-[180px] border-[#262626] border bg-opacity-30 rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm"
+              className="bg-[#0F0F0F] min-w-[180px] border-[#262626] border bg-opacity-30 rounded-2xl px-6 py-3 font-semibold transition-colors backdrop-blur-sm ml-4 text-white"
             >
-              <span className="text-base">Aktualności</span>
+              Aktualności
             </a>
           </div>
         </div>
@@ -212,118 +178,9 @@ export default function EssentialsPage() {
         </div>
       </section>
 
-      {/* Schedule Info */}
-      <section className="py-16 bg-[#0F0F0F]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
-            Harmonogram odpraw
-          </h2>
 
-          <div className="space-y-6">
-            {scheduleInfo.map((event, index) => (
-              <div
-                key={index}
-                className="bg-[#1a1a1a] rounded-lg border border-[#262626] p-6"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="bg-amber-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
-                    {index + 1}
-                  </div>
 
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-amber-400 mb-2">
-                      {event.title}
-                    </h3>
 
-                    <div className="grid md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <div className="flex items-center space-x-2 text-amber-400">
-                          <Sun className="h-4 w-4" />
-                          <span className="font-semibold">{event.time}</span>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2 text-amber-400">
-                          <span className="text-lg">📍</span>
-                          <span className="font-semibold">
-                            {event.location}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="font-semibold text-gray-200 mb-2">
-                        Program:
-                      </h4>
-                      <ul className="space-y-1">
-                        {event.details.map((detail, detailIndex) => (
-                          <li
-                            key={detailIndex}
-                            className="flex items-start space-x-2"
-                          >
-                            <span className="text-amber-400 text-sm">•</span>
-                            <span className="text-gray-200 text-sm">
-                              {detail}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Weather Info */}
-      <section className="py-16 bg-[#0F0F0F]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <div className="text-6xl mb-4">🌤️</div>
-            <h2 className="text-3xl font-bold text-amber-400 mb-4">
-              Informacje pogodowe
-            </h2>
-            <p className="text-gray-300">
-              Sprawdź prognozę pogody przed pakowaniem się!
-            </p>
-          </div>
-
-          <div className="bg-[#1a1a1a] rounded-lg shadow-lg p-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="text-center">
-                <Sun className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-amber-400 mb-2">Dzień</h3>
-                <p className="text-gray-200 text-sm">
-                  Temperatura: 18-22°C
-                  <br />
-                  Zalecane: lekka odzież, okulary przeciwsłoneczne, krem z filtrem
-                </p>
-              </div>
-
-              <div className="text-center">
-                <Moon className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-amber-400 mb-2">
-                  Wieczór
-                </h3>
-                <p className="text-gray-200 text-sm">
-                  Temperatura: 10-15°C
-                  <br />
-                  Zalecane: bluza, kurtka, długie spodnie
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-400">
-                * Prognoza pogody może się zmienić. Sprawdź aktualne warunki przed wyjazdem.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Contact for Questions */}
       <section className="py-16 bg-[#0F0F0F] text-white">

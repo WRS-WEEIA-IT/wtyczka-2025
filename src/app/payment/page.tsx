@@ -291,24 +291,14 @@ export default function PaymentPage() {
       <div className="min-h-screen bg-black py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header with logo */}
-          <section className="relative bg-black text-white overflow-hidden mb-8">
-            <div className="relative max-w-7xl mx-auto text-center flex flex-col justify-center items-center">
-              <div className="flex flex-col items-center">
-                <Image
-                  src="/logo_czarne_tło.jpg"
-                  alt="Logo wtyczka"
-                  width={400}
-                  height={150}
-                  className="m-0 p-0 leading-none"
-                  style={{ display: "block", marginBottom: "-15px" }}
-                />
-                <p
-                  className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-                  style={{ marginTop: "-4px" }}
-                >
-                  Potwierdzenie płatności
-                </p>
-              </div>
+          <section className="bg-black border-b border-[#262626] text-white py-16 mb-8">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+                Potwierdzenie płatności
+              </h1>
+              <p className="text-xl text-gray-200">
+                Sprawdź status i szczegóły swojej płatności za Wtyczkę 2025
+              </p>
             </div>
           </section>
 
@@ -528,40 +518,15 @@ export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-black py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header with logo */}
-        <section className="relative bg-black text-white overflow-hidden mb-8">
-          <div className="relative max-w-7xl mx-auto text-center flex flex-col justify-center items-center">
-            <div className="flex flex-col items-center">
-              <Image
-                src="/logo_czarne_tło.jpg"
-                alt="Logo wtyczka"
-                width={400}
-                height={150}
-                className="m-0 p-0 leading-none"
-                style={{ display: "block", marginBottom: "-15px" }}
-              />
-              <p
-                className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-                style={{ marginTop: "-4px" }}
-              >
-                Formularz płatności
-              </p>
-            </div>
-
-            <div className="flex flex-row gap-3 w-full justify-center items-stretch mt-4 mb-2 overflow-x-auto">
-              <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 flex items-center justify-center backdrop-blur-sm">
-                <Calendar className="h-5 w-5 mr-1" />
-                <span className="text-base">{daysUntilEvent} dni</span>
-              </div>
-              <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 flex items-center justify-center backdrop-blur-sm">
-                <MapPin className="h-5 w-5 mr-1" />
-                <span className="text-base">Murzasichle</span>
-              </div>
-              <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm">
-                <UserRound className="h-5 w-5 mr-1" />
-                <span className="text-base">{userRegistration?.name}</span>
-              </div>
-            </div>
+        {/* Header like on news page, no logo */}
+        <section className="bg-black border-b border-[#262626] text-white py-16 mb-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+              Formularz płatności
+            </h1>
+            <p className="text-xl text-gray-200">
+              Wypełnij formularz płatności za Wtyczkę 2025
+            </p>
           </div>
         </section>
 
@@ -680,7 +645,7 @@ export default function PaymentPage() {
               {/* Upload payment confirmation */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Potwierdzenie przelewu *
+                  Potwierdzenie przelewu <span className="text-red-500">*</span>
                 </label>
                 {!uploadedFile ? (
                   <div className="border-2 border-dashed border-[#262626] rounded-xl p-6 text-center">
@@ -749,7 +714,7 @@ export default function PaymentPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Status studenta *
+                    Status studenta <span className="text-red-500">*</span>
                   </label>
                   <select
                     {...register("studentStatus")}
@@ -768,7 +733,7 @@ export default function PaymentPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Czy dojeżdżasz na wydarzenie we własnym zakresie? *
+                    Czy dojeżdżasz na wydarzenie we własnym zakresie? <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -791,7 +756,7 @@ export default function PaymentPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Imię i nazwisko *
+                      Imię i nazwisko <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -808,7 +773,7 @@ export default function PaymentPage() {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Numer telefonu *
+                        Numer telefonu <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
@@ -824,7 +789,7 @@ export default function PaymentPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Stopień pokrewieństwa *
+                        Stopień pokrewieństwa <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -899,7 +864,7 @@ export default function PaymentPage() {
                     className="ml-3 text-gray-300"
                   >
                     Potwierdzam, że wykonałem/am przelew na wskazane konto bankowe
-                    i załączyłem/am jego potwierdzenie. *
+                    i załączyłem/am jego potwierdzenie. <span className="text-red-500">*</span>
                   </label>
                 </div>
                 {errors.transferConfirmation && (
@@ -920,7 +885,7 @@ export default function PaymentPage() {
                     className="ml-3 text-gray-300"
                   >
                     Oświadczam, że mam ukończone 18 lat w dniu wyjazdu lub będę pod
-                    opieką osoby dorosłej. *
+                    opieką osoby dorosłej. <span className="text-red-500">*</span>
                   </label>
                 </div>
                 {errors.ageConfirmation && (
@@ -941,7 +906,7 @@ export default function PaymentPage() {
                     className="ml-3 text-gray-300"
                   >
                     Rozumiem i akceptuję politykę anulowania, zgodnie z którą zwrot
-                    pieniędzy jest możliwy tylko do 30 dni przed wydarzeniem. *
+                    pieniędzy jest możliwy tylko do 30 dni przed wydarzeniem. <span className="text-red-500">*</span>
                   </label>
                 </div>
                 {errors.cancellationPolicy && (

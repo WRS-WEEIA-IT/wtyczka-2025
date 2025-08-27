@@ -96,24 +96,14 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative bg-black text-white overflow-hidden">
-        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/logo_czarne_tło.jpg"
-              alt="Logo wtyczka"
-              width={400}
-              height={150}
-              className="m-0 p-0 leading-none"
-              style={{ display: "block", marginBottom: "-15px" }}
-            />
-            <p
-              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-              style={{ marginTop: "-4px" }}
-            >
-              Najczęściej zadawane pytania
-            </p>
-          </div>
+      <section className="bg-black border-b border-[#262626] text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+            Najczęściej zadawane pytania
+          </h1>
+          <p className="text-xl text-gray-200">
+            Odpowiedzi na najważniejsze pytania dotyczące Wtyczki 2025
+          </p>
         </div>
       </section>
 

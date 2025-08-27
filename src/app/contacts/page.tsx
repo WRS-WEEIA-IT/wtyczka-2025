@@ -124,27 +124,17 @@ export default function ContactsPage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative bg-black text-white overflow-hidden">
-        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/logo_czarne_tło.jpg"
-              alt="Logo wtyczka"
-              width={400}
-              height={150}
-              className="m-0 p-0 leading-none"
-              style={{ display: "block", marginBottom: "-15px" }}
-            />
-            <p
-              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-              style={{ marginTop: "-4px" }}
-            >
-              Kontakty do organizatorów
-            </p>
-            <p className="text-sm text-amber-300 mt-2">
-              Dostępne dla zakwalifikowanych uczestników
-            </p>
-          </div>
+      <section className="bg-black border-b border-[#262626] text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+            Kontakty do organizatorów
+          </h1>
+          <p className="text-xl text-gray-200">
+            Lista kontaktów do organizatorów wydarzenia Wtyczka 2025
+          </p>
+          <p className="text-sm text-amber-300 mt-2">
+            Dostępne dla zakwalifikowanych uczestników
+          </p>
         </div>
       </section>
 
@@ -261,136 +251,11 @@ export default function ContactsPage() {
         </div>
       </section>
 
-      {/* Emergency Contacts */}
-  <section className="py-16 bg-[#232323] border-t border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
-            Kontakty w nagłych przypadkach
-          </h2>
 
-          <div className="space-y-4">
-            {emergencyContacts.map((contact, index) => (
-              <div
-                key={index}
-                className="bg-[#18181b] border-l-4 border-amber-400 rounded-xl p-6"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="bg-[#232323] rounded-full p-3">
-                    <Phone className="h-6 w-6 text-amber-400" />
-                  </div>
 
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-amber-300 mb-2">
-                      {contact.title}
-                    </h3>
 
-                    <div className="space-y-2">
-                      <div>
-                        <a
-                          href={`tel:${contact.phone}`}
-                          className="text-2xl font-bold text-amber-400 hover:underline"
-                        >
-                          {contact.phone}
-                        </a>
-                      </div>
 
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-gray-400" />
-                        <span className="text-gray-300 text-sm">
-                          {contact.availability}
-                        </span>
-                      </div>
 
-                      <p className="text-gray-300 text-sm">
-                        {contact.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Office Location */}
-  <section className="py-16 bg-[#232323] border-t border-[#262626]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
-            Biuro organizatorów
-          </h2>
-
-          <div className="bg-[#18181b] rounded-xl p-6 border border-[#262626]">
-            <div className="flex items-start space-x-4">
-              <div className="bg-[#232323] rounded-full p-3">
-                <MapPin className="h-6 w-6 text-amber-400" />
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold text-amber-300 mb-2">
-                  Lokalizacja biura
-                </h3>
-
-                <div className="space-y-2 text-gray-300">
-                  <p>
-                    <strong>Adres:</strong>
-                    <br />
-                    ul. Żeromskiego 116
-                    <br />
-                    90-924 Łódź
-                    <br />
-                    Budynek B1, pokój 123
-                  </p>
-
-                  <p>
-                    <strong>Godziny otwarcia:</strong>
-                    <br />
-                    Poniedziałek - Piątek: 9:00 - 17:00
-                    <br />
-                    Sobota - Niedziela: Zamknięte
-                  </p>
-
-                  <p className="text-sm text-amber-400">
-                    💡 Przed wizytą zalecamy wcześniejszy kontakt telefoniczny
-                    lub mailowy
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Response Times */}
-      <section className="py-16 bg-[#232323] border-t border-[#262626] text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-2xl font-bold mb-6 text-amber-400">Czas odpowiedzi</h3>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <div className="text-4xl mb-2">📧</div>
-              <h4 className="font-bold mb-2 text-amber-300">Email</h4>
-              <p className="text-amber-200 text-sm">
-                Do 24 godzin w dni robocze
-              </p>
-            </div>
-
-            <div>
-              <div className="text-4xl mb-2">📱</div>
-              <h4 className="font-bold mb-2 text-amber-300">Telefon</h4>
-              <p className="text-amber-200 text-sm">
-                Natychmiastowo w godzinach pracy
-              </p>
-            </div>
-
-            <div>
-              <div className="text-4xl mb-2">🚨</div>
-              <h4 className="font-bold mb-2 text-amber-300">Nagłe przypadki</h4>
-              <p className="text-amber-200 text-sm">Natychmiastowo 24/7</p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

@@ -114,27 +114,17 @@ export default function StatusPage() {
   return (
     <div className="min-h-screen bg-black py-8">
       {/* Hero Section */}
-      <section className="relative bg-black text-white overflow-hidden">
-        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center mb-8">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/logo_czarne_tło.jpg"
-              alt="Logo wtyczka"
-              width={400}
-              height={150}
-              className="m-0 p-0 leading-none"
-              style={{ display: "block", marginBottom: "-15px" }}
-            />
-            <p
-              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-              style={{ marginTop: "-4px" }}
-            >
-              Status Twojej aplikacji
-            </p>
-            <p className="text-sm text-amber-300 mt-2">
-              Zalogowany jako: <span className="font-semibold">{user.email}</span>
-            </p>
-          </div>
+      <section className="bg-black border-b border-[#262626] text-white py-16 mb-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+            Status Twojej aplikacji
+          </h1>
+          <p className="text-xl text-gray-200">
+            Sprawdź status swojej rejestracji i płatności na Wtyczkę 2025
+          </p>
+          <p className="text-sm text-amber-300 mt-2">
+            Zalogowany jako: <span className="font-semibold">{user.email}</span>
+          </p>
         </div>
       </section>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
