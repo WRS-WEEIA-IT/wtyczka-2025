@@ -505,7 +505,7 @@ export default function RegistrationPage() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.howDidYouKnow} *
+                  {t.forms.howDidYouKnow} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("aboutWtyczka")}

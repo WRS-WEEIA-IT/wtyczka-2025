@@ -233,26 +233,26 @@ export default function StatusPage() {
               </span>
             </div>
 
-            {isQualified ? (
-              paymentCompleted ? (
-                <div>
-                  <p className="text-green-400 text-sm mb-2">
-                    ✓ Formularz płatności został pomyślnie wysłany
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-yellow-400 text-sm mb-3">
-                    Możesz teraz wypełnić formularz płatności
-                  </p>
-                  <Link
-                    href="/payment"
-                    className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
-                  >
-                    Wypełnij formularz płatności
-                  </Link>
-                </div>
-              )
+            {paymentCompleted ? (
+              <div>
+                <p className="text-green-400 text-sm mb-2">
+                  ✓ Formularz płatności został pomyślnie wysłany
+                </p>
+              </div>
+            ) : isQualified ? (
+              <div>
+                <p className={`text-sm mb-3 ${!registrationCompleted ? 'text-red-400' : 'text-yellow-400'}`}>
+                  {!registrationCompleted
+                    ? 'Najpierw wypełnij formularz rejestracji!'
+                    : 'Możesz teraz wypełnić formularz płatności'}
+                </p>
+                <Link
+                  href="/payment"
+                  className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
+                >
+                  Wypełnij formularz płatności
+                </Link>
+              </div>
             ) : (
               <p className="text-gray-400 text-sm">
                 Formularz płatności będzie dostępny po zakwalifikowaniu
