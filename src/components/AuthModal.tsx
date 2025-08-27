@@ -78,15 +78,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-md">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold text-amber-900">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#18181b] border border-[#262626] rounded-2xl w-full max-w-md shadow-2xl">
+        <div className="flex justify-between items-center p-6 border-b border-[#262626]">
+          <h2 className="text-2xl font-bold text-white">
             {isLogin ? t.auth.login : t.auth.register}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-400 hover:text-amber-400"
           >
             <X size={24} />
           </button>
@@ -97,7 +97,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {!isLogin && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     {t.auth.firstName}
                   </label>
                   <div className="relative">
@@ -105,7 +105,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <input
                       type="text"
                       required
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                       value={formData.firstName}
                       onChange={(e) =>
                         setFormData({ ...formData, firstName: e.target.value })
@@ -115,7 +115,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     {t.auth.lastName}
                   </label>
                   <div className="relative">
@@ -123,7 +123,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <input
                       type="text"
                       required
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                       value={formData.lastName}
                       onChange={(e) =>
                         setFormData({ ...formData, lastName: e.target.value })
@@ -135,7 +135,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 {t.auth.email}
               </label>
               <div className="relative">
@@ -143,7 +143,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <input
                   type="email"
                   required
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
@@ -153,7 +153,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 {t.auth.password}
               </label>
               <div className="relative">
@@ -162,7 +162,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   type="password"
                   required
                   minLength={6}
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -173,7 +173,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   {t.auth.confirmPassword}
                 </label>
                 <div className="relative">
@@ -182,7 +182,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     type="password"
                     required
                     minLength={6}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                     value={formData.confirmPassword}
                     onChange={(e) =>
                       setFormData({
@@ -198,7 +198,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
+              className="w-full bg-[#E7A801] text-black py-2 px-4 rounded-xl hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 font-semibold shadow-md"
             >
               {loading
                 ? "Ładowanie..."
@@ -211,17 +211,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <div className="mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-[#262626]" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">lub</span>
+                <span className="px-2 bg-[#18181b] text-gray-400">lub</span>
               </div>
             </div>
 
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="w-full mt-3 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
+              className="w-full mt-3 bg-green-600 text-white py-2 px-4 rounded-xl hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 font-semibold shadow-md transition-colors"
             >
               {isLogin ? t.auth.loginWithGoogle : t.auth.registerWithGoogle}
             </button>
@@ -230,10 +230,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <div className="mt-4 text-center">
             <button
               onClick={switchMode}
-              className="text-amber-600 hover:text-amber-700 text-sm"
+              className="text-amber-400 hover:text-amber-500 text-sm font-semibold"
             >
-              {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount}{" "}
-              <span className="font-semibold">
+              {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount} {" "}
+              <span className="underline">
                 {isLogin ? t.auth.register : t.auth.login}
               </span>
             </button>
