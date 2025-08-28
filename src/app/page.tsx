@@ -54,85 +54,89 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black">
+  <div className="min-h-screen flex flex-col bg-black font-sans" style={{ backgroundImage: 'url("/wood-texture.jpg")', backgroundSize: 'cover', backgroundAttachment: 'fixed', filter: 'sepia(0.10)' }}>
       {/* Hero Section */}
-      <section className="relative bg-black text-white overflow-hidden">
-        <div className="relative max-w-7xl mx-auto sm:px-4 lg:px-6 text-center flex flex-col justify-center items-center">
+      <section className="relative text-white overflow-hidden shadow-[0_4px_16px_#000a] bg-gradient-to-b from-black/90 via-[#18181b]/95 to-black/90">
+  <div className="relative max-w-4xl mx-auto px-4 py-10 text-center flex flex-col justify-center items-center rounded-2xl shadow-2xl" style={{ boxShadow: '0 0 30px #000a' }}>
           <div className="flex flex-col items-center">
             <Image
               src="/logo_czarne_tło.jpg"
               alt="Logo wtyczka"
-              width={400}
-              height={150}
-              className="m-0 p-0 leading-none"
-              style={{ display: "block", marginBottom: "-15px" }}
+              width={320}
+              height={110}
+              className="m-0 p-0 leading-none drop-shadow-2xl rounded-lg bg-[#18181b] shadow-lg"
+              style={{ display: "block", marginBottom: "-10px" }}
             />
             <p
-              className="text-xl md:text-2xl m-0 p-0 text-white leading-none"
-              style={{ marginTop: "-4px" }}
+              className="text-2xl md:text-3xl m-0 p-0 text-[#E7A801] font-extrabold tracking-widest uppercase drop-shadow-lg western-title"
+              style={{ marginTop: "-2px", letterSpacing: "0.18em", textShadow: '0 2px 8px #000a' }}
             >
               {t.home.subtitle}
             </p>
           </div>
 
-          <div className="flex flex-row gap-3 w-full justify-center items-stretch mt-4 mb-2 overflow-x-auto">
-            <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 flex items-center justify-center backdrop-blur-sm">
-              <Calendar className="h-5 w-5 mr-1" />
-              <span className="text-base">{daysUntilEvent} dni</span>
-            </div>
-            <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 flex items-center justify-center backdrop-blur-sm">
-              <MapPin className="h-5 w-5 mr-1" />
-              <span className="text-base">Murzasichle</span>
-            </div>
-            <div className="bg-[#0F0F0F] min-w-[110px] border-[#262626] border bg-opacity-30 rounded-xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm">
-              <UserRound className="h-5 w-5 mr-1" />
-              <span className="text-base">Studenci</span>
+          <div className="flex flex-row mt-10 gap-6 w-full justify-center items-stretch mb-2 mt-2 overflow-x-auto">
+            <Link
+              href="/registration"
+              className="bg-[#E7A801] hover:bg-amber-700 min-w-[160px] rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-black shadow-md transition-colors western-btn"
+              style={{ boxShadow: '0 2px 8px #7c4a0399' }}
+            >
+              Zapisz się
+            </Link>
+
+            <Link
+              href="/faq"
+              className="bg-[#232323]/90 hover:bg-[#3a2c13] min-w-[160px] rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-[#E7A801] shadow-md transition-colors western-btn"
+              style={{ boxShadow: '0 2px 8px #7c4a0399' }}
+            >
+              Dowiedz się więcej
+            </Link>
+            
+          </div>
+
+          <div className="w-full flex justify-center mt-2 mb-2">
+            <div className="bg-[#232323]/90 w-full max-w-xs rounded-lg py-3 px-4 flex flex-row items-center justify-center gap-3 shadow-lg">
+              <Calendar className="h-7 w-7 text-[#E7A801]" />
+              <span className="text-lg font-extrabold tracking-widest uppercase text-[#E7A801]">Pozostało {daysUntilEvent} dni</span>
             </div>
           </div>
 
-          <div className="flex flex-row gap-3 w-full justify-center items-stretch mb-2 mt-2 overflow-x-auto">
-            <Link
-              href="/registration"
-              className="bg-[#E7A801] hover:bg-amber-700 min-w-[180px] border-[#262626] border rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center font-semibold transition-colors backdrop-blur-sm"
-            >
-              <span className="text-base text-black">Zapisz się</span>
-            </Link>
-            <Link
-              href="/faq"
-              className="bg-[#0F0F0F] min-w-[180px] border-[#262626] border bg-opacity-30 rounded-2xl p-2 pt-3 pb-3 flex items-center justify-center backdrop-blur-sm"
-            >
-              <span className="text-base">Dowiedz się więcej</span>
-            </Link>
+          <div className="flex justify-center w-full mt-8 mb-2">
+            <div className="w-full flex justify-center items-center">
+              <span className="text-[#E7A801] text-3xl mx-2 select-none">★ ★ ★</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Latest News Section */}
-      <section className="py-16 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+  <section className="py-16 pb-0 flex-1 bg-[#18181b]/95 shadow-[0_-4px_16px_#000a]" style={{ backgroundImage: 'url("/paper-texture.png")', backgroundSize: 'cover', backgroundBlendMode: 'multiply' }}>
+  <div className="w-full h-full px-2 sm:px-6 lg:px-8 rounded-2xl shadow-lg flex flex-col flex-1" style={{ boxShadow: '0 0 20px #000a' }}>
+          <div className="text-center mb-10 pt-8">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#E7A801] uppercase tracking-widest drop-shadow-lg western-title">
               {t.home.latestNews}
             </h2>
-            <div className="w-24 h-1 bg-[#E7A801] mx-auto"></div>
-          </div>
-
-          <div className="flex flex-col gap-6 site-container">
-            <div className="flex flex-col gap-8 readable-width">
-              <div className="grid grid-cols-1 gap-8">
-                <Suspense fallback={<FacebookCardSkeleton />}>
-                  {facebookPosts.map((post) => (
-                    <FacebookCard {...post} key={post.id} />
-                  ))}
-                </Suspense>
-              </div>
+            <div className="flex justify-center items-center mt-2 mb-2">
+              <span className="text-[#E7A801] text-2xl mx-2 select-none">★ ★</span>
+            </div>
+            <div className="flex justify-center">
+              <span className="inline-block text-lg text-gray-400 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1">Wiadomości z saloonu</span>
             </div>
           </div>
 
-          <div className="text-center mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-4 w-full justify-center max-w-7xl mx-auto">
+            <Suspense fallback={<FacebookCardSkeleton />}>
+              {facebookPosts.map((post) => (
+                <FacebookCard {...post} className="w-full max-w-2xl cursor-pointer justify-self-center" key={post.id} />
+              ))}
+            </Suspense>
+          </div>
+
+          <div className="text-center mt-8 pb-10">
             <Link
               href="/news"
-              className="inline-flex items-center space-x-2 bg-[#E7A801] text-black px-6 py-3 rounded-xl hover:bg-amber-700 transition-colors"
+              className="inline-flex items-center space-x-2 bg-[#E7A801] text-black px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest hover:bg-amber-700 transition-colors shadow-md western-btn"
+              style={{ boxShadow: '0 2px 8px #7c4a0399' }}
             >
               <Facebook className="h-5 w-5" />
               <span>{t.home.viewAllNews}</span>
