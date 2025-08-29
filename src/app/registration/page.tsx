@@ -492,14 +492,21 @@ export default function RegistrationPage() {
                 )}
               </div>
               <div className="md:col-span-2">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    {...register("invoice")}
-                    className="rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
-                  />
-                  <label className="text-sm text-gray-300">
-                    {t.forms.invoice}
+                <div className="flex items-start">
+                  <label className="flex items-center cursor-pointer select-none">
+                    <span className="relative inline-block">
+                      <input
+                        type="checkbox"
+                        {...register("invoice")}
+                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      />
+                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="5 10 9 14 15 7" />
+                      </svg>
+                    </span>
+                    <span className="ml-3 text-gray-300">
+                      {t.forms.invoice}
+                    </span>
                   </label>
                 </div>
               </div>
@@ -531,33 +538,47 @@ export default function RegistrationPage() {
               Zgody i regulamin
             </h3>
             <div className="space-y-4">
-              <div className="flex items-start space-x-2">
-                <input
-                  type="checkbox"
-                  {...register("regAccept")}
-                  className="mt-1 rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
-                />
-                <label className="text-sm text-gray-300">
-                  <button
-                    type="button"
-                    onClick={() => setShowRegulations(true)}
-                    className="text-amber-400 hover:text-amber-500 underline"
-                  >
-                    {t.forms.acceptRegulations} <span className="text-red-500">*</span>
-                  </button>
+              <div className="flex items-start">
+                <label className="flex items-center cursor-pointer select-none">
+                  <span className="relative inline-block">
+                    <input
+                      type="checkbox"
+                      {...register("regAccept")}
+                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                    />
+                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="5 10 9 14 15 7" />
+                    </svg>
+                  </span>
+                  <span className="ml-3 text-gray-300">
+                    <button
+                      type="button"
+                      onClick={() => setShowRegulations(true)}
+                      className="text-amber-400 hover:text-amber-500 underline"
+                    >
+                      {t.forms.acceptRegulations} <span className="text-red-500">*</span>
+                    </button>
+                  </span>
                 </label>
               </div>
               {errors.regAccept && (
                 <p className="text-red-500 text-sm">{errors.regAccept.message}</p>
               )}
-              <div className="flex items-start space-x-2">
-                <input
-                  type="checkbox"
-                  {...register("rodoAccept")}
-                  className="mt-1 rounded border-[#262626] text-amber-400 bg-[#232323] focus:ring-amber-500"
-                />
-                <label className="text-sm text-gray-300">
-                  {t.forms.dataProcessingConsent} <span className="text-red-500">*</span>
+              <div className="flex items-start">
+                <label className="flex items-center cursor-pointer select-none">
+                  <span className="relative inline-block">
+                    <input
+                      type="checkbox"
+                      {...register("rodoAccept")}
+                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                    />
+                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="5 10 9 14 15 7" />
+                    </svg>
+                  </span>
+                  <span className="ml-3 text-gray-300">
+                    {t.forms.dataProcessingConsent} <span className="text-red-500">*</span>
+                  </span>
                 </label>
               </div>
               {errors.rodoAccept && (
