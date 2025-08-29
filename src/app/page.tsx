@@ -75,10 +75,10 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex flex-row mt-10 gap-6 w-full justify-center items-stretch mb-2 mt-2 overflow-x-auto">
+          <div className="flex flex-col sm:flex-row mt-10 gap-3 w-full justify-center items-center mb-2 mt-2 overflow-x-auto">
             <Link
               href="/registration"
-              className="bg-[#E7A801] hover:bg-amber-700 min-w-[160px] rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-black shadow-md transition-colors western-btn"
+              className="bg-[#E7A801] hover:bg-amber-700 min-w-[160px] max-w-xs w-full rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-black shadow-md transition-colors western-btn"
               style={{ boxShadow: '0 2px 8px #7c4a0399' }}
             >
               Zapisz się
@@ -86,7 +86,7 @@ export default function HomePage() {
 
             <Link
               href="/faq"
-              className="bg-[#232323]/90 hover:bg-[#3a2c13] min-w-[160px] rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-[#E7A801] shadow-md transition-colors western-btn"
+              className="bg-[#232323]/90 hover:bg-[#3a2c13] min-w-[160px] max-w-xs w-full rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-[#E7A801] shadow-md transition-colors western-btn"
               style={{ boxShadow: '0 2px 8px #7c4a0399' }}
             >
               Dowiedz się więcej
@@ -95,10 +95,16 @@ export default function HomePage() {
           </div>
 
           <div className="w-full flex justify-center mt-2 mb-2">
-            <div className="bg-[#232323]/90 w-full max-w-xs rounded-lg py-3 px-4 flex flex-row items-center justify-center gap-3 shadow-lg">
+            <a
+              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wtyczka+2025+-+Wyjazd+Integracyjny&dates=20251023T120000Z/20251023T130000Z&details=Wyjazd+Integracyjny+Wydziału+EEIA+PŁ"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#232323]/90 w-full max-w-xs rounded-lg py-3 px-4 flex flex-row items-center justify-center gap-3 shadow-lg cursor-pointer hover:bg-[#232323] transition"
+              title="Dodaj wydarzenie do kalendarza Google"
+            >
               <Calendar className="h-7 w-7 text-[#E7A801]" />
               <span className="text-lg font-extrabold tracking-widest uppercase text-[#E7A801]">Pozostało {daysUntilEvent} dni</span>
-            </div>
+            </a>
           </div>
 
           <div className="flex justify-center w-full mt-8 mb-2">
@@ -110,8 +116,8 @@ export default function HomePage() {
       </section>
 
       {/* Latest News Section */}
-  <section className="py-16 pb-0 flex-1 bg-[#18181b]/95 shadow-[0_-4px_16px_#000a]" style={{ backgroundImage: 'url("/paper-texture.png")', backgroundSize: 'cover', backgroundBlendMode: 'multiply' }}>
-  <div className="w-full h-full px-2 sm:px-6 lg:px-8 rounded-2xl shadow-lg flex flex-col flex-1" style={{ boxShadow: '0 0 20px #000a' }}>
+  <section className="py-16 pb-0 pt-0 flex-1 bg-black shadow-[0_-4px_16px_#000a]" style={{ boxShadow: '0 0 20px rgba(0, 0, 0, 1)'  }}>
+  <div className="w-full h-full px-2 sm:px-6 lg:px-8 shadow-lg flex flex-col flex-1 rounded-2xl bg-[#18181b]" style={{ boxShadow: '0 0 20px rgba(0, 0, 0, 1)' }}>
           <div className="text-center mb-10 pt-8">
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#E7A801] uppercase tracking-widest drop-shadow-lg western-title">
               {t.home.latestNews}
