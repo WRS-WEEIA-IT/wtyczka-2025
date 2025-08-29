@@ -36,7 +36,8 @@ export function FacebookCard({
   link,
   timeCreated,
   text,
-}: FacebookPost) {
+  className,
+}: FacebookPost & { className?: string }) {
   const [showImage, setShowImage] = useState(true);
   const date = new Date(timeCreated);
 
@@ -45,7 +46,7 @@ export function FacebookCard({
   };
 
   return (
-    <div className="rounded-lg border shadow-xl w-full">
+    <div className={`rounded-lg border shadow-xl w-full ${className ?? ""}`}>
       <div className="flex flex-col items-start p-4">
         <div className="flex w-full">
           <Avatar className="w-10 h-10 rounded-full mr-3">
