@@ -46,7 +46,12 @@ export function FacebookCard({
   };
 
   return (
-    <div className={`rounded-lg border shadow-xl w-full ${className ?? ""}`}>
+    <Link
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`block rounded-lg border shadow-xl w-full cursor-pointer ${className ?? ""}`}
+    >
       <div className="flex flex-col items-start p-4">
         <div className="flex w-full">
           <Avatar className="w-10 h-10 rounded-full mr-3">
@@ -62,11 +67,9 @@ export function FacebookCard({
                 <time dateTime={`${date}`}>{formatPolishDate(date)}</time>
               </p>
             </div>
-            <Link href={link} target="_blank" passHref>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <ExternalLink />
-              </Button>
-            </Link>
+            <span className="rounded-full p-2 bg-transparent">
+              <ExternalLink />
+            </span>
           </div>
         </div>
         <div className="flex flex-col w-full">
@@ -93,7 +96,7 @@ export function FacebookCard({
           />
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 export function FacebookCardSkeleton() {

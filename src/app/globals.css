@@ -1,3 +1,17 @@
+@keyframes toast-bottom-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-toast-bottom {
+  animation: toast-bottom-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
 @import "tailwindcss";
 
 :root {

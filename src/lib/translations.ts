@@ -12,7 +12,8 @@ export const translations: Record<'pl' | 'en', Translations> = {
       regulations: "Regulamin",
       essentials: "Niezbędnik uczestnika",
       faq: "FAQ",
-      contacts: "Kontakty"
+  contacts: "Kontakty",
+  partners: "Partnerzy"
     },
     home: {
       title: "Wtyczka 2025",
@@ -111,7 +112,8 @@ export const translations: Record<'pl' | 'en', Translations> = {
       regulations: "Regulations",
       essentials: "Participant Essentials",
       faq: "FAQ",
-      contacts: "Contacts"
+  contacts: "Contacts",
+  partners: "Partners"
     },
     home: {
       title: "Wtyczka 2025",

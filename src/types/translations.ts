@@ -12,6 +12,7 @@ export interface Translations {
     essentials: string;
     faq: string;
     contacts: string;
+  partners: string;
   };
   home: {
     title: string;

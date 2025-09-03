@@ -14,7 +14,7 @@ export default function Card({ children, className = "", ...props }: CardProps) 
   return (
     <div
       className={clsx(
-        "bg-[#0F0F0F] bg-opacity-30 border border-[#262626] rounded-xl shadow-md hover:shadow-lg transition-shadow backdrop-blur-sm p-8",
+        "bg-[#0F0F0F] bg-opacity-30 border border-[#262626] rounded-xl shadow-md hover:shadow-lg transition-shadow backdrop-blur-sm p-8 cursor-pointer",
         className
       )}
       {...props}

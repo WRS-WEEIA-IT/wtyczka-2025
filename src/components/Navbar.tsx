@@ -46,6 +46,13 @@ export default function Navbar() {
                 {t.nav.news}
               </Link>
 
+               <Link
+                 href="/partners"
+                 className="hover:text-amber-200 transition-colors"
+               >
+                 {t.nav.partners}
+               </Link>
+
               {user && (
                 <>
                   <div className="relative group">
@@ -163,6 +170,13 @@ export default function Navbar() {
                 >
                   {t.nav.news}
                 </Link>
+
+                 <Link
+                   href="/partners"
+                   className="hover:text-amber-200 transition-colors"
+                 >
+                   {t.nav.partners}
+                 </Link>
 
                 {user && (
                   <>
