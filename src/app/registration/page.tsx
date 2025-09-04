@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, School, Info, Save } from "lucide-react";
+import { User, School, Info, Save, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import {
@@ -254,6 +254,21 @@ export default function RegistrationPage() {
           </div>
         </section>
 
+        {/* Ostrzeżenie o konsekwencjach podawania fałszywych danych */}
+        <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
+          <div className="flex items-start">
+            <AlertTriangle className="h-6 w-6 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="font-semibold text-red-400 text-lg">UWAGA!</h3>
+              <p className="text-gray-200">
+                Podawanie fałszywych informacji (np. osoba niepełnoletnia w dniu wyjazdu wpisująca fałszywą datę urodzenia) 
+                będzie wiązało się z negatywnymi konsekwencjami - niedopuszczenie uczestnika do wyjazdu oraz permanentny 
+                zakaz uczestniczenia w przyszłych tego typu wyjazdach.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Dane uczestnika */}
           <div className="bg-[#18181b] rounded-2xl shadow-xl p-6 border border-[#262626]">
@@ -465,7 +480,7 @@ export default function RegistrationPage() {
                 >
                   <option value="">Wybierz diete</option>
                   <option value="standard">Standardowa</option>
-                  <option value="vegetarian">Wegetariańska (+30zł)</option>
+                  <option value="vegetarian">Wegetariańska (+10zł)</option>
                 </select>
                 {errors.dietName && (
                   <p className="text-red-500 text-sm mt-1">{errors.dietName.message}</p>

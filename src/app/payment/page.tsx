@@ -597,7 +597,23 @@ export default function PaymentPage() {
 
         {/* Payment form - visible only when authorized */}
         {isAuthorized && (
-          <form onSubmit={async (e) => {
+          <>
+            {/* Ostrzeżenie o konsekwencjach podawania fałszywych danych */}
+            <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
+              <div className="flex items-start">
+                <AlertTriangle className="h-6 w-6 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold text-red-400 text-lg">UWAGA!</h3>
+                  <p className="text-gray-200">
+                    Podawanie fałszywych informacji (np. osoba niepełnoletnia w dniu wyjazdu wpisująca fałszywą datę urodzenia) 
+                    będzie wiązało się z negatywnymi konsekwencjami - niedopuszczenie uczestnika do wyjazdu oraz permanentny 
+                    zakaz uczestniczenia w przyszłych tego typu wyjazdach.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <form onSubmit={async (e) => {
             e.preventDefault();
             const valid = await trigger();
             if (!valid) {
@@ -723,29 +739,33 @@ export default function PaymentPage() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Status studenta <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    {...register("studentStatus")}
-                    className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  >
-                    <option value="">Wybierz...</option>
-                    <option value="politechnika">Politechnika Łódzka</option>
-                    <option value="other">Inna uczelnia</option>
-                    <option value="not-student">Nie jestem studentem</option>
-                  </select>
-                  {errors.studentStatus && (
-                    <p className="mt-1 text-red-500 text-sm">
-                      Status studenta jest wymagany
-                    </p>
-                  )}
+                <div className="flex flex-col justify-end h-full">
+                  <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Status studenta <span className="text-red-500">*</span>
+                    </label>
+                  </div>
+                  <div>
+                    <select
+                      {...register("studentStatus")}
+                      className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    >
+                      <option value="">Wybierz...</option>
+                      <option value="politechnika">Politechnika Łódzka</option>
+                      <option value="other">Inna uczelnia</option>
+                      <option value="not-student">Nie jestem studentem</option>
+                    </select>
+                    {errors.studentStatus && (
+                      <p className="mt-1 text-red-500 text-sm">
+                        Status studenta jest wymagany
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Czy dojeżdżasz na wydarzenie we własnym zakresie? {/*<span className="text-red-500">*</span>*/}
+                    Czy dojeżdżasz samodzielnie (tam, z powrotem i na atrakcje)?
                   </label>
                   <div className="flex items-center space-x-2 h-10">
           <label className="flex items-center cursor-pointer gap-2 select-none">
@@ -761,7 +781,7 @@ export default function PaymentPage() {
             </span>
             <span className="text-white text-sm">Tak, dojeżdżam samodzielnie</span>
           </label>
-                  </div>
+                  </div>  
                 </div>
               </div>
 
@@ -908,8 +928,7 @@ export default function PaymentPage() {
                       </svg>
                     </span>
                     <span className="ml-3 text-gray-300">
-                      Oświadczam, że mam ukończone 18 lat w dniu wyjazdu lub będę pod
-                      opieką osoby dorosłej. <span className="text-red-500">*</span>
+                      Oświadczam, że mam ukończone 18 lat w dniu wyjazdu. <span className="text-red-500">*</span>
                     </span>
                   </label>
                 </div>
@@ -960,6 +979,7 @@ export default function PaymentPage() {
               </button>
             </div>
           </form>
+          </>
         )}
       </div>
     </div>
