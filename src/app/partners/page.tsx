@@ -97,11 +97,22 @@ export default function PartnersPage() {
   const [goldenBarsVisible, setGoldenBarsVisible] = useState(false);
   const [chestVisible, setChestVisible] = useState(true);
   const [barsInGrid, setBarsInGrid] = useState(false);
-  const [selectedPartner, setSelectedPartner] = useState<number | null>(null);
   const chestRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const chestPositionRef = useRef({x: 0, y: 0});
   const [dustParticles, setDustParticles] = useState<Array<{id: number, left: string, size: string, duration: string}>>([]);
+
+  // Calculate and store chest position for better animation reference
+  useEffect(() => {
+    if (chestRef.current) {
+      const rect = chestRef.current.getBoundingClientRect();
+      chestPositionRef.current = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    }
+  }, [isChestOpen]);
 
   // Create dust particles effect
   useEffect(() => {
@@ -145,27 +156,31 @@ export default function PartnersPage() {
       // Create extra dust for chest opening
       createDustParticles(10);
       
-      // After chest opens, start the gold bar animation with a delay
+      // Show gold bars immediately when chest starts opening
       setTimeout(() => {
+        // Show bars in grid layout from the start - no transitioning between layouts
+        setBarsInGrid(true);
         setGoldenBarsVisible(true);
         createDustParticles(15);
         
-        // Fade out the chest after gold bars are displayed
+        // Scroll down to see the gold bars
         setTimeout(() => {
-          setChestVisible(false);
-          
-          // After chest disappears, organize bars into grid
-          setTimeout(() => {
-            setBarsInGrid(true);
-          }, 1000);
-        }, 3000);
-      }, 1000);
+          if (gridRef.current) {
+            gridRef.current.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start'
+            });
+          }
+        }, 400);
+      }, 300);
     }
   };
   
-  // Handle partner card click
-  const handlePartnerClick = (partnerId: number) => {
-    setSelectedPartner(partnerId === selectedPartner ? null : partnerId);
+  // Handle partner card click - redirect to partner website
+  const handlePartnerClick = (partner: { id: number, url: string }) => {
+    if (partner.url) {
+      window.open(partner.url, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
@@ -188,17 +203,14 @@ export default function PartnersPage() {
       {/* Western-themed header */}
       <div className="w-full max-w-5xl text-center mb-8">
         <h1 className={`text-5xl md:text-6xl font-bold text-yellow-300 mb-3 ${styles.goldRushTitle}`}>
-          GORĄCZKA ZŁOTA
-        </h1>
-        <h2 className={`text-3xl md:text-4xl text-amber-200 mb-4 ${styles.goldRushTitle}`} style={{textShadow: "2px 2px 4px rgba(0,0,0,0.5)"}}>
           Nasi Partnerzy
-        </h2>
+        </h1>
         <p className="text-xl text-amber-100 max-w-2xl mx-auto mt-4">
           Kliknij w skrzynię, aby odkryć prawdziwe skarby Wtyczki!
         </p>
       </div>
 
-      {/* Desert and mountains background */}
+      {/* Desert background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute bottom-0 w-full h-1/4 bg-amber-800" /> {/* Desert */}
         <div 
@@ -207,22 +219,6 @@ export default function PartnersPage() {
             background: "linear-gradient(180deg, transparent 0%, rgba(146, 64, 14, 0.8) 100%)"
           }}
         /> {/* Desert fade */}
-        <div 
-          className="absolute bottom-1/3 left-1/4 w-1/5 h-1/5"
-          style={{
-            background: "linear-gradient(135deg, #8B5A2B 0%, #634323 100%)",
-            clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
-            transform: "skewX(15deg)"
-          }}
-        /> {/* Left mountain */}
-        <div 
-          className="absolute bottom-1/3 right-1/4 w-1/5 h-1/4"
-          style={{
-            background: "linear-gradient(135deg, #8B5A2B 0%, #634323 100%)",
-            clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
-            transform: "skewX(-15deg)"
-          }}
-        /> {/* Right mountain */}
       </div>
 
       {/* Main treasure chest container */}
@@ -235,9 +231,9 @@ export default function PartnersPage() {
               onClick={handleChestClick}
               initial={{ scale: 0.8, opacity: 1 }}
               animate={{ 
-                scale: 1, 
-                rotate: isChestOpen ? [0, -2, 2, 0] : 0,
-                y: isChestOpen ? [0, -5, 5, 0] : 0,
+                scale: isChestOpen ? [1, 1.05, 0.95, 1] : 1, 
+                rotate: isChestOpen ? [0, -3, 3, -2, 2, 0] : 0,
+                y: isChestOpen ? [0, -8, 5, -3, 0] : 0,
                 opacity: 1
               }}
               exit={{ 
@@ -247,53 +243,86 @@ export default function PartnersPage() {
                 transition: { duration: 1.5 }
               }}
               transition={{ 
-                scale: { duration: 0.5, ease: "easeOut" },
-                rotate: { duration: 0.3, ease: "easeInOut", repeat: isChestOpen ? 2 : 0 },
-                y: { duration: 0.2, ease: "easeInOut", repeat: isChestOpen ? 3 : 0 }
+                scale: { duration: 0.8, ease: "easeOut" },
+                rotate: { duration: 0.5, ease: "easeInOut", repeat: isChestOpen ? 1 : 0 },
+                y: { duration: 0.4, ease: "easeInOut", repeat: isChestOpen ? 1 : 0 }
               }}
               whileHover={{ 
                 scale: isChestOpen ? 1 : 1.02,
                 transition: { duration: 0.3 }
               }}
             >
-              {/* Chest base */}
+              {/* Chest base - more realistic treasure chest */}
               <div className="relative w-full h-full">
-                {/* Chest shadow */}
+                {/* Enhanced chest shadow with better depth perception */}
                 <motion.div 
-                  className="absolute bottom-[-5%] left-1/2 w-[80%] h-[10%] bg-black rounded-full blur-md opacity-50"
+                  className="absolute bottom-[-8%] left-1/2 w-[85%] h-[15%] bg-black rounded-[50%] blur-lg opacity-40"
                   style={{ transform: "translateX(-50%)" }}
                   animate={{ 
-                    width: isChestOpen ? "90%" : "80%",
-                    opacity: isChestOpen ? 0.6 : 0.5
+                    width: isChestOpen ? "95%" : "85%",
+                    opacity: isChestOpen ? 0.5 : 0.4,
+                    filter: isChestOpen ? "blur(16px)" : "blur(12px)"
                   }}
+                  transition={{ duration: 0.8 }}
                 />
               
-                {/* Chest body */}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] h-[60%]">
-                  <div className="relative w-full h-full bg-gradient-to-b from-amber-800 to-amber-950 rounded-xl border-4 border-yellow-950 overflow-hidden shadow-xl">
-                    {/* Wood texture */}
+                {/* Chest body - enhanced with more realistic wood texture and metal details */}
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] h-[65%]">
+                  {/* Main chest body with enhanced wood texture */}
+                  <div className="relative w-full h-full bg-gradient-to-b from-[#704214] via-[#8B572A] to-[#5D370F] rounded-xl border-4 border-[#3A2311] overflow-hidden shadow-2xl" 
+                       style={{ boxShadow: "inset 0 5px 15px rgba(255,248,220,0.1), inset 0 -5px 15px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.4)" }}>
+                    {/* Rich wood grain texture */}
                     <div 
-                      className="absolute inset-0" 
+                      className="absolute inset-0 mix-blend-overlay" 
                       style={{
-                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23B85C00' fill-opacity='0.2' d='M0 0h100v10H0zm0 20h100v10H0zm0 20h100v10H0zm0 20h100v10H0zm0 20h100v10H0z'/%3E%3C/svg%3E\")",
-                        opacity: 0.6
+                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpath fill='%23603813' fill-opacity='0.35' d='M0 0c20 8 40 12 60 13 20 0 40-3 60-9s40-14 60-18c4-1 8-2 12-2 2 0 4 0 6 1v215H0V0z'/%3E%3C/svg%3E\"), url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23A67C52' fill-opacity='0.2' d='M0 0h100v10H0zm0 20h100v10H0zm0 20h100v10H0zm0 20h100v10H0zm0 20h100v10H0z'/%3E%3C/svg%3E\")",
+                        backgroundSize: "cover, 100px 100px",
+                        opacity: 0.9
                       }}
                     />
                     
-                    {/* Chest details - wooden planks */}
+                    {/* Realistic wooden planks with grain and nails */}
                     <div className="absolute top-0 left-0 w-full h-full flex flex-col">
-                      <div className="h-1/3 border-b-2 border-yellow-950"></div>
-                      <div className="h-1/3 border-b-2 border-yellow-950"></div>
-                      <div className="h-1/3"></div>
+                      <div className="h-1/3 border-b-2 border-[#3A2311] relative">
+                        {/* Nail details */}
+                        <div className="absolute bottom-1 left-[10%] w-2 h-2 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-sm"></div>
+                        <div className="absolute bottom-1 right-[10%] w-2 h-2 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-sm"></div>
+                      </div>
+                      <div className="h-1/3 border-b-2 border-[#3A2311] relative">
+                        {/* Nail details */}
+                        <div className="absolute bottom-1 left-[20%] w-2 h-2 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-sm"></div>
+                        <div className="absolute bottom-1 right-[20%] w-2 h-2 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-sm"></div>
+                      </div>
+                      <div className="h-1/3 relative">
+                        {/* Nail details */}
+                        <div className="absolute bottom-3 left-[15%] w-2 h-2 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-sm"></div>
+                        <div className="absolute bottom-3 right-[15%] w-2 h-2 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-sm"></div>
+                      </div>
                     </div>
                     
-                    {/* Metal decorations - with gold accents */}
-                    <div className="absolute top-1/4 left-4 w-4 h-16 bg-gradient-to-b from-yellow-500 to-yellow-700 rounded-full border border-yellow-950 shadow-inner"></div>
-                    <div className="absolute top-1/4 right-4 w-4 h-16 bg-gradient-to-b from-yellow-500 to-yellow-700 rounded-full border border-yellow-950 shadow-inner"></div>
+                    {/* Metal corner reinforcements - more realistic */}
+                    <div className="absolute top-0 left-0 w-[15%] h-[15%] border-r-2 border-b-2 border-[#3A2311] bg-gradient-to-br from-[#B8860B] to-[#8B6914] rounded-tl-lg"></div>
+                    <div className="absolute top-0 right-0 w-[15%] h-[15%] border-l-2 border-b-2 border-[#3A2311] bg-gradient-to-bl from-[#B8860B] to-[#8B6914] rounded-tr-lg"></div>
+                    <div className="absolute bottom-0 left-0 w-[15%] h-[15%] border-r-2 border-t-2 border-[#3A2311] bg-gradient-to-tr from-[#B8860B] to-[#8B6914] rounded-bl-lg"></div>
+                    <div className="absolute bottom-0 right-0 w-[15%] h-[15%] border-l-2 border-t-2 border-[#3A2311] bg-gradient-to-tl from-[#B8860B] to-[#8B6914] rounded-br-lg"></div>
                     
-                    {/* Front lock with key hole */}
+                    {/* Metal band reinforcements with rivets */}
+                    <div className="absolute top-[20%] left-0 w-full h-[5%] bg-gradient-to-r from-[#B8860B] via-[#DAA520] to-[#B8860B] opacity-80">
+                      {/* Rivets */}
+                      <div className="absolute top-1/2 left-[10%] w-3 h-3 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311] transform -translate-y-1/2"></div>
+                      <div className="absolute top-1/2 right-[10%] w-3 h-3 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311] transform -translate-y-1/2"></div>
+                    </div>
+                    
+                    <div className="absolute bottom-[20%] left-0 w-full h-[5%] bg-gradient-to-r from-[#B8860B] via-[#DAA520] to-[#B8860B] opacity-80">
+                      {/* Rivets */}
+                      <div className="absolute top-1/2 left-[10%] w-3 h-3 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311] transform -translate-y-1/2"></div>
+                      <div className="absolute top-1/2 right-[10%] w-3 h-3 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311] transform -translate-y-1/2"></div>
+                    </div>
+                    
+                    {/* Front lock with ornate key hole - more detailed and realistic */}
                     <motion.div 
-                      className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-b from-amber-500 to-amber-700 rounded-md border-2 border-yellow-950 shadow-lg"
+                      className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gradient-to-b from-[#DAA520] to-[#8B6914] rounded-md border-2 border-[#3A2311] shadow-lg overflow-hidden"
+                      style={{ boxShadow: "inset 0 2px 4px rgba(255,223,0,0.3), inset 0 -2px 4px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.3)" }}
                       animate={{ 
                         rotateY: isChestOpen ? [0, 45, 0, -45, 0] : 0,
                         scale: isChestOpen ? [1, 1.1, 0.9, 1] : 1
@@ -304,48 +333,32 @@ export default function PartnersPage() {
                         ease: "easeInOut"
                       }}
                     >
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gray-800 rounded-full shadow-inner">
-                        {/* Key hole detail */}
-                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[40%] h-[70%] bg-black rounded-b-sm"></div>
+                      {/* Ornate border around keyhole */}
+                      <div className="absolute inset-2 border-2 border-[#B8860B] rounded-sm"></div>
+                      
+                      {/* Key hole with more realistic details */}
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gradient-to-b from-gray-900 to-gray-700 rounded-full shadow-inner" 
+                           style={{ boxShadow: "inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 2px rgba(255,215,0,0.2)" }}>
+                        {/* Key slot detail */}
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[40%] h-[70%] bg-black rounded-b-sm"
+                             style={{ boxShadow: "inset 0 -2px 2px rgba(255,255,255,0.1)" }}></div>
                       </div>
+                      
+                      {/* Decorative rivets on lock */}
+                      <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311]"></div>
+                      <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311]"></div>
+                      <div className="absolute bottom-2 left-2 w-2 h-2 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311]"></div>
+                      <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border border-[#3A2311]"></div>
                     </motion.div>
-
-                    {/* Gold coins peeking from bottom when chest is open */}
-                    <AnimatePresence>
-                      {isChestOpen && (
-                        <motion.div
-                          className="absolute bottom-0 left-0 w-full"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5, duration: 0.5 }}
-                        >
-                          <div className="flex justify-center">
-                            {[...Array(8)].map((_, i) => (
-                              <motion.div
-                                key={i}
-                                className="w-6 h-6 bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full border border-amber-600 shadow-md mx-[-5px]"
-                                initial={{ y: 20 }}
-                                animate={{ y: i % 2 === 0 ? -2 : -5 }}
-                                transition={{
-                                  delay: 0.6 + (i * 0.05),
-                                  duration: 0.3,
-                                  ease: "easeOut"
-                                }}
-                              />
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </div>
                 </div>
                 
-                {/* Chest lid - animated */}
+                {/* Chest lid - enhanced with more realistic details */}
                 <motion.div 
-                  className="absolute top-[15%] left-1/2 transform -translate-x-1/2 w-[95%] h-[30%] origin-bottom"
+                  className="absolute top-[10%] left-1/2 transform -translate-x-1/2 w-[95%] h-[35%] origin-bottom"
                   animate={{ 
-                    rotateX: isChestOpen ? -100 : 0,
-                    y: isChestOpen ? -10 : 0
+                    rotateX: isChestOpen ? -105 : 0,
+                    y: isChestOpen ? -15 : 0
                   }}
                   transition={{ 
                     duration: 1.2, 
@@ -357,75 +370,135 @@ export default function PartnersPage() {
                     zIndex: isChestOpen ? 0 : 1
                   }}
                 >
-                  {/* Lid top */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-amber-700 to-amber-900 rounded-t-xl border-4 border-yellow-950 shadow-xl">
-                    {/* Wood texture */}
+                  {/* Lid top - enhanced with curved top for more realistic treasure chest look */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#8B572A] via-[#704214] to-[#5D370F] rounded-t-xl border-4 border-[#3A2311] shadow-xl"
+                       style={{ boxShadow: "inset 0 5px 15px rgba(255,248,220,0.1), 0 5px 15px rgba(0,0,0,0.3)" }}>
+                    {/* Curved top effect with gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-20 rounded-t-xl"></div>
+                    
+                    {/* Rich wood grain texture */}
                     <div 
-                      className="absolute inset-0" 
+                      className="absolute inset-0 mix-blend-overlay rounded-t-xl" 
                       style={{
-                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23B85C00' fill-opacity='0.2' d='M0 0h100v20H0z'/%3E%3C/svg%3E\")",
-                        opacity: 0.6
+                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpath fill='%23603813' fill-opacity='0.35' d='M0 0c20 8 40 12 60 13 20 0 40-3 60-9s40-14 60-18c4-1 8-2 12-2 2 0 4 0 6 1v215H0V0z'/%3E%3C/svg%3E\")",
+                        backgroundSize: "cover",
+                        opacity: 0.9
                       }}
                     />
                     
-                    {/* Lid details */}
-                    <div className="absolute top-0 left-0 w-full h-full">
-                      <div className="h-1/2 border-b-2 border-yellow-950"></div>
+                    {/* Ornate metal reinforcement on lid top - more decorative */}
+                    <div className="absolute top-[20%] left-0 w-full h-[10%]">
+                      <div className="w-full h-full bg-gradient-to-r from-[#B8860B] via-[#DAA520] to-[#B8860B] opacity-80">
+                        {/* Decorative pattern */}
+                        <div className="absolute inset-0 flex justify-around items-center">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className="w-6 h-2 bg-gradient-to-b from-[#FFD700] to-[#DAA520] rounded-full border border-[#3A2311] opacity-90"></div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                     
-                    {/* Decorative metal band */}
-                    <div className="absolute top-1/2 left-0 w-full h-2 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 shadow-sm"></div>
-                    
-                    {/* Metal decorations on lid with gold inlays */}
-                    <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-20 h-8 bg-gradient-to-b from-amber-600 to-amber-800 rounded-md border-2 border-yellow-950 overflow-hidden shadow-md">
-                      {/* Gold inlay pattern */}
-                      <div className="w-full h-full grid grid-cols-3 gap-px">
+                    {/* Ornate metal centerpiece on lid - more detailed and realistic */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-12 bg-gradient-to-b from-[#DAA520] to-[#B8860B] rounded-lg border-2 border-[#3A2311] overflow-hidden shadow-lg"
+                         style={{ boxShadow: "inset 0 2px 4px rgba(255,223,0,0.4), 0 2px 4px rgba(0,0,0,0.3)" }}>
+                      
+                      {/* Ornate border */}
+                      <div className="absolute inset-1 border border-[#B8860B] rounded"></div>
+                      
+                      {/* Gold inlay pattern - more intricate design */}
+                      <div className="w-full h-full grid grid-cols-3 gap-[1px]">
                         {[...Array(6)].map((_, i) => (
-                          <div key={i} className="bg-gradient-to-br from-yellow-300 to-yellow-500 opacity-80" />
+                          <div key={i} className="bg-gradient-to-br from-[#FFD700] to-[#DAA520] flex items-center justify-center">
+                            <div className="w-[70%] h-[70%] rounded-full bg-gradient-to-br from-[#FFD700] to-[#B8860B] border-[0.5px] border-[#3A2311]"></div>
+                          </div>
                         ))}
                       </div>
                     </div>
+                    
+                    {/* Corner reinforcements */}
+                    <div className="absolute top-0 left-0 w-[15%] h-[20%] bg-gradient-to-br from-[#B8860B] to-[#8B6914] rounded-tr-lg border-r border-b border-[#3A2311]"></div>
+                    <div className="absolute top-0 right-0 w-[15%] h-[20%] bg-gradient-to-bl from-[#B8860B] to-[#8B6914] rounded-tl-lg border-l border-b border-[#3A2311]"></div>
                   </div>
                   
-                  {/* Lid interior (showing when opened) */}
+                  {/* Lid interior - enhanced with more detail */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-r from-amber-900 to-amber-950 rounded-t-xl border-4 border-yellow-950"
+                    className="absolute inset-0 bg-gradient-to-r from-[#5D370F] to-[#3A2311] rounded-t-xl border-4 border-[#3A2311]"
                     style={{
                       transform: "rotateX(180deg) translateZ(-4px)",
                       backfaceVisibility: "hidden",
+                      boxShadow: "inset 0 -2px 8px rgba(0,0,0,0.5)"
                     }}
                   >
-                    {/* Interior wood grain */}
+                    {/* Interior wood grain - more refined texture */}
                     <div 
-                      className="absolute inset-0 opacity-30" 
+                      className="absolute inset-0 opacity-40" 
                       style={{
-                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='%23805500' fill-opacity='0.3' d='M0 0h20v20H0V0zm20 20h20v20H20V20z'/%3E%3C/svg%3E\")"
+                        backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='%23805500' fill-opacity='0.3' d='M0 0h20v20H0V0zm20 20h20v20H20V20z'/%3E%3C/svg%3E\")",
+                        backgroundSize: "30px 30px"
                       }}
                     />
+                    
+                    {/* Interior staining and aging effects */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-20"></div>
+                    <div className="absolute top-1/3 left-1/4 w-1/2 h-1/3 bg-black opacity-10 blur-md rounded-full"></div>
                   </div>
                 </motion.div>
                 
-                {/* Chest shine effects */}
+                {/* Enhanced chest shine and light effects */}
                 <motion.div 
-                  className="absolute top-1/4 left-1/4 w-1/2 h-1/6 bg-white opacity-0 rounded-full blur-md"
+                  className="absolute top-1/3 left-1/4 w-1/2 h-1/6 bg-white opacity-0 rounded-full blur-lg"
                   animate={{ 
-                    opacity: isChestOpen ? [0, 0.3, 0] : [0, 0.15, 0],
-                    scale: isChestOpen ? [0.8, 1.2, 0.8] : [0.9, 1.1, 0.9]
+                    opacity: isChestOpen ? [0, 0.4, 0] : [0, 0.2, 0],
+                    scale: isChestOpen ? [0.8, 1.3, 0.8] : [0.9, 1.1, 0.9],
+                    width: isChestOpen ? ["50%", "60%", "50%"] : ["50%", "55%", "50%"]
                   }}
                   transition={{ 
-                    duration: 2,
+                    duration: 3,
                     repeat: Infinity,
                     repeatType: "reverse"
                   }}
                 />
                 
-                {/* Click indicator if chest is not open */}
+                {/* Additional ambient light effects */}
+                {isChestOpen && (
+                  <>
+                    <motion.div 
+                      className="absolute top-0 left-1/3 w-1/3 h-1/4 bg-[#FFD700] opacity-0 rounded-full blur-xl"
+                      animate={{ 
+                        opacity: [0, 0.15, 0],
+                        scale: [1, 1.2, 1] 
+                      }}
+                      transition={{ 
+                        duration: 2.5,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        delay: 0.5
+                      }}
+                    />
+                    <motion.div 
+                      className="absolute top-1/4 right-1/4 w-1/5 h-1/5 bg-[#FFD700] opacity-0 rounded-full blur-lg"
+                      animate={{ 
+                        opacity: [0, 0.2, 0],
+                        scale: [1, 1.1, 1] 
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        delay: 1
+                      }}
+                    />
+                  </>
+                )}
+                
+                {/* Enhanced click indicator if chest is not open */}
                 {!isChestOpen && (
                   <motion.div
-                    className="absolute bottom-[15%] left-1/2 transform -translate-x-1/2 text-amber-200 text-xl"
+                    className="absolute bottom-[15%] left-1/2 transform -translate-x-1/2 text-amber-200 text-xl font-bold"
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: [0.5, 1, 0.5], y: [-5, 0, -5] }}
                     transition={{ duration: 2, repeat: Infinity }}
+                    style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
                   >
                     ↓ Kliknij aby otworzyć ↓
                   </motion.div>
@@ -451,159 +524,114 @@ export default function PartnersPage() {
             {goldenBarsVisible && (
               <motion.div 
                 ref={gridRef}
-                className={`${barsInGrid ? styles.gridContainer : 'relative'} w-full h-full mt-16`}
+                className={`${styles.gridContainer} w-full h-full mt-16`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
+                transition={{ duration: 0.5 }}
               >
                 {partners.map((partner, idx) => {
-                  // Grid layout position calculation
-                  const gridRow = Math.floor(idx / 3);
-                  const gridCol = idx % 3;
-                  
-                  // Random variations for non-grid layout
-                  const row = Math.floor(idx / 4); 
-                  const col = idx % 4;
-                  const isEvenRow = row % 2 === 0;
-                  const xOffset = isEvenRow ? 0 : 40;
-                  const colPosition = isEvenRow ? col : (3 - col);
-                  
-                  // Random variations
-                  const randomRotateZ = Math.random() * 40 - 20;
-                  const randomScale = 0.9 + (Math.random() * 0.2);
-                  const randomDelay = Math.random() * 0.3;
-                  
-                  const isSelected = selectedPartner === partner.id;
-                  
+                  // Animation sequence delay - purely sequential
+                  const sequentialDelay = 0.15 * idx + 0.2;
                   return (
                     <motion.div
                       key={partner.id}
-                      className={`${barsInGrid ? styles.gridItem : 'absolute left-1/2'}`}
-                      initial={{ 
-                        y: -150, 
-                        x: 0,
+                      className={`${styles.gridItem}`}
+                      initial={{
+                        y: -200,
+                        x: -100 + (idx % 3) * 50,
                         opacity: 0,
                         rotateX: 60,
                         rotateY: 30,
-                        rotateZ: randomRotateZ * 3,
-                        scale: 0
+                        rotateZ: 180 - (idx * 30) % 360,
+                        scale: 0.1
                       }}
-                      animate={barsInGrid ? {
+                      animate={{
+                        y: 0,
+                        x: 0,
                         opacity: 1,
                         rotateX: 0,
                         rotateY: 0,
                         rotateZ: 0,
-                        scale: isSelected ? 1.05 : 1,
-                        zIndex: isSelected ? 10 : 0
-                      } : { 
-                        y: 20 + (row * 60) + (Math.random() * 20),
-                        x: ((colPosition - 1.5) * 130) + xOffset + (Math.random() * 20 - 10),
-                        opacity: 1,
-                        rotateX: Math.random() * 10 - 5,
-                        rotateY: Math.random() * 10 - 5,
-                        rotateZ: randomRotateZ,
-                        scale: randomScale,
+                        scale: 1,
                         zIndex: 0
                       }}
-                      transition={ barsInGrid ? { 
-                        type: "spring",
-                        damping: 15,
-                        stiffness: 100,
-                        duration: 0.8
-                      } : { 
-                        type: "spring",
-                        stiffness: 70,
-                        damping: 15,
-                        mass: 2,
-                        delay: (0.15 * idx) + 1 + randomDelay
+                      transition={{
+                        type: "spring", 
+                        stiffness: 120,
+                        damping: 18,
+                        mass: 0.7,
+                        delay: sequentialDelay,
+                        duration: 0.5
                       }}
-                      onClick={() => handlePartnerClick(partner.id)}
                       whileHover={{ 
-                        scale: 1.05,
-                        zIndex: 10, 
-                        transition: { duration: 0.3 }
+                        scale: 1.08,
+                        y: -5,
+                        zIndex: 10,
+                        rotateY: 5,
+                        rotateX: -5,
+                        boxShadow: "0 15px 30px rgba(255, 215, 0, 0.4), 0 5px 15px rgba(0,0,0,0.5)",
+                        transition: { duration: 0.15 }
                       }}
                     >
-                      <motion.div 
-                        className="w-full h-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-500 rounded-lg border-2 border-yellow-600 shadow-lg flex flex-col relative"
-                        style={{ 
-                          boxShadow: isSelected ? 
-                            "0 0 30px rgba(255, 215, 0, 0.8), inset 0 2px 6px rgba(255,255,255,0.8)" :
-                            "0 4px 12px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.6)" 
-                        }}
+                      {/* Use an anchor tag that covers the entire gold bar to ensure full clickability */}
+                      <a 
+                        href={partner.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full h-full"
+                        title={`Przejdź do strony partnera: ${partner.name}`}
+                        aria-label={`Przejdź do strony partnera: ${partner.name}`}
+                        style={{ cursor: 'pointer' }}
                       >
-                        {/* Gold bar texture */}
-                        <div 
-                          className="absolute inset-0 opacity-30" 
-                          style={{
-                            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
-                          }}
-                        />
-                        
-                        {/* Gold bar shine effect */}
-                        <motion.div 
-                          className={styles.goldBarShine}
-                          initial={{ left: "-100%" }}
-                          animate={{ left: "200%" }}
-                          transition={{ 
-                            repeat: Infinity, 
-                            duration: 3,
-                            delay: idx * 0.2
-                          }}
-                        />
-                        
-                        {/* Partner logo and info */}
-                        <div className="flex flex-col h-full">
-                          {/* Partner logo area */}
-                          <div className="flex-grow flex items-center justify-center p-3">
-                            <div className="w-full h-full bg-white rounded-md overflow-hidden flex items-center justify-center shadow-inner">
-                              <img
-                                src={partner.logo}
-                                alt={partner.name}
-                                className="w-[80%] h-[80%] object-contain"
-                              />
-                            </div>
+                        <div className={`w-full h-full ${styles.goldBar} flex flex-col relative`}>
+                          {/* Gold bar beveled edges */}
+                          <div className="absolute inset-0">
+                            {/* Top beveled edge - brighter */}
+                            <div className="absolute top-0 left-0 right-0 h-[8%] bg-gradient-to-b from-yellow-100 to-transparent opacity-90 rounded-t"></div>
+                            
+                            {/* Bottom beveled edge - darker */}
+                            <div className="absolute bottom-0 left-0 right-0 h-[8%] bg-gradient-to-t from-amber-900 to-transparent opacity-70 rounded-b"></div>
+                            
+                            {/* Side bevels for more 3D look */}
+                            <div className="absolute top-[10%] bottom-[10%] left-0 w-[4%] bg-gradient-to-r from-amber-900 to-transparent opacity-50"></div>
+                            <div className="absolute top-[10%] bottom-[10%] right-0 w-[4%] bg-gradient-to-l from-amber-900 to-transparent opacity-50"></div>
                           </div>
                           
-                          {/* Partner name */}
-                          <div className="text-center p-2 bg-amber-600 text-white font-bold rounded-b-md">
-                            {partner.name}
+                          {/* Gold bar texture - more realistic gold ingot texture */}
+                          <div 
+                            className="absolute inset-0 opacity-40" 
+                            style={{
+                              backgroundImage: "linear-gradient(135deg, transparent 75%, rgba(255, 223, 0, 0.8) 75%, transparent 76%, transparent 83%, rgba(255, 223, 0, 0.8) 83%, transparent 84%), linear-gradient(45deg, transparent 75%, rgba(255, 223, 0, 0.8) 75%, transparent 76%, transparent 83%, rgba(255, 223, 0, 0.8) 83%, transparent 84%)",
+                              backgroundSize: "30px 30px",
+                              backgroundPosition: "0 0, 15px 15px"
+                            }}
+                          />
+                          
+                          {/* Partner logo and info */}
+                          <div className="relative flex flex-col h-full z-10">
+                            {/* Gold bar hallmark/stamp look */}
+                            <div className="absolute top-2 left-2 text-xs font-bold text-amber-900 opacity-80" style={{textShadow: "0px 1px 1px rgba(255, 215, 0, 0.5)"}}>999.9</div>
+                            <div className="absolute top-2 right-2 text-xs font-bold text-amber-900 opacity-80" style={{textShadow: "0px 1px 1px rgba(255, 215, 0, 0.5)"}}>24K</div>
+                            <div className="absolute bottom-[35px] right-2 text-xs font-bold text-amber-900 opacity-80" style={{textShadow: "0px 1px 1px rgba(255, 215, 0, 0.5)"}}>WTYCZKA</div>
+                            
+                            {/* Partner logo area with embossed effect */}
+                            <div className="flex-grow flex items-center justify-center p-3">
+                              <div className="w-full h-full bg-gradient-to-br from-white to-gray-100 rounded-md overflow-hidden flex items-center justify-center border-2 border-amber-700" style={{boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1), 0 1px 3px rgba(255,215,0,0.3)"}}>
+                                <img
+                                  src={partner.logo}
+                                  alt={partner.name}
+                                  className="w-[80%] h-[80%] object-contain"
+                                />
+                              </div>
+                            </div>
+                            
+                            {/* Partner name with metallic effect */}
+                            <div className="text-center p-2 bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 text-yellow-100 font-bold rounded-b" style={{textShadow: "0px 1px 2px rgba(0,0,0,0.5)"}}>
+                              {partner.name}
+                            </div>
                           </div>
                         </div>
-                        
-                        {/* Partner details - shows when selected */}
-                        <AnimatePresence>
-                          {isSelected && (
-                            <motion.div 
-                              className="absolute inset-0 bg-amber-800 bg-opacity-95 rounded-lg p-4 flex flex-col"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <h3 className="text-lg font-bold text-amber-100 mb-2">{partner.name}</h3>
-                              <p className="text-amber-100 text-sm mb-3">{partner.description}</p>
-                              <a 
-                                href={partner.url} 
-                                target="_blank"
-                                rel="noopener noreferrer" 
-                                className="mt-auto bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-500 text-center"
-                              >
-                                Odwiedź stronę
-                              </a>
-                              <button 
-                                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedPartner(null);
-                                }}
-                              >
-                                ✕
-                              </button>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
+                      </a>
                     </motion.div>
                   );
                 })}
@@ -615,17 +643,18 @@ export default function PartnersPage() {
       
       {/* Western-themed footer */}
       <div className="mt-24 mb-8 w-full text-center">
-        <div className="inline-block px-8 py-2 border-t-2 border-b-2 border-amber-500">
-          <p className="text-amber-200 text-xl font-bold" style={{ fontFamily: "fantasy, 'Copperplate Gothic', serif" }}>
+        <div className="inline-block px-8 py-3 border-t-2 border-b-2 border-amber-500">
+          <p className="text-amber-200 text-3xl font-bold" style={{ fontFamily: "fantasy, 'Copperplate Gothic', serif", textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}>
             Razem tworzymy prawdziwą kopalnię możliwości!
           </p>
         </div>
         {isChestOpen && (
           <motion.p 
-            className="mt-4 text-amber-300 italic"
+            className="mt-5 text-amber-300 text-2xl italic font-bold"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 3 }}
+            style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.5)" }}
           >
             Każdy partner jest na wagę złota!
           </motion.p>

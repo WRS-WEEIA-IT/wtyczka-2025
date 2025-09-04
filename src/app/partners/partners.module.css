@@ -34,41 +34,46 @@
 .gridContainer {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 24px;
+  grid-gap: 30px;
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+  min-height: 400px; /* Ensure enough space for the animation */
 }
 
 /* Grid item styling */
 .gridItem {
-  aspect-ratio: 1/1.2;
+  aspect-ratio: 16/9; /* Wider, more rectangular gold bar shape */
   transform-style: preserve-3d;
   cursor: pointer;
+  position: relative; /* Important for proper animation */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .gridItem:hover {
   z-index: 10;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(255, 187, 0, 0.4);
+  cursor: pointer;
+  position: relative;
 }
 
-/* Gold bar shine effect */
-.goldBarShine {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.5) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: skewX(-25deg);
-  pointer-events: none;
+/* Gold bar styling */
+.goldBar {
+  background: linear-gradient(165deg, #ffd700 0%, #e6b800 20%, #d4af37 40%, #b8860b 65%, #cd7f32 100%);
+  border-radius: 4px;
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.3),
+    inset 0 2px 6px rgba(255,255,255,0.6);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  /* More realistic gold bar 3D effect */
+  border-left: 4px solid #b7801e;
+  border-right: 4px solid #b7801e;
+  border-top: 2px solid #ffd95b;
+  border-bottom: 6px solid #8e5b0a;
 }
 
 /* Desert dust particles effect */
