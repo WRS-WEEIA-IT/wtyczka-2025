@@ -54,7 +54,7 @@ export default function HomePage() {
   }, []);
 
   return (
-  <div className="min-h-screen flex flex-col bg-black font-sans" style={{ backgroundImage: 'url("/wood-texture.jpg")', backgroundSize: 'cover', backgroundAttachment: 'fixed', filter: 'sepia(0.10)' }}>
+  <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-black via-[#18181b] to-[#E7A801]">
       {/* Hero Section */}
       <section className="relative text-white overflow-hidden shadow-[0_4px_16px_#000a] bg-gradient-to-b from-black/90 via-[#18181b]/95 to-black/90">
   <div className="relative max-w-4xl mx-auto px-4 py-10 text-center flex flex-col justify-center items-center rounded-2xl shadow-2xl" style={{ boxShadow: '0 0 30px #000a' }}>

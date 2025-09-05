@@ -1,18 +1,103 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Menu, X, LogOut, Users, Globe } from "lucide-react";
+import { Menu, X, LogOut, Users } from "lucide-react";
 import AuthModal from "./AuthModal";
 import Link from "next/link";
+import "./western-navbar.css";
 
 export default function Navbar() {
   const { user, authLogout } = useAuth();
-
   const { language, setLanguage, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Import necessary modules only on the client side
+  useEffect(() => {
+    // Create audio context for sound effects (to ensure they can play)
+    const initializeAudio = () => {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContext) {
+        const audioCtx = new AudioContext();
+        audioCtx.resume().catch(console.error);
+      }
+    };
+    
+    document.addEventListener('click', initializeAudio, { once: true });
+    
+    // Preload sound and images
+    const preloadResources = () => {
+      // Preload gunshot sound
+      const audio = new Audio();
+      audio.src = '/western/gunshot.mp3';
+      
+      // Preload images
+      const imageUrls = ['/western/wooden-sign.png', '/western/bullet-hole.png', '/western/wooden-background.jpg'];
+      imageUrls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+      });
+    };
+    
+    // Handle responsive menu based on screen size
+    const handleResize = () => {
+      const isMobileView = window.innerWidth < 768;
+      setIsMobile(isMobileView);
+      if (!isMobileView && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+    
+    // Initial check
+    handleResize();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+    
+    preloadResources();
+    
+    return () => {
+      document.removeEventListener('click', initializeAudio);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isMenuOpen]);
+
+  const handleNavigation = (e: React.MouseEvent, href: string) => {
+    // Prevent default navigation
+    e.preventDefault();
+    
+    // Get click coordinates
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    // Create bullet hole
+    const bulletHole = document.createElement('div');
+    bulletHole.className = 'bullet-hole';
+    bulletHole.style.left = `${x - 10}px`;
+    bulletHole.style.top = `${y - 10}px`;
+    document.body.appendChild(bulletHole);
+    
+  // (Removed gunshot flash effect)
+    
+    // Play gunshot sound
+    try {
+      const gunshotSound = new Audio('/western/gunshot.mp3');
+      gunshotSound.volume = 0.3;
+      gunshotSound.play().catch(e => console.log('Audio playback error:', e));
+    } catch (error) {
+      console.error("Audio error:", error);
+    }
+    
+  // (No flash effect to remove)
+    
+    // Navigate after a delay (0.5s)
+    setTimeout(() => {
+      window.location.href = href;
+    }, 750); // 0.5 second delay
+  };
 
   const handleLogout = async () => {
     try {
@@ -22,239 +107,228 @@ export default function Navbar() {
     }
   };
 
-  const toggleLanguage = () => {
-    setLanguage(language === "pl" ? "en" : "pl");
-  };
+  // Usunięto funkcję przełączania języków
 
   return (
     <>
-      <nav className="bg-black text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center"></div>
-
+      <nav className="western-navbar sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6" style={{ width: "100%" }}>
+          <div className="flex justify-center items-center w-full">
+            {/* Mobile menu button - only show in mobile view */}
+            {isMobile && (
+              <div className="md:hidden">
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="western-icon-button"
+                >
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </div>
+            )}
+            
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/" className="hover:text-amber-200 transition-colors">
+            {!isMobile && (
+              <div className="hidden md:flex flex-wrap justify-center items-center gap-3 py-2 western-nav-container mx-auto" style={{ margin: "0 auto", width: "100%", justifyContent: "center" }}>
+              <a 
+                href="/" 
+                className="western-button"
+                onClick={(e) => handleNavigation(e, "/")}
+              >
                 {t.nav.home}
-              </Link>
+              </a>
 
-              <Link
+              <a
                 href="/news"
-                className="hover:text-amber-200 transition-colors"
+                className="western-button"
+                onClick={(e) => handleNavigation(e, "/news")}
               >
                 {t.nav.news}
-              </Link>
+              </a>
 
-               <Link
+               <a
                  href="/partners"
-                 className="hover:text-amber-200 transition-colors"
+                 className="western-button"
+                 onClick={(e) => handleNavigation(e, "/partners")}
                >
                  {t.nav.partners}
-               </Link>
+               </a>
 
               {user && (
                 <>
                   <div className="relative group">
-                    <button className="hover:text-amber-200 transition-colors flex items-center space-x-1">
-                      <Users size={16} />
-                      <span>{t.nav.participantInfo}</span>
+                    <button className="western-button">
+                      {t.nav.participantInfo}
                     </button>
-                    <div className="absolute top-full left-0 mt-1 bg-amber-800 rounded-md shadow-lg py-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                      <Link
+                    <div className="western-parent-chain group-hover:opacity-100 group-hover:visible opacity-0 invisible transition-all duration-300">
+                      <div className="western-parent-chain-link"></div>
+                      <div className="western-parent-chain-link"></div>
+                    </div>
+                    <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                      <a
                         href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block px-4 py-2 hover:bg-amber-700"
+                        className="western-dropdown-item"
                       >
                         {t.nav.regulations}
-                      </Link>
-                      <Link
+                      </a>
+                      <div className="chain-container">
+                        <div className="chain-link"></div>
+                        <div className="chain-link"></div>
+                      </div>
+                      <a
                         href="/essentials"
-                        className="block px-4 py-2 hover:bg-amber-700"
+                        className="western-dropdown-item"
+                        onClick={(e) => handleNavigation(e, "/essentials")}
                       >
                         {t.nav.essentials}
-                      </Link>
-                      <Link
+                      </a>
+                      <div className="chain-container">
+                        <div className="chain-link"></div>
+                        <div className="chain-link"></div>
+                      </div>
+                      <a
                         href="/faq"
-                        className="block px-4 py-2 hover:bg-amber-700"
+                        className="western-dropdown-item"
+                        onClick={(e) => handleNavigation(e, "/faq")}
                       >
                         {t.nav.faq}
-                      </Link>
-                      <Link
+                      </a>
+                      <div className="chain-container">
+                        <div className="chain-link"></div>
+                        <div className="chain-link"></div>
+                      </div>
+                      <a
                         href="/contacts"
-                        className="block px-4 py-2 hover:bg-amber-700"
+                        className="western-dropdown-item"
+                        onClick={(e) => handleNavigation(e, "/contacts")}
                       >
                         {t.nav.contacts}
-                      </Link>
+                      </a>
                     </div>
                   </div>
 
-                  <Link
-                    href="/registration"
-                    className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-md transition-colors"
-                  >
-                    Formularz rejestracji
-                  </Link>
-
-                  <Link
+                  <a
                     href="/status"
-                    className="hover:text-amber-200 transition-colors"
+                    className="western-button"
+                    onClick={(e) => handleNavigation(e, "/status")}
                   >
                     Status
-                  </Link>
+                  </a>
                 </>
               )}
 
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center space-x-1 hover:text-amber-200 transition-colors"
-              >
-                <Globe size={16} />
-                <span>{language.toUpperCase()}</span>
-              </button>
-
               {user ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-amber-200">
-                    Witaj,
-                    {` ${
-                      user.user_metadata.name
-                        ? user.user_metadata.name
-                        : user.email
-                    }`}
-                  </span>
+                <div className="flex items-center">
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 hover:text-amber-200 transition-colors"
+                    className="western-button"
                   >
-                    <LogOut size={16} />
-                    <span>{t.nav.logout}</span>
+                    {t.nav.logout}
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-md transition-colors"
+                  className="western-login-button"
                 >
                   {t.nav.login} / {t.nav.register}
                 </button>
               )}
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-[#E7A801] hover:text-amber-200"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
+              </div>
+            )}
+            
+            {/* Empty div for layout balance on mobile */}
+            <div className="md:hidden">
+              {/* Placeholder for layout balance */}
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-[#E7A801]">
-              <div className="flex flex-col space-y-3">
-                <Link
+          {isMenuOpen && isMobile && (
+            <div className="md:hidden py-2 border-t border-[#8B4513] western-mobile-menu w-full">
+              <div className="flex flex-col space-y-2 px-2 pb-2 overflow-y-auto overflow-x-hidden max-h-screen">
+                <a
                   href="/"
-                  className="hover:text-amber-200 transition-colors"
+                  className="western-button text-center"
+                  onClick={(e) => handleNavigation(e, "/")}
                 >
                   {t.nav.home}
-                </Link>
+                </a>
 
-                <Link
+                <a
                   href="/news"
-                  className="hover:text-amber-200 transition-colors"
+                  className="western-button text-center"
+                  onClick={(e) => handleNavigation(e, "/news")}
                 >
                   {t.nav.news}
-                </Link>
+                </a>
 
-                 <Link
-                   href="/partners"
-                   className="hover:text-amber-200 transition-colors"
-                 >
-                   {t.nav.partners}
-                 </Link>
+                <a
+                  href="/partners"
+                  className="western-button text-center"
+                  onClick={(e) => handleNavigation(e, "/partners")}
+                >
+                  {t.nav.partners}
+                </a>
 
                 {user && (
                   <>
-                    <div className="pl-4 space-y-2">
-                      <div className="text-amber-300 font-semibold">
-                        {t.nav.participantInfo}:
-                      </div>
-                      <Link
+                    <div className="space-y-3">
+                      <a
                         href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block px-4 py-2 hover:bg-amber-700"
+                        className="western-dropdown-item mobile-dropdown-item"
                       >
                         {t.nav.regulations}
-                      </Link>
-                      <Link
+                      </a>
+                      <a
                         href="/essentials"
-                        className="block hover:text-amber-200"
+                        className="western-dropdown-item mobile-dropdown-item"
+                        onClick={(e) => handleNavigation(e, "/essentials")}
                       >
                         {t.nav.essentials}
-                      </Link>
-                      <Link href="/faq" className="block hover:text-amber-200">
+                      </a>
+                      <a
+                        href="/faq" 
+                        className="western-dropdown-item mobile-dropdown-item"
+                        onClick={(e) => handleNavigation(e, "/faq")}
+                      >
                         {t.nav.faq}
-                      </Link>
-                      <Link
+                      </a>
+                      <a
                         href="/contacts"
-                        className="block hover:text-amber-200"
+                        className="western-dropdown-item mobile-dropdown-item"
+                        onClick={(e) => handleNavigation(e, "/contacts")}
                       >
                         {t.nav.contacts}
-                      </Link>
+                      </a>
                     </div>
 
-                    <Link
-                      href="/registration"
-                      className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-md transition-colors text-center"
-                    >
-                      Formularz rejestracji
-                    </Link>
-
-                    <Link
+                    <a
                       href="/status"
-                      className="hover:text-amber-200 transition-colors"
+                      className="western-button text-center"
+                      onClick={(e) => handleNavigation(e, "/status")}
                     >
                       Status
-                    </Link>
+                    </a>
                   </>
                 )}
 
-                <button
-                  onClick={toggleLanguage}
-                  className="flex items-center space-x-1 hover:text-amber-200 transition-colors"
-                >
-                  <Globe size={16} />
-                  <span>{language.toUpperCase()}</span>
-                </button>
-
                 {user ? (
-                  <div className="space-y-2">
-                    <div className="text-amber-200">
-                      Witaj
-                      {` ${
-                        user.user_metadata.name
-                          ? user.user_metadata.name
-                          : user.email
-                      }`}
-                    </div>
+                  <div className="space-y-3">
                     <button
                       onClick={handleLogout}
-                      className="flex items-center space-x-1 hover:text-amber-200 transition-colors"
+                      className="western-button mx-auto block"
                     >
-                      <LogOut size={16} />
-                      <span>{t.nav.logout}</span>
+                      {t.nav.logout}
                     </button>
                   </div>
                 ) : (
                   <button
                     onClick={() => setIsAuthModalOpen(true)}
-                    className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-md transition-colors text-center"
+                    className="western-login-button mx-auto block"
                   >
                     {t.nav.login} / {t.nav.register}
                   </button>

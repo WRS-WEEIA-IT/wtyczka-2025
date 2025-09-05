@@ -13,6 +13,12 @@ module.exports = {
                 protocol: 'https',
                 hostname: '**.fbcdn.net',
             },
+            {
+                protocol: 'https',
+                hostname: 'bvzdouqtahdyiaaxywsw.supabase.co',
+                port: '',
+                pathname: '/storage/v1/object/public/post-imgs/**',
+            },
         ],
     },
 };
