@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ABeeZee } from "next/font/google";
 import "./globals.css";
+import "./background-styles.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
@@ -23,11 +24,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body className={`${abeeZee.className} antialiased`}>
+      <body className={`${abeeZee.className} antialiased text-white`}>
+        <div className="background-container">
+          <div className="background-content">
+            <img src="/background.svg" alt="Background" className="background-svg" />
+            <div className="background-overlay-top"></div>
+            <div className="background-overlay-bottom"></div>
+          </div>
+        </div>
         <LanguageProvider>
           <AuthProvider>
             <Navbar />
-            <main className="min-h-screen">{children}</main>
+            <main className="min-h-screen relative z-10">{children}</main>
             <Toaster
               position="bottom-right"
               toastOptions={{

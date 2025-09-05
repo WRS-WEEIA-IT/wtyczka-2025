@@ -54,10 +54,10 @@ export default function HomePage() {
   }, []);
 
   return (
-  <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-black via-[#18181b] to-[#E7A801]">
+  <div className="min-h-screen flex flex-col font-sans">
       {/* Hero Section */}
-      <section className="relative text-white overflow-hidden shadow-[0_4px_16px_#000a] bg-gradient-to-b from-black/90 via-[#18181b]/95 to-black/90">
-  <div className="relative max-w-4xl mx-auto px-4 py-10 text-center flex flex-col justify-center items-center rounded-2xl shadow-2xl" style={{ boxShadow: '0 0 30px #000a' }}>
+      <section className="relative text-white overflow-hidden p-4">
+        <div className="relative max-w-4xl mx-auto px-4 py-10 text-center flex flex-col justify-center items-center home-hero-section">
           <div className="flex flex-col items-center">
             <Image
               src="/logo_czarne_tło.jpg"
@@ -69,17 +69,17 @@ export default function HomePage() {
             />
             <p
               className="text-2xl md:text-3xl m-0 p-0 text-[#E7A801] font-extrabold tracking-widest uppercase drop-shadow-lg western-title"
-              style={{ marginTop: "-2px", letterSpacing: "0.18em", textShadow: '0 2px 8px #000a' }}
+              style={{ marginTop: "-2px" }}
             >
               {t.home.subtitle}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row mt-10 gap-3 w-full justify-center items-center mb-2 mt-2 overflow-x-auto">
+          <div className="flex flex-col sm:flex-row mt-10 gap-3 w-full justify-center items-center mb-2 overflow-x-auto">
             <Link
               href="/registration"
               className="bg-[#E7A801] hover:bg-amber-700 min-w-[160px] max-w-xs w-full rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-black shadow-md transition-colors western-btn"
-              style={{ boxShadow: '0 2px 8px #7c4a0399' }}
+              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
             >
               Zapisz się
             </Link>
@@ -87,62 +87,60 @@ export default function HomePage() {
             <Link
               href="/faq"
               className="bg-[#232323]/90 hover:bg-[#3a2c13] min-w-[160px] max-w-xs w-full rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-[#E7A801] shadow-md transition-colors western-btn"
-              style={{ boxShadow: '0 2px 8px #7c4a0399' }}
+              style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)' }}
             >
               Dowiedz się więcej
             </Link>
-            
           </div>
 
-          <div className="w-full flex justify-center mt-2 mb-2">
+          <div className="w-full flex justify-center mt-5 mb-2">
             <a
               href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wtyczka+2025+-+Wyjazd+Integracyjny&dates=20251023T120000Z/20251023T130000Z&details=Wyjazd+Integracyjny+Wydziału+EEIA+PŁ"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#232323]/90 w-full max-w-xs rounded-lg py-3 px-4 flex flex-row items-center justify-center gap-3 shadow-lg cursor-pointer hover:bg-[#232323] transition"
+              className="bg-[#232323]/80 w-full max-w-xs rounded-lg py-3 px-4 flex flex-row items-center justify-center gap-3 shadow-lg cursor-pointer hover:bg-[#232323] transition"
               title="Dodaj wydarzenie do kalendarza Google"
+              style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)' }}
             >
               <Calendar className="h-7 w-7 text-[#E7A801]" />
               <span className="text-lg font-extrabold tracking-widest uppercase text-[#E7A801]">Pozostało {daysUntilEvent} dni</span>
             </a>
           </div>
 
-          <div className="flex justify-center w-full mt-8 mb-2">
-            <div className="w-full flex justify-center items-center">
-              <span className="text-[#E7A801] text-3xl mx-2 select-none">★ ★ ★</span>
-            </div>
+          <div className="star-divider mt-8 mb-2">
+            <span className="text-[#E7A801] text-3xl select-none">★ ★ ★</span>
           </div>
         </div>
       </section>
 
       {/* Latest News Section */}
-  <section className="py-16 pb-0 pt-0 flex-1 bg-black shadow-[0_-4px_16px_#000a]" style={{ boxShadow: '0 0 20px rgba(0, 0, 0, 1)'  }}>
-  <div className="w-full h-full px-2 sm:px-6 lg:px-8 shadow-lg flex flex-col flex-1 rounded-2xl bg-[#18181b]" style={{ boxShadow: '0 0 20px rgba(0, 0, 0, 1)' }}>
+      <section className="py-8 px-4 flex-1">
+        <div className="w-full h-full px-4 sm:px-6 lg:px-8 flex flex-col flex-1 home-content-container max-w-6xl mx-auto">
           <div className="text-center mb-10 pt-8">
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#E7A801] uppercase tracking-widest drop-shadow-lg western-title">
               {t.home.latestNews}
             </h2>
-            <div className="flex justify-center items-center mt-2 mb-2">
-              <span className="text-[#E7A801] text-2xl mx-2 select-none">★ ★</span>
+            <div className="star-divider">
+              <span className="text-[#E7A801] text-2xl select-none">★ ★</span>
             </div>
             <div className="flex justify-center">
-              <span className="inline-block text-lg text-gray-400 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1">Wiadomości z saloonu</span>
+              <span className="inline-block text-lg text-gray-300 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1">Wiadomości z saloonu</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-4 w-full justify-center max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-6 w-full justify-center max-w-7xl mx-auto">
             <Suspense fallback={<FacebookCardSkeleton />}>
               {facebookPosts.map((post) => (
-                <FacebookCard {...post} className="w-full max-w-2xl cursor-pointer justify-self-center" key={post.id} />
+                <FacebookCard {...post} className="w-full max-w-2xl cursor-pointer justify-self-center shadow-xl hover:shadow-2xl transition-shadow" key={post.id} />
               ))}
             </Suspense>
           </div>
 
-          <div className="text-center mt-8 pb-10">
+          <div className="text-center mt-10 pb-10">
             <Link
               href="/news"
               className="inline-flex items-center space-x-2 bg-[#E7A801] text-black px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest hover:bg-amber-700 transition-colors shadow-md western-btn"
-              style={{ boxShadow: '0 2px 8px #7c4a0399' }}
+              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
             >
               <Facebook className="h-5 w-5" />
               <span>{t.home.viewAllNews}</span>
