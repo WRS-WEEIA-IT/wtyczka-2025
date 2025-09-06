@@ -178,48 +178,48 @@ export default function Navbar() {
                       <div className="western-parent-chain-link"></div>
                       <div className="western-parent-chain-link"></div>
                     </div>
-                    <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{backgroundColor: 'transparent', boxShadow: 'none', border: 'none'}}>
+                    <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', flexDirection: 'column', gap: '0'}}>
                       <a
                         href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="western-button western-button--sign186"
-                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
+                        className="western-button western-button--sign186 western-dropdown-animated"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms' }}
                       >
                         {t.nav.regulations}
                       </a>
-                      <div className="chain-container">
+                      <div className="chain-container western-dropdown-animated" style={{transitionDelay: '80ms'}}>
                         <div className="chain-link"></div>
                         <div className="chain-link"></div>
                       </div>
                       <a
                         href="/essentials"
-                        className="western-button western-button--sign186"
-                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
+                        className="western-button western-button--sign186 western-dropdown-animated"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
                         onClick={(e) => handleNavigation(e, "/essentials")}
                       >
                         {t.nav.essentials}
                       </a>
-                      <div className="chain-container">
+                      <div className="chain-container western-dropdown-animated" style={{transitionDelay: '240ms'}}>
                         <div className="chain-link"></div>
                         <div className="chain-link"></div>
                       </div>
                       <a
                         href="/faq"
-                        className="western-button western-button--sign186"
-                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
+                        className="western-button western-button--sign186 western-dropdown-animated"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
                         onClick={(e) => handleNavigation(e, "/faq")}
                       >
                         {t.nav.faq}
                       </a>
-                      <div className="chain-container">
+                      <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
                         <div className="chain-link"></div>
                         <div className="chain-link"></div>
                       </div>
                       <a
                         href="/contacts"
-                        className="western-button western-button--sign186"
-                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
+                        className="western-button western-button--sign186 western-dropdown-animated"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
                         onClick={(e) => handleNavigation(e, "/contacts")}
                       >
                         {t.nav.contacts}
