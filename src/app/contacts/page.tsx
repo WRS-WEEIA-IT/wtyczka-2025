@@ -3,8 +3,20 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { Phone, Mail, MessageCircle, Clock, MapPin, Users } from "lucide-react";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { LoopCarousel } from "@/components/LoopCarousel";
+
+type Contact = {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  availability: string;
+  responsibilities: string[];
+};
 
 export default function ContactsPage() {
   const { user, loading } = useAuth();
@@ -67,7 +79,7 @@ export default function ContactsPage() {
     );
   }
 
-  const coordinators = [
+  const coordinators: Contact[] = [
     {
       name: "Anna Kowalska",
       role: "Główny Koordynator",
@@ -184,24 +196,20 @@ export default function ContactsPage() {
           <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
             Koordynatorzy wydarzenia
           </h2>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {coordinators.map((coordinator, index) => (
-              <div key={index} className="bg-[#232323] rounded-xl shadow-lg p-6 border border-[#262626]">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="bg-[#18181b] rounded-full p-3">
-                    <Users className="h-6 w-6 text-amber-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-amber-300">
-                      {coordinator.name}
-                    </h3>
-                    <p className="text-amber-400 text-sm">{coordinator.role}</p>
-                  </div>
+          <LoopCarousel
+            items={coordinators}
+            renderItem={(coordinator) => (
+              <div className="bg-[#232323] rounded-xl shadow-lg p-6 border border-[#262626] w-full max-w-xl mx-auto flex flex-col items-center">
+                {/* Miejsce na zdjęcie */}
+                <div className="w-24 h-24 rounded-full bg-[#18181b] flex items-center justify-center mb-4 overflow-hidden">
+                  {/* Możesz podmienić na <Image src={coordinator.avatarUrl} ... /> jeśli dodasz url */}
+                  <Users className="h-12 w-12 text-amber-400" />
                 </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
+                <h3 className="text-xl font-bold text-amber-300 text-center mb-2">
+                  {coordinator.name}
+                </h3>
+                <div className="space-y-3 w-full">
+                  <div className="flex items-center space-x-2 justify-center">
                     <Mail className="h-4 w-4 text-gray-400" />
                     <a
                       href={`mailto:${coordinator.email}`}
@@ -210,8 +218,7 @@ export default function ContactsPage() {
                       {coordinator.email}
                     </a>
                   </div>
-
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 justify-center">
                     <Phone className="h-4 w-4 text-gray-400" />
                     <a
                       href={`tel:${coordinator.phone}`}
@@ -220,34 +227,10 @@ export default function ContactsPage() {
                       {coordinator.phone}
                     </a>
                   </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-300 text-sm">
-                      {coordinator.availability}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-[#262626]">
-                  <h4 className="font-semibold text-gray-200 text-sm mb-2">
-                    Obszar odpowiedzialności:
-                  </h4>
-                  <ul className="space-y-1">
-                    {coordinator.responsibilities.map((resp, respIndex) => (
-                      <li
-                        key={respIndex}
-                        className="text-gray-300 text-xs flex items-start space-x-1"
-                      >
-                        <span className="text-amber-400">•</span>
-                        <span>{resp}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+          />
         </div>
       </section>
 
