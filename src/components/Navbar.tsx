@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Menu, X, LogOut, Users } from "lucide-react";
+import { Menu, X, DoorOpen, Users } from "lucide-react";
 import AuthModal from "./AuthModal";
 import Link from "next/link";
 import "./western-navbar.css";
@@ -116,14 +116,17 @@ export default function Navbar() {
   return (
     <>
       <nav className="western-navbar sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6" style={{ width: "100%" }}>
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
           <div className="flex justify-center items-center w-full">
             {/* Mobile menu button - only show in mobile view */}
             {isMobile && (
               <div className="md:hidden">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="western-icon-button"
+                       className="western-icon-button"
+                       style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', width: '160px', height: '80px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                       onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.cursor = 'pointer'; }}
+                       onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
                 >
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -136,24 +139,27 @@ export default function Navbar() {
 
 
               <a 
-                href="/" 
-                className="western-button western-button--sign186 western-button--first"
+        href="/" 
+        className="western-button western-button--sign186 western-button--first"
+      style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                 onClick={(e) => handleNavigation(e, "/")}
               >
                 {t.nav.home}
               </a>
 
               <a
-                href="/news"
-                className="western-button western-button--sign186"
+        href="/news"
+        className="western-button western-button--sign186"
+      style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                 onClick={(e) => handleNavigation(e, "/news")}
               >
                 {t.nav.news}
               </a>
 
                <a
-                 href="/partners"
-                 className="western-button western-button--sign186"
+       href="/partners"
+       className="western-button western-button--sign186"
+     style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                  onClick={(e) => handleNavigation(e, "/partners")}
                >
                  {t.nav.partners}
@@ -162,19 +168,23 @@ export default function Navbar() {
               {user && (
                 <>
                   <div className="relative group">
-                    <button className="western-button">
+                    <button 
+                      className="western-button"
+                      style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
+                    >
                       {t.nav.participantInfo}
                     </button>
                     <div className="western-parent-chain group-hover:opacity-100 group-hover:visible opacity-0 invisible transition-all duration-300">
                       <div className="western-parent-chain-link"></div>
                       <div className="western-parent-chain-link"></div>
                     </div>
-                    <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                    <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{backgroundColor: 'transparent', boxShadow: 'none', border: 'none'}}>
                       <a
                         href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="western-dropdown-item"
+                        className="western-button western-button--sign186"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
                       >
                         {t.nav.regulations}
                       </a>
@@ -184,7 +194,8 @@ export default function Navbar() {
                       </div>
                       <a
                         href="/essentials"
-                        className="western-dropdown-item"
+                        className="western-button western-button--sign186"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
                         onClick={(e) => handleNavigation(e, "/essentials")}
                       >
                         {t.nav.essentials}
@@ -195,7 +206,8 @@ export default function Navbar() {
                       </div>
                       <a
                         href="/faq"
-                        className="western-dropdown-item"
+                        className="western-button western-button--sign186"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
                         onClick={(e) => handleNavigation(e, "/faq")}
                       >
                         {t.nav.faq}
@@ -206,7 +218,8 @@ export default function Navbar() {
                       </div>
                       <a
                         href="/contacts"
-                        className="western-dropdown-item"
+                        className="western-button western-button--sign186"
+                        style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px' }}
                         onClick={(e) => handleNavigation(e, "/contacts")}
                       >
                         {t.nav.contacts}
@@ -216,7 +229,8 @@ export default function Navbar() {
 
                   <a
                     href="/status"
-                    className="western-button"
+                    className="western-button western-button--sign186"
+                    style={{ backgroundImage: 'url(/western/sign420.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                     onClick={(e) => handleNavigation(e, "/status")}
                   >
                     Status
@@ -229,14 +243,17 @@ export default function Navbar() {
                   <button
                     onClick={handleLogout}
                     className="western-button"
+                    style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
+                    <DoorOpen size={28} style={{marginRight: '8px', background: 'transparent', color: '#ffe066'}} />
                     {t.nav.logout}
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="western-login-button"
+                  className="western-button"
+                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                 >
                   {t.nav.login} / {t.nav.register}
                 </button>
@@ -253,10 +270,13 @@ export default function Navbar() {
           {/* Mobile Navigation */}
           {isMenuOpen && isMobile && (
             <div className="md:hidden py-2 border-t border-[#8B4513] western-mobile-menu w-full">
-              <div className="flex flex-col space-y-2 px-2 pb-2 overflow-y-auto overflow-x-hidden max-h-screen">
+              <div className="flex flex-col px-2 pb-2 overflow-y-auto overflow-x-hidden max-h-screen" style={{rowGap: '3px'}}>
                 <a
                   href="/"
                   className="western-button text-center"
+                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                   onClick={(e) => handleNavigation(e, "/")}
                 >
                   {t.nav.home}
@@ -265,6 +285,9 @@ export default function Navbar() {
                 <a
                   href="/news"
                   className="western-button text-center"
+                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                   onClick={(e) => handleNavigation(e, "/news")}
                 >
                   {t.nav.news}
@@ -273,6 +296,9 @@ export default function Navbar() {
                 <a
                   href="/partners"
                   className="western-button text-center"
+                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                   onClick={(e) => handleNavigation(e, "/partners")}
                 >
                   {t.nav.partners}
@@ -286,12 +312,18 @@ export default function Navbar() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="western-dropdown-item mobile-dropdown-item"
+                        style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                        onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                       >
                         {t.nav.regulations}
                       </a>
                       <a
                         href="/essentials"
                         className="western-dropdown-item mobile-dropdown-item"
+                        style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                        onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                         onClick={(e) => handleNavigation(e, "/essentials")}
                       >
                         {t.nav.essentials}
@@ -299,6 +331,9 @@ export default function Navbar() {
                       <a
                         href="/faq" 
                         className="western-dropdown-item mobile-dropdown-item"
+                        style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                        onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                         onClick={(e) => handleNavigation(e, "/faq")}
                       >
                         {t.nav.faq}
@@ -306,6 +341,9 @@ export default function Navbar() {
                       <a
                         href="/contacts"
                         className="western-dropdown-item mobile-dropdown-item"
+                        style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                        onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                        onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                         onClick={(e) => handleNavigation(e, "/contacts")}
                       >
                         {t.nav.contacts}
@@ -315,6 +353,7 @@ export default function Navbar() {
                     <a
                       href="/status"
                       className="western-button text-center"
+                      style={{ backgroundImage: 'url(/western/sign420.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                       onClick={(e) => handleNavigation(e, "/status")}
                     >
                       Status
@@ -327,14 +366,21 @@ export default function Navbar() {
                     <button
                       onClick={handleLogout}
                       className="western-button mx-auto block"
+                      style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                     >
+                      <DoorOpen size={28} style={{marginRight: '8px', background: 'transparent', color: '#ffe066'}} />
                       {t.nav.logout}
                     </button>
                   </div>
                 ) : (
                   <button
                     onClick={() => setIsAuthModalOpen(true)}
-                    className="western-login-button mx-auto block"
+                    className="western-button mx-auto block"
+                    style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'scaleX(1.08) scaleY(0.95)'; e.currentTarget.style.cursor = 'pointer'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'; }}
                   >
                     {t.nav.login} / {t.nav.register}
                   </button>
