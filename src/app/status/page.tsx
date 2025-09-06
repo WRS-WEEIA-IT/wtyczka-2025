@@ -141,38 +141,38 @@ export default function StatusPage() {
 
         {/* Status Overview */}
         <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-amber-400 mb-6">
+          <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center mt-4">
             Ogólny status aplikacji
           </h2>
 
           <div className="flex items-center justify-center mb-6">
-            <div className="text-center">
+            <div className="flex flex-col items-center justify-center w-full">
               {statusType === 'none' && (
                 <>
-                  <XCircle className="h-6 w-6 text-red-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2">Brak rejestracji</div>
-                  <div className="text-gray-300 mt-2">Wypełnij formularz rejestracji, aby rozpocząć proces zgłoszenia.</div>
+                  <XCircle className="h-16 w-16 text-red-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Brak rejestracji</div>
+                  <div className="text-gray-300 mt-2 text-center">Wypełnij formularz rejestracji, aby rozpocząć proces zgłoszenia.</div>
                 </>
               )}
               {statusType === 'registration' && (
                 <>
-                  <Clock className="h-6 w-6 text-yellow-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2">Czekamy na formularz płatności</div>
-                  <div className="text-gray-300 mt-2">Wypełnij formularz płatności, aby przejść dalej.</div>
+                  <Clock className="h-16 w-16 text-yellow-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Czekamy na formularz płatności</div>
+                  <div className="text-gray-300 mt-2 text-center">Wypełnij formularz płatności, aby przejść dalej.</div>
                 </>
               )}
               {statusType === 'pending' && (
                 <>
-                  <Clock className="h-6 w-6 text-yellow-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2">Oczekiwanie na werdykt</div>
-                  <div className="text-gray-300 mt-2">Twoje zgłoszenie i płatność zostały przyjęte. Czekaj na decyzję organizatorów – możesz być jeszcze niezaakceptowany lub znajdować się na liście rezerwowej.</div>
+                  <Clock className="h-16 w-16 text-yellow-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Oczekiwanie na werdykt</div>
+                  <div className="text-gray-300 mt-2 text-center">Twoje zgłoszenie i płatność zostały przyjęte. Czekaj na decyzję organizatorów – możesz być jeszcze niezaakceptowany lub znajdować się na liście rezerwowej.</div>
                 </>
               )}
               {statusType === 'qualified' && (
                 <>
-                  <CheckCircle className="h-6 w-6 text-green-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2">Zakwalifikowany!</div>
-                  <div className="text-green-400 mt-2">Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉</div>
+                  <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Zakwalifikowany!</div>
+                  <div className="text-green-400 mt-2 text-center">Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉</div>
                 </>
               )}
             </div>
@@ -195,100 +195,118 @@ export default function StatusPage() {
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Registration Form Status */}
           <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <FileText className="h-6 w-6 text-amber-400" />
-              <h3 className="text-xl font-bold text-amber-400">
-                Formularz rejestracji
-              </h3>
-            </div>
-
-            <div className="flex items-center space-x-2 mb-4">
-              {getStatusIcon(registrationCompleted)}
-              <span className="font-semibold text-gray-200">
-                {registrationCompleted ? "Wypełniony" : "Nie wypełniony"}
-              </span>
-            </div>
-
-            {registrationCompleted ? (
-              <div>
-                <p className="text-green-400 text-sm mb-2">
-                  ✓ Formularz rejestracji został pomyślnie wysłany
-                </p>
-                {registration && (
-                  <div className="text-xs text-gray-400">
-                    <p>
-                      Imię i nazwisko: {registration.name}{" "}
-                      {registration.surname}
-                    </p>
-                    <p>Wydział: {registration.faculty}</p>
-                    <p>Kierunek: {registration.studyField}</p>
-                  </div>
-                )}
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="flex items-center space-x-3 mb-4">
+                <FileText className="h-6 w-6 text-amber-400" />
+                <h3 className="text-xl font-bold text-amber-400">
+                  Formularz rejestracji
+                </h3>
               </div>
-            ) : (
-              <div>
-                <p className="text-red-400 text-sm mb-3">
-                  Formularz rejestracji nie został jeszcze wypełniony
-                </p>
-                <Link
-                  href="/registration"
-                  className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
-                >
-                  Wypełnij formularz
-                </Link>
+
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                {getStatusIcon(registrationCompleted)}
+                <span className="font-semibold text-gray-200">
+                  {registrationCompleted ? "Wypełniony" : "Nie wypełniony"}
+                </span>
               </div>
-            )}
+
+              {registrationCompleted ? (
+                <div>
+                  <p className="text-green-400 text-sm mb-2">
+                    ✓ Formularz rejestracji został pomyślnie wysłany
+                  </p>
+                  <div className="h-1"></div>
+                  {registration && (
+                    <div className="text-xs text-gray-400">
+                      <p>
+                        Imię i nazwisko: {registration.name}{" "}
+                        {registration.surname}
+                      </p>
+                      <p>Wydział: {registration.faculty}</p>
+                      <p>Kierunek: {registration.studyField}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <p className="text-red-400 text-sm mb-3">
+                    Formularz rejestracji nie został jeszcze wypełniony
+                  </p>
+                  <div className="h-4"></div>
+                  <Link
+                    href="/registration"
+                    className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
+                  >
+                    Wypełnij formularz
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Payment Form Status */}
           <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <CreditCard className="h-6 w-6 text-amber-400" />
-              <h3 className="text-xl font-bold text-amber-400">
-                Formularz płatności
-              </h3>
-            </div>
-
-            <div className="flex items-center space-x-2 mb-4">
-              {getStatusIcon(paymentCompleted)}
-              <span className="font-semibold text-gray-200">
-                {paymentCompleted ? "Wypełniony" : "Nie wypełniony"}
-              </span>
-            </div>
-
-            {paymentCompleted ? (
-              <div>
-                <p className="text-green-400 text-sm mb-2">
-                  ✓ Formularz płatności został pomyślnie wysłany
-                </p>
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="flex items-center space-x-3 mb-4">
+                <CreditCard className="h-6 w-6 text-amber-400" />
+                <h3 className="text-xl font-bold text-amber-400">
+                  Formularz płatności
+                </h3>
               </div>
-            ) : registrationCompleted ? (
-              <div>
-                <p className="text-yellow-400 text-sm mb-3">
-                  Wypełnij formularz płatności, aby przejść dalej
-                </p>
-                <Link
-                  href="/payment"
-                  className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
-                >
-                  Wypełnij formularz płatności
-                </Link>
+
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                {getStatusIcon(paymentCompleted)}
+                <span className="font-semibold text-gray-200">
+                  {paymentCompleted ? "Wypełniony" : "Nie wypełniony"}
+                </span>
               </div>
-            ) : (
-              <p className="text-gray-400 text-sm">
-                Najpierw wypełnij formularz rejestracji
-              </p>
-            )}
+
+              {paymentCompleted ? (
+                <div>
+                  <p className="text-green-400 text-sm mb-2">
+                    ✓ Formularz płatności został pomyślnie wysłany
+                  </p>
+                  <div className="text-xs text-gray-400 mt-5">
+                      <p className="text-lg">
+                        Oczekuj na werdykt
+                      </p>
+                    </div>
+                </div>
+              ) : registrationCompleted ? (
+                <div>
+                  <p className="text-yellow-400 text-sm mb-3">
+                    Wypełnij formularz płatności, aby przejść dalej
+                  </p>
+                  <div className="h-4"></div>
+                  <Link
+                    href="/payment"
+                    className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
+                  >
+                    Wypełnij formularz płatności
+                  </Link>
+                </div>
+               ) : (
+                 <div className="flex flex-col items-center">
+                   <p className="text-red-400 text-sm mb-3">
+                     Najpierw wypełnij formularz rejestracji
+                   </p>
+                   <div className="h-2"></div>
+                   <button
+                     className="bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold cursor-not-allowed opacity-60"
+                     disabled
+                   >
+                     Wypełnij formularz płatności
+                   </button>
+                 </div>
+                
+              )}
+            </div>
           </div>
         </div>
 
-
-
-
-
         {/* Help Section */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-600 mb-4">
+        <div className="mt-16 text-center">
+          <p className="text-gray-300 mb-8">
             Masz pytania? Sprawdź naszą sekcję FAQ lub skontaktuj się z
             organizatorami.
           </p>

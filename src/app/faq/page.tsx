@@ -95,20 +95,18 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="border-b border-[#262626] text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
-            Najczęściej zadawane pytania
-          </h1>
-          <p className="text-xl text-gray-200">
-            Odpowiedzi na najważniejsze pytania dotyczące Wtyczki 2025
-          </p>
-        </div>
-      </section>
-
       {/* FAQ Content */}
-      <section className="py-16">
+      <section className="py-8">
+        <div className="border-b border-[#262626] text-white py-10 mb-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+              Najczęściej zadawane pytania
+            </h1>
+            <p className="text-xl text-gray-200">
+              Odpowiedzi na najważniejsze pytania dotyczące Wtyczki 2025
+            </p>
+          </div>
+        </div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-[#1a1a1a]/70 border border-[#262626] rounded-lg shadow-lg overflow-hidden p-6">
             <div className="space-y-6">
