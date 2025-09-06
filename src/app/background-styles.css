@@ -1,0 +1,350 @@
+/* Western-style Roboto Slab for homepage buttons */
+.western-btn-roboto {
+  font-family: 'Roboto Slab', 'Times New Roman', serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  text-shadow: 1px 2px 0 #00000022, 0 1px 0 #E7A80144;
+  font-weight: 700;
+}
+/* Western title font with fallback for Polish characters */
+.western-title {
+  font-family: 'Rye', 'Playfair Display', 'Roboto Slab', 'Times New Roman', serif;
+  letter-spacing: 0.08em;
+}
+/* Homepage animated buttons */
+.homepage-btn {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: transform 0.38s cubic-bezier(.4,2,.3,1), box-shadow 0.38s cubic-bezier(.4,2,.3,1), background 0.38s;
+  box-shadow: 0 2px 8px rgba(231,168,1,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+}
+.homepage-btn:hover, .homepage-btn:focus-visible {
+  transform: scale(1.025);
+  box-shadow: 0 3px 12px 0 rgba(231,168,1,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+  filter: brightness(1.03) saturate(1.03);
+}
+.homepage-btn:active {
+  transform: scale(0.98) rotate(0deg);
+  box-shadow: 0 2px 8px rgba(231,168,1,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+}
+
+/* Subtle animated shine on hover */
+.homepage-btn::after {
+  content: "";
+  position: absolute;
+  left: -60%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 60%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: left 0.5s cubic-bezier(.4,2,.3,1), opacity 0.3s;
+  z-index: 2;
+}
+.homepage-btn:hover::after {
+  left: 110%;
+  opacity: 1;
+}
+
+/* Glow for 'zapisz się' button */
+.zapisz-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 110%;
+  height: 120%;
+  z-index: 0;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse at center, rgba(231,168,1,0.22) 0%, rgba(231,168,1,0.12) 60%, transparent 100%);
+  filter: blur(8px) brightness(1.1);
+  pointer-events: none;
+  transition: filter 0.3s;
+  animation: zapiszGlowPulse 2.5s infinite alternate cubic-bezier(.4,2,.3,1);
+}
+@keyframes zapiszGlowPulse {
+  0% { filter: blur(8px) brightness(1.08); }
+  100% { filter: blur(14px) brightness(1.18); }
+}
+/* Background styles for the website */
+
+.background-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.background-content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #060606;
+}
+
+.background-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+  mix-blend-mode: lighten;
+  filter: contrast(1.4) brightness(1.5) saturate(1.1);
+}
+
+/* Create a gradient overlay for the top part */
+.background-overlay-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+  z-index: 1;
+}
+
+/* Create a gradient overlay for the bottom part */
+.background-overlay-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(0deg, rgba(10, 10, 10, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+  z-index: 1;
+}
+
+/* Override body background to ensure consistency */
+body {
+  background-color: transparent !important;
+  color: white;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .background-svg {
+    opacity: 0.25;
+  }
+}
+
+/* Fix specific card and section styles that might be affected */
+.shadow-lg, .shadow-xl, .shadow-2xl {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Make images with background stand out properly */
+img[class*="bg-"] {
+  background-color: #18181b !important;
+}
+
+/* Section background styling - semi-transparent with blur */
+/* Apply to specific black backgrounds that need to be transparent */
+section[class*="bg-black"], 
+div[class*="bg-black"],
+div.bg-black,
+div.bg-zinc-950,
+div.bg-zinc-900,
+div.bg-zinc-800,
+div[class*="bg-gray-"],
+div[class*="bg-zinc-"],
+div.border-b,
+section.border-b,
+div[class*="bg-[#0F0F0F]"],
+div[class*="bg-[#18181b]"],
+div.form-container,
+.form-section,
+.form-card {
+  background-color: rgba(26, 26, 26, 0.7) !important;
+  backdrop-filter: blur(8px) !important;
+  border-color: rgba(38, 38, 38, 0.5) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Apply to specific layouts that contain content */
+.card, 
+.shadow-md,
+.shadow-lg, 
+.shadow-xl, 
+.shadow-2xl,
+.rounded-md,
+.rounded-lg,
+.rounded-xl {
+  background-color: rgba(15, 15, 15, 0.7) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+/* Exception for specific components that should remain transparent */
+nav,
+.navbar-container,
+.western-navbar,
+.western-nav-container,
+.background-container,
+.background-content,
+.background-svg,
+.background-overlay-top,
+.background-overlay-bottom,
+main {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Ensure western navbar elements preserve their styles */
+.western-navbar *,
+.western-nav-container * {
+  background-color: inherit !important;
+  /* Keep all other styles as defined in western-navbar.css */
+}
+
+/* Homepage specific styles */
+.home-hero-section {
+  background-color: rgba(24, 24, 27, 0.3) !important;
+  backdrop-filter: blur(5px);
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(167, 126, 48, 0.2);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(231, 168, 1, 0.1);
+}
+
+.home-content-container {
+  background-color: rgba(24, 24, 27, 0.4) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(167, 126, 48, 0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(231, 168, 1, 0.1);
+}
+
+.western-title {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.15em;
+}
+
+.star-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+.star-divider::before,
+.star-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-image: linear-gradient(90deg, transparent, rgba(231, 168, 1, 0.5), rgba(231, 168, 1, 0.7));
+  margin: 0 1rem;
+}
+
+.star-divider::after {
+  background-image: linear-gradient(90deg, rgba(231, 168, 1, 0.7), rgba(231, 168, 1, 0.5), transparent);
+}
+
+/* Button styling fixes using attribute selectors instead of invalid class selectors */
+[class*="bg-\\[\\#E7A801\\]"] {
+  background-color: #E7A801 !important;
+  color: black !important;
+}
+
+/* Facebook card styling for homepage */
+a[href*="facebook.com"] {
+  background-color: rgba(24, 24, 27, 0.75) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(167, 126, 48, 0.2);
+  transition: all 0.3s ease;
+}
+
+a[href*="facebook.com"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(231, 168, 1, 0.15) !important;
+  border: 1px solid rgba(167, 126, 48, 0.4);
+}
+
+.bg-amber-600, .bg-amber-500, .bg-amber-400,
+[class*="bg-amber-"] {
+  background-color: #d97706 !important; /* amber-600 */
+}
+
+[class*="hover\\:bg-amber-"]:hover {
+  background-color: #b45309 !important; /* amber-700 */
+}
+
+[class*="bg-\\[\\#232323\\]"] {
+  background-color: rgba(35, 35, 35, 0.8) !important;
+  backdrop-filter: blur(4px);
+}
+
+[class*="hover\\:bg-\\[\\#232323\\]"]:hover {
+  background-color: rgba(35, 35, 35, 0.9) !important;
+}
+
+[class*="hover\\:bg-\\[\\#3a2c13\\]"]:hover {
+  background-color: rgba(58, 44, 19, 0.9) !important;
+}
+
+[class*="bg-\\[\\#0F0F0F\\]"] {
+  background-color: rgba(15, 15, 15, 0.75) !important;
+  backdrop-filter: blur(8px);
+}
+
+[class*="bg-\\[\\#18181b\\]"] {
+  background-color: #18181b !important;
+}
+
+/* Tailwind-specific class fixes as fallback */
+.bg-\[\#E7A801\] {
+  background-color: #E7A801 !important;
+  color: black !important;
+}
+
+.bg-\[\#232323\] {
+  background-color: rgba(35, 35, 35, 0.8) !important;
+  backdrop-filter: blur(4px);
+}
+
+.bg-\[\#0F0F0F\] {
+  background-color: rgba(15, 15, 15, 0.75) !important;
+  backdrop-filter: blur(8px);
+}
+
+.bg-\[\#18181b\] {
+  background-color: #18181b !important;
+}
+
+.hover\:bg-\[\#232323\]:hover {
+  background-color: rgba(35, 35, 35, 0.9) !important;
+}
+
+.hover\:bg-\[\#3a2c13\]:hover {
+  background-color: rgba(58, 44, 19, 0.9) !important;
+}
+
+.hover\:bg-amber-700:hover {
+  background-color: #b45309 !important;
+}
+
+/* Dark button hover */
+a[class*="hover:bg-[#3a2c13]"]:hover, button[class*="hover:bg-[#3a2c13]"]:hover {
+  background-color: rgba(58, 44, 19, 0.9) !important;
+}
+
+/* Card and panel styling */
+div[class*="bg-[#0F0F0F]"], div[class*="bg-[#232323]"] {
+  background-color: rgba(15, 15, 15, 0.75) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Accordion and button styling */
+button[class*="bg-[#1a1a1a]"] {
+  background-color: rgba(26, 26, 26, 0.8) !important;
+  backdrop-filter: blur(5px);
+}
+
+button[class*="hover:bg-[#232323]"]:hover {
+  background-color: rgba(35, 35, 35, 0.9) !important;
+}

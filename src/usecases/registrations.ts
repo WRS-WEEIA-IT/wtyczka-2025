@@ -33,6 +33,8 @@ export interface RegistrationRecord {
   regAccept: boolean;
   rodoAccept: boolean;
 
+  qualified?: boolean;
+
   createdAt: Date;
   updatedAt: Date;
 }

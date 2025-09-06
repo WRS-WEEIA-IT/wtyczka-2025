@@ -83,7 +83,7 @@ export function FacebookCard({
           ))}
         </div>
       </div>
-      {imageUrl && showImage && (
+      {imageUrl && showImage ? (
         <div className="w-full">
           <Image
             src={imageUrl}
@@ -93,6 +93,17 @@ export function FacebookCard({
             className="object-cover w-full h-full rounded-b-lg"
             style={{ objectFit: "cover" }}
             onError={handleImageError}
+          />
+        </div>
+      ) : (
+        <div className="w-full">
+          <Image
+            src="/wtyczka_avatar.jpg"
+            alt="Brak obrazu"
+            width={800}
+            height={450}
+            className="object-cover w-full h-full rounded-b-lg opacity-60"
+            style={{ objectFit: "cover" }}
           />
         </div>
       )}

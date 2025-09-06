@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -77,16 +77,12 @@ export default function PaymentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [userRegistration, setUserRegistration] =
-    useState<RegistrationRecord | null>(null);
-  const [existingPayment, setExistingPayment] = useState<PaymentRecord | null>(
-    null
-  );
-  const [uploadedFile, setUploadedFile] = useState<FileUploadResult | null>(
-    null
-  );
+  const [userRegistration, setUserRegistration] = useState<RegistrationRecord | null>(null);
+  const [existingPayment, setExistingPayment] = useState<PaymentRecord | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<FileUploadResult | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [daysUntilEvent, setDaysUntilEvent] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Calculate days until event
   useEffect(() => {
@@ -259,7 +255,7 @@ export default function PaymentPage() {
   // Redirect to login if not authenticated
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🤠</div>
           <div className="text-xl text-amber-400">Ładowanie...</div>
@@ -270,7 +266,7 @@ export default function PaymentPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-md mx-auto text-center p-8 bg-[#18181b] rounded-2xl shadow-xl border border-[#262626]">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-amber-400 mb-4">
@@ -293,10 +289,10 @@ export default function PaymentPage() {
   // Show existing payment if already submitted
   if (existingPayment) {
     return (
-      <div className="min-h-screen bg-black py-8">
+      <div className="min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header with logo */}
-          <section className="bg-black border-b border-[#262626] text-white py-16 mb-8">
+          <section className="border-b border-[#262626] text-white py-16 mb-8">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
                 Potwierdzenie płatności
@@ -474,14 +470,14 @@ export default function PaymentPage() {
   // Check if user is registered before allowing payment
   if (!userRegistration) {
     return (
-      <div className="min-h-screen bg-black py-8">
+      <div className="min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header with logo */}
           <section className="relative bg-black text-white overflow-hidden mb-8">
             <div className="relative max-w-7xl mx-auto text-center flex flex-col justify-center items-center">
               <div className="flex flex-col items-center">
                 <Image
-                  src="/logo_czarne_tło.jpg"
+                  src="/logo.svg"
                   alt="Logo wtyczka"
                   width={400}
                   height={150}
@@ -521,10 +517,10 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header like on news page, no logo */}
-        <section className="bg-black border-b border-[#262626] text-white py-16 mb-8">
+        <section className="border-b border-[#262626] text-white py-16 mb-8">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
               Formularz płatności
@@ -677,15 +673,17 @@ export default function PaymentPage() {
                       </p>
                       <div className="relative">
                         <input
+                          ref={fileInputRef}
                           type="file"
                           onChange={handleFileUpload}
                           accept=".pdf,.jpg,.jpeg,.png"
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          style={{ display: "none" }}
                         />
                         <button
                           type="button"
                           className="bg-[#E7A801] hover:bg-amber-700 text-black py-2 px-6 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center mx-auto"
                           disabled={isFileUploading}
+                          onClick={() => fileInputRef.current?.click()}
                         >
                           {isFileUploading ? (
                             "Przesyłanie..."
@@ -985,3 +983,4 @@ export default function PaymentPage() {
     </div>
   );
 }
+

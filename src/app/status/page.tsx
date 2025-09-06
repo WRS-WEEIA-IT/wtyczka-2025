@@ -52,7 +52,7 @@ export default function StatusPage() {
 
   if (loading || dataLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🤠</div>
           <div className="text-xl text-amber-400">Ładowanie...</div>
@@ -63,7 +63,7 @@ export default function StatusPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-md mx-auto text-center p-8 bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-amber-400 mb-4">
@@ -103,18 +103,27 @@ export default function StatusPage() {
     return t.forms.pending;
   };
 
-  // Calculate status based on real data
-  const isQualified = true;
-  const isNotQualified = false;
-  const isPending = false;
+
+  // Nowa logika statusu
   const registrationCompleted = !!registration;
   const paymentCompleted = !!payment;
-  const paymentConfirmed = true;
+  const qualified = payment?.qualified === true;
+
+  let statusType: 'none' | 'registration' | 'payment' | 'pending' | 'qualified' = 'none';
+  if (!registrationCompleted) {
+    statusType = 'none';
+  } else if (registrationCompleted && !paymentCompleted) {
+    statusType = 'registration';
+  } else if (registrationCompleted && paymentCompleted && !qualified) {
+    statusType = 'pending';
+  } else if (registrationCompleted && paymentCompleted && qualified) {
+    statusType = 'qualified';
+  }
 
   return (
-    <div className="min-h-screen bg-black py-8">
+    <div className="min-h-screen py-8">
       {/* Hero Section */}
-      <section className="bg-black border-b border-[#262626] text-white py-16 mb-8">
+      <section className="border-b border-[#262626] text-white py-16 mb-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
             Status Twojej aplikacji
@@ -138,19 +147,33 @@ export default function StatusPage() {
 
           <div className="flex items-center justify-center mb-6">
             <div className="text-center">
-              {getStatusIcon(isQualified || isPending, isQualified)}
-              <div className="text-3xl font-bold text-amber-400 mt-2">
-                {getStatusText(isQualified || isPending, isQualified)}
-              </div>
-              {isQualified && (
-                <div className="text-green-400 mt-2">
-                  Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉
-                </div>
+              {statusType === 'none' && (
+                <>
+                  <XCircle className="h-6 w-6 text-red-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2">Brak rejestracji</div>
+                  <div className="text-gray-300 mt-2">Wypełnij formularz rejestracji, aby rozpocząć proces zgłoszenia.</div>
+                </>
               )}
-              {isNotQualified && (
-                <div className="text-red-400 mt-2">
-                  Niestety, tym razem nie zostałeś zakwalifikowany.
-                </div>
+              {statusType === 'registration' && (
+                <>
+                  <Clock className="h-6 w-6 text-yellow-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2">Czekamy na formularz płatności</div>
+                  <div className="text-gray-300 mt-2">Wypełnij formularz płatności, aby przejść dalej.</div>
+                </>
+              )}
+              {statusType === 'pending' && (
+                <>
+                  <Clock className="h-6 w-6 text-yellow-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2">Oczekiwanie na werdykt</div>
+                  <div className="text-gray-300 mt-2">Twoje zgłoszenie i płatność zostały przyjęte. Czekaj na decyzję organizatorów – możesz być jeszcze niezaakceptowany lub znajdować się na liście rezerwowej.</div>
+                </>
+              )}
+              {statusType === 'qualified' && (
+                <>
+                  <CheckCircle className="h-6 w-6 text-green-500 mx-auto" />
+                  <div className="text-3xl font-bold text-amber-400 mt-2">Zakwalifikowany!</div>
+                  <div className="text-green-400 mt-2">Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉</div>
+                </>
               )}
             </div>
           </div>
@@ -239,12 +262,10 @@ export default function StatusPage() {
                   ✓ Formularz płatności został pomyślnie wysłany
                 </p>
               </div>
-            ) : isQualified ? (
+            ) : registrationCompleted ? (
               <div>
-                <p className={`text-sm mb-3 ${!registrationCompleted ? 'text-red-400' : 'text-yellow-400'}`}>
-                  {!registrationCompleted
-                    ? 'Najpierw wypełnij formularz rejestracji!'
-                    : 'Możesz teraz wypełnić formularz płatności'}
+                <p className="text-yellow-400 text-sm mb-3">
+                  Wypełnij formularz płatności, aby przejść dalej
                 </p>
                 <Link
                   href="/payment"
@@ -255,104 +276,15 @@ export default function StatusPage() {
               </div>
             ) : (
               <p className="text-gray-400 text-sm">
-                Formularz płatności będzie dostępny po zakwalifikowaniu
+                Najpierw wypełnij formularz rejestracji
               </p>
             )}
           </div>
         </div>
 
 
-        {/* Payment Status */}
-        {isQualified && (
-          <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg p-6 mb-8">
-            <h3 className="text-xl font-bold text-amber-400 mb-4">
-              Status płatności
-            </h3>
 
-            <div className="flex items-center space-x-2 mb-4">
-              {getStatusIcon(paymentConfirmed)}
-              <span className="font-semibold text-gray-200">
-                {paymentConfirmed
-                  ? "Płatność potwierdzona"
-                  : "Oczekuje na płatność"}
-              </span>
-            </div>
 
-            {paymentConfirmed ? (
-              <p className="text-green-400 text-sm">
-                ✓ Twoja płatność została potwierdzona. Wszystko gotowe!
-              </p>
-            ) : (
-              <div className="bg-[#232323] border border-yellow-600 rounded-md p-4">
-                <p className="text-yellow-400 text-sm mb-2">
-                  <strong>Ważne:</strong> Wpłaty należy dokonać w ciągu 7 dni od zakwalifikowania.
-                </p>
-                <p className="text-yellow-300 text-sm">
-                  Po dokonaniu przelewu, wypełnij formularz płatności aby potwierdzić wpłatę.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Next Steps */}
-        <div className="bg-[#0F0F0F] border border-[#262626] text-white rounded-lg p-6 mb-8">
-          <h3 className="text-xl font-bold mb-4 text-amber-400">Następne kroki</h3>
-
-          <div className="space-y-3">
-            {!registrationCompleted && (
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-[#E7A801] text-black rounded-full flex items-center justify-center font-bold text-sm">
-                  1
-                </div>
-                <span className="text-gray-200">Wypełnij formularz rejestracji</span>
-              </div>
-            )}
-
-            {registrationCompleted && !isQualified && !isNotQualified && (
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-[#E7A801] text-black rounded-full flex items-center justify-center font-bold text-sm">
-                  2
-                </div>
-                <span className="text-gray-200">Oczekuj na informację o zakwalifikowaniu</span>
-              </div>
-            )}
-
-            {isQualified && !paymentCompleted && (
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-[#E7A801] text-black rounded-full flex items-center justify-center font-bold text-sm">
-                  3
-                </div>
-                <span className="text-gray-200">Wypełnij formularz płatności</span>
-              </div>
-            )}
-
-            {paymentCompleted && !paymentConfirmed && (
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-[#E7A801] text-black rounded-full flex items-center justify-center font-bold text-sm">
-                  4
-                </div>
-                <span className="text-gray-200">Dokonaj wpłaty i potwierdź przelew</span>
-              </div>
-            )}
-
-            {paymentConfirmed && (
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="w-8 h-8 text-green-300" />
-                <span className="text-gray-200">Gotowe! Czekamy na Ciebie na Wtyczce 2025! 🤠</span>
-              </div>
-            )}
-
-            {isNotQualified && (
-              <div className="flex items-center space-x-3">
-                <XCircle className="w-8 h-8 text-red-300" />
-                <span className="text-gray-200">
-                  Niestety tym razem się nie udało. Zapraszamy za rok!
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Help Section */}
         <div className="mt-8 text-center">
@@ -379,3 +311,4 @@ export default function StatusPage() {
     </div>
   );
 }
+
