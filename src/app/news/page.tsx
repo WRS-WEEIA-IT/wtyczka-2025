@@ -62,7 +62,8 @@ export default function NewsPage() {
               href="https://facebook.com/wtyczka.eeia"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-semibold transition-colors"
+              className="inline-flex items-center space-x-2 px-7 py-3 rounded-xl font-bold tracking-wider uppercase transition-all western-btn bg-[#1877F2] hover:bg-[#145db2] text-white shadow-lg border-2 border-[#145db2] focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2"
+              style={{ fontFamily: 'var(--font-rye), fantasy, serif', boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)' }}
             >
               <ExternalLink className="h-5 w-5" />
               <span>Obserwuj nas na Facebooku</span>
@@ -113,7 +114,8 @@ export default function NewsPage() {
             href="https://www.facebook.com/wtyczka.eeia"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 bg-[#E7A801] hover:bg-amber-700 text-black px-8 py-3 rounded-xl font-semibold transition-colors"
+            className="inline-flex items-center space-x-2 px-8 py-3 rounded-xl font-bold tracking-wider uppercase transition-all western-btn bg-[#1877F2] hover:bg-[#145db2] text-white shadow-lg border-2 border-[#145db2] focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2"
+            style={{ fontFamily: 'var(--font-rye), fantasy, serif', boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)' }}
           >
             <ExternalLink className="h-5 w-5" />
             <span>Odwiedź naszego Facebooka</span>

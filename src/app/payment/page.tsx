@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -77,16 +77,12 @@ export default function PaymentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [userRegistration, setUserRegistration] =
-    useState<RegistrationRecord | null>(null);
-  const [existingPayment, setExistingPayment] = useState<PaymentRecord | null>(
-    null
-  );
-  const [uploadedFile, setUploadedFile] = useState<FileUploadResult | null>(
-    null
-  );
+  const [userRegistration, setUserRegistration] = useState<RegistrationRecord | null>(null);
+  const [existingPayment, setExistingPayment] = useState<PaymentRecord | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<FileUploadResult | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [daysUntilEvent, setDaysUntilEvent] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Calculate days until event
   useEffect(() => {
@@ -481,7 +477,7 @@ export default function PaymentPage() {
             <div className="relative max-w-7xl mx-auto text-center flex flex-col justify-center items-center">
               <div className="flex flex-col items-center">
                 <Image
-                  src="/logo_czarne_tło.jpg"
+                  src="/logo.svg"
                   alt="Logo wtyczka"
                   width={400}
                   height={150}
@@ -677,15 +673,17 @@ export default function PaymentPage() {
                       </p>
                       <div className="relative">
                         <input
+                          ref={fileInputRef}
                           type="file"
                           onChange={handleFileUpload}
                           accept=".pdf,.jpg,.jpeg,.png"
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          style={{ display: "none" }}
                         />
                         <button
                           type="button"
                           className="bg-[#E7A801] hover:bg-amber-700 text-black py-2 px-6 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center mx-auto"
                           disabled={isFileUploading}
+                          onClick={() => fileInputRef.current?.click()}
                         >
                           {isFileUploading ? (
                             "Przesyłanie..."

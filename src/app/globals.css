@@ -1,3 +1,26 @@
+/* Font utility classes for consistent typography */
+.font-rye {
+  font-family: var(--font-rye), fantasy, serif;
+}
+.font-playfair {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+}
+
+/* Example: apply .font-rye to all h1, h2, h3, h4, h5, h6 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-rye), fantasy, serif;
+  letter-spacing: 0.03em;
+}
+
+/* Example: apply .font-playfair to all p, span, li, label, a, button, input, textarea, etc. */
+p, span, li, label, a, button, input, textarea, th, td, div, section, article {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+}
+
+/* Optionally, override for .western-title if needed */
+.western-title {
+  font-family: var(--font-rye), fantasy, serif;
+}
 @keyframes toast-bottom-in {
   from {
     opacity: 0;
@@ -36,7 +59,15 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-playfair), serif;
+}
+
+.western-title {
+  font-family: var(--font-rye), fantasy;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-rye), fantasy;
 }
 
 @layer base {

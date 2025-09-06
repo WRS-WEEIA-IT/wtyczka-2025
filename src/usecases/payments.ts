@@ -24,6 +24,8 @@ export interface PaymentRecord {
   transferConfirmation: boolean;
   ageConfirmation: boolean;
   cancellationPolicy: boolean;
+
+  qualified?: boolean;
   
   createdAt: Date;
   updatedAt: Date;

@@ -108,7 +108,7 @@ export default function RegistrationPage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-[#18181b] rounded-2xl shadow-xl border border-[#262626]">
+        <div className="max-w-md mx-auto text-center p-8 bg-[#1a1a1a]/70 rounded-2xl shadow-xl border border-[#262626]">
           <div className="text-6xl mb-4">🔒</div>
           <h1 className="text-2xl font-bold text-amber-400 mb-4">
             Dostęp ograniczony
@@ -118,7 +118,8 @@ export default function RegistrationPage() {
           </p>
           <Link
             href="/"
-            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-semibold transition-colors"
+            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-bold tracking-wider uppercase transition-colors western-btn"
+            style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
           >
             Wróć do strony głównej
           </Link>

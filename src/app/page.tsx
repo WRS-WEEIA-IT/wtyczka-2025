@@ -60,12 +60,12 @@ export default function HomePage() {
         <div className="relative max-w-4xl mx-auto px-4 py-10 text-center flex flex-col justify-center items-center home-hero-section">
           <div className="flex flex-col items-center">
             <Image
-              src="/logo_czarne_tło.jpg"
+              src="/logo2.svg"
               alt="Logo wtyczka"
-              width={320}
-              height={110}
-              className="m-0 p-0 leading-none drop-shadow-2xl rounded-lg bg-[#18181b] shadow-lg"
-              style={{ display: "block", marginBottom: "-10px" }}
+              width={1200}
+              height={440}
+              className="m-0 p-0 leading-none drop-shadow-2xl"
+              style={{ display: "block", marginTop: "26px", marginBottom: "-8px" }}
             />
             <p
               className="text-2xl md:text-3xl m-0 p-0 text-[#E7A801] font-extrabold tracking-widest uppercase drop-shadow-lg western-title"
@@ -75,21 +75,25 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row mt-10 gap-3 w-full justify-center items-center mb-2 overflow-x-auto">
-            <Link
-              href="/registration"
-              className="bg-[#E7A801] hover:bg-amber-700 min-w-[160px] max-w-xs w-full rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-black shadow-md transition-colors western-btn"
-              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
-            >
-              Zapisz się
-            </Link>
+
+          <div className="flex flex-col sm:flex-row mt-10 gap-3 w-full justify-center items-center mb-2" style={{overflowX: 'visible'}}>
+            <span className="relative group">
+              <span className="zapisz-glow" aria-hidden="true"></span>
+              <Link
+                href="/registration"
+                className="homepage-btn zapisz-btn western-btn-roboto min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-white bg-[#E7A801] hover:bg-yellow-400 transition-all duration-200 border-none shadow-none relative overflow-hidden"
+                style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+              >
+                ZAPISZ SIĘ
+              </Link>
+            </span>
 
             <Link
               href="/faq"
-              className="bg-[#232323]/90 hover:bg-[#3a2c13] min-w-[160px] max-w-xs w-full rounded-lg p-3 flex items-center justify-center font-extrabold text-base uppercase tracking-widest text-[#E7A801] shadow-md transition-colors western-btn"
-              style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)' }}
+              className="homepage-btn western-btn-roboto min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-[#E7A801] bg-[#232323] hover:bg-[#18181b] transition-all duration-200 border-none shadow-none relative overflow-hidden"
+              style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
             >
-              Dowiedz się więcej
+              DOWIEDZ SIĘ WIĘCEJ
             </Link>
           </div>
 
@@ -98,12 +102,14 @@ export default function HomePage() {
               href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wtyczka+2025+-+Wyjazd+Integracyjny&dates=20251023T120000Z/20251023T130000Z&details=Wyjazd+Integracyjny+Wydziału+EEIA+PŁ"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#232323]/80 w-full max-w-xs rounded-lg py-3 px-4 flex flex-row items-center justify-center gap-3 shadow-lg cursor-pointer hover:bg-[#232323] transition"
+              className="homepage-btn western-btn-roboto min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex flex-row items-center justify-center gap-3 text-lg font-bold text-[#E7A801] bg-[#232323] hover:bg-[#18181b] transition-all duration-200 border-none shadow-none relative overflow-hidden"
+              style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
               title="Dodaj wydarzenie do kalendarza Google"
-              style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)' }}
             >
               <Calendar className="h-7 w-7 text-[#E7A801]" />
-              <span className="text-lg font-extrabold tracking-widest uppercase text-[#E7A801]">Pozostało {daysUntilEvent} dni</span>
+              <span className="uppercase tracking-wide" style={{ fontFamily: 'inherit' }}>
+                POZOSTAŁO <span style={{ fontFamily: 'monospace' }}>{daysUntilEvent}</span> DNI
+              </span>
             </a>
           </div>
 

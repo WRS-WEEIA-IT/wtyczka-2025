@@ -1,3 +1,73 @@
+/* Western-style Roboto Slab for homepage buttons */
+.western-btn-roboto {
+  font-family: 'Roboto Slab', 'Times New Roman', serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  text-shadow: 1px 2px 0 #00000022, 0 1px 0 #E7A80144;
+  font-weight: 700;
+}
+/* Western title font with fallback for Polish characters */
+.western-title {
+  font-family: 'Rye', 'Playfair Display', 'Roboto Slab', 'Times New Roman', serif;
+  letter-spacing: 0.08em;
+}
+/* Homepage animated buttons */
+.homepage-btn {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: transform 0.38s cubic-bezier(.4,2,.3,1), box-shadow 0.38s cubic-bezier(.4,2,.3,1), background 0.38s;
+  box-shadow: 0 2px 8px rgba(231,168,1,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+}
+.homepage-btn:hover, .homepage-btn:focus-visible {
+  transform: scale(1.025);
+  box-shadow: 0 3px 12px 0 rgba(231,168,1,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+  filter: brightness(1.03) saturate(1.03);
+}
+.homepage-btn:active {
+  transform: scale(0.98) rotate(0deg);
+  box-shadow: 0 2px 8px rgba(231,168,1,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+}
+
+/* Subtle animated shine on hover */
+.homepage-btn::after {
+  content: "";
+  position: absolute;
+  left: -60%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 60%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: left 0.5s cubic-bezier(.4,2,.3,1), opacity 0.3s;
+  z-index: 2;
+}
+.homepage-btn:hover::after {
+  left: 110%;
+  opacity: 1;
+}
+
+/* Glow for 'zapisz się' button */
+.zapisz-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 110%;
+  height: 120%;
+  z-index: 0;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse at center, rgba(231,168,1,0.22) 0%, rgba(231,168,1,0.12) 60%, transparent 100%);
+  filter: blur(8px) brightness(1.1);
+  pointer-events: none;
+  transition: filter 0.3s;
+  animation: zapiszGlowPulse 2.5s infinite alternate cubic-bezier(.4,2,.3,1);
+}
+@keyframes zapiszGlowPulse {
+  0% { filter: blur(8px) brightness(1.08); }
+  100% { filter: blur(14px) brightness(1.18); }
+}
 /* Background styles for the website */
 
 .background-container {
@@ -25,19 +95,6 @@
   opacity: 0.7;
   mix-blend-mode: lighten;
   filter: contrast(1.4) brightness(1.5) saturate(1.1);
-  animation: pulse 15s infinite alternate;
-}
-
-@keyframes pulse {
-  0% {
-    filter: contrast(1.4) brightness(1.5) saturate(1.1);
-  }
-  50% {
-    filter: contrast(1.5) brightness(1.6) saturate(1.2);
-  }
-  100% {
-    filter: contrast(1.4) brightness(1.5) saturate(1.1);
-  }
 }
 
 /* Create a gradient overlay for the top part */
@@ -49,7 +106,6 @@
   height: 50%;
   background: linear-gradient(180deg, rgba(10, 10, 10, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
   z-index: 1;
-  animation: fadeGradientTop 20s infinite alternate;
 }
 
 /* Create a gradient overlay for the bottom part */
@@ -61,31 +117,6 @@
   height: 50%;
   background: linear-gradient(0deg, rgba(10, 10, 10, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
   z-index: 1;
-  animation: fadeGradientBottom 20s infinite alternate;
-}
-
-@keyframes fadeGradientTop {
-  0% {
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
-  }
-  50% {
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.7) 0%, rgba(0, 0, 0, 0) 90%);
-  }
-  100% {
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
-  }
-}
-
-@keyframes fadeGradientBottom {
-  0% {
-    background: linear-gradient(0deg, rgba(10, 10, 10, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
-  }
-  50% {
-    background: linear-gradient(0deg, rgba(10, 10, 10, 0.7) 0%, rgba(0, 0, 0, 0) 90%);
-  }
-  100% {
-    background: linear-gradient(0deg, rgba(10, 10, 10, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
-  }
 }
 
 /* Override body background to ensure consistency */
@@ -122,10 +153,16 @@ div.bg-zinc-800,
 div[class*="bg-gray-"],
 div[class*="bg-zinc-"],
 div.border-b,
-section.border-b {
-  background-color: rgba(10, 10, 10, 0.6) !important;
+section.border-b,
+div[class*="bg-[#0F0F0F]"],
+div[class*="bg-[#18181b]"],
+div.form-container,
+.form-section,
+.form-card {
+  background-color: rgba(26, 26, 26, 0.7) !important;
   backdrop-filter: blur(8px) !important;
   border-color: rgba(38, 38, 38, 0.5) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Apply to specific layouts that contain content */

@@ -4,7 +4,7 @@
 
 /* Base navbar styles */
 .western-navbar {
-  /* background-color removed */
+  background-color: rgba(24, 24, 27, 0.72) !important; /* ciemnoszary, pasujący do tła */
   /* border-bottom removed */
   padding: 0.8rem 0 1.2rem 0; 
   width: 100%;
@@ -14,6 +14,9 @@
   max-width: 100vw;
   min-height: fit-content;
   margin-bottom: 1rem; /* Add margin at the bottom for spacing */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
 }
 
 /* Container layout */
@@ -36,7 +39,7 @@
   max-width: 100%;
   overflow-x: hidden;
   padding-bottom: 5px;
-  gap: 10px;
+  gap: 4px;
   margin: 0 auto;
   width: fit-content;
   text-align: center;
@@ -58,7 +61,7 @@
   justify-content: center;
   align-items: center;
   padding: 0.5rem 0;
-  gap: 10px;
+  gap: 4px;
   width: 100%;
   max-width: 100%;
   text-align: center;
@@ -68,7 +71,17 @@
   .western-navbar .hidden.md\:flex {
     flex-wrap: wrap;
     justify-content: center;
-    row-gap: 15px;
+  row-gap: 4px;
+/* Bullet icon for navbar click */
+.navbar-bullet {
+  pointer-events: none;
+  user-select: none;
+  z-index: 9999;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.5s;
+}
     column-gap: 10px;
     padding: 10px 0;
     text-align: center;
@@ -79,7 +92,7 @@
 
 /* Western-style signboard buttons */
 .western-button {
-  background-image: url('/western/wooden-sign.png');
+  background-image: none;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   position: relative;
@@ -102,11 +115,37 @@
   overflow: visible;
   text-align: center;
   max-width: 100%;
-  display: inline-block;
-  min-width: 120px;
-  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
   line-height: 1.1;
-  z-index: 1;
+  z-index: 50;
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+/* Specjalna klasa dla pierwszych trzech przycisków nawigacji */
+.western-button--sign186 {
+  background-image: none;
+  /* Wymuś wysokość i proporcje jak w .western-button */
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.13rem;
+  line-height: 1.1;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .western-button:hover {
@@ -333,6 +372,7 @@ html, body {
 
 /* Western dropdown */
 .western-dropdown {
+  padding-top: 36px;
   position: absolute;
   z-index: 40;
   display: flex;
@@ -346,8 +386,8 @@ html, body {
   border: none;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 30px;
-  row-gap: 5px;
+  margin-top: 16px;
+  row-gap: 1px;
 }
 
 /* Chain connection between wooden signs */
@@ -358,14 +398,14 @@ html, body {
   display: flex;
   justify-content: space-between;
   margin: -10px 0;
-  padding: 0 60px;
+  padding: 0 90px;
   z-index: 39;
   pointer-events: none;
   box-sizing: border-box;
 }
 
 .chain-link {
-  background-image: url('/western/chain.png');
+  background-image: url('/western/chain.svg');
   background-repeat: repeat-y;
   background-size: contain;
   width: 20px;
@@ -376,19 +416,19 @@ html, body {
 /* Main chain connection from parent menu to first dropdown item */
 .western-parent-chain {
   position: absolute;
-  top: 100%;
+  top: 92%;
   height: 30px;
   width: 100%;
   z-index: 39;
-  margin-top: 0;
+  margin-top: -8px;
   display: flex;
   justify-content: space-between;
-  padding: 0 60px;
+  padding: 0 90px;
   box-sizing: border-box;
 }
 
 .western-parent-chain-link {
-  background-image: url('/western/chain.png');
+  background-image: url('/western/chain.svg');
   background-repeat: repeat-y;
   background-size: contain;
   width: 20px;
@@ -398,7 +438,7 @@ html, body {
 
 /* Wooden sign dropdown items */
 .western-dropdown-item {
-  background-image: url('/western/wooden-sign.png');
+  background-image: url('/western/wooden-sign.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   position: relative;

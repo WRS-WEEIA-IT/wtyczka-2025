@@ -40,7 +40,7 @@ export default function FAQPage() {
         const [general, payments, transport, accommodation, contact] =
           await Promise.all([
             getFAQByCategory("general"),
-            getFAQByCategory("payments"),
+            getFAQByCategory("cost"),
             getFAQByCategory("transport"),
             getFAQByCategory("accommodation"),
             getFAQByCategory("contact"),
@@ -110,55 +110,57 @@ export default function FAQPage() {
       {/* FAQ Content */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-6">
-            {faqData.map((section) => (
-              <div
-                key={section.id}
-                className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-md overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleSection(section.id)}
-                  className="w-full px-6 py-4 bg-[#1a1a1a] hover:bg-[#232323] transition-colors flex items-center justify-between text-left"
+          <div className="bg-[#1a1a1a]/70 border border-[#262626] rounded-lg shadow-lg overflow-hidden p-6">
+            <div className="space-y-6">
+              {faqData.map((section) => (
+                <div
+                  key={section.id}
+                  className="overflow-hidden mb-6 last:mb-0"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className="text-amber-400">{section.icon}</div>
-                    <h2 className="text-xl font-bold text-amber-400">
-                      {section.title}
-                    </h2>
-                  </div>
-                  <div className="text-amber-400">
-                    {openSections.includes(section.id) ? (
-                      <ChevronDown className="h-5 w-5" />
-                    ) : (
-                      <ChevronRight className="h-5 w-5" />
-                    )}
-                  </div>
-                </button>
+                  <button
+                    onClick={() => toggleSection(section.id)}
+                    className="w-full px-6 py-4 bg-[#232323] hover:bg-[#2a2a2a] transition-colors flex items-center justify-between text-left rounded-lg"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="text-amber-400">{section.icon}</div>
+                      <h2 className="text-xl font-bold text-amber-400">
+                        {section.title}
+                      </h2>
+                    </div>
+                    <div className="text-amber-400">
+                      {openSections.includes(section.id) ? (
+                        <ChevronDown className="h-5 w-5" />
+                      ) : (
+                        <ChevronRight className="h-5 w-5" />
+                      )}
+                    </div>
+                  </button>
 
-                {openSections.includes(section.id) && (
-                  <div className="px-6 py-4 space-y-6">
-                    {section.questions.map((qa, index) => (
-                      <div
-                        key={index}
-                        className="border-b border-[#262626] last:border-b-0 pb-4 last:pb-0"
-                      >
-                        <h3 className="text-lg font-semibold text-amber-300 mb-2">
-                          {qa.question}
-                        </h3>
-                        <p className="text-gray-200 leading-relaxed">
-                          {qa.answer}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {openSections.includes(section.id) && (
+                    <div className="px-4 py-4 space-y-6 mt-3">
+                      {section.questions.map((qa, index) => (
+                        <div
+                          key={index}
+                          className="border border-[#3a3a3a] rounded-lg p-4 last:mb-0"
+                        >
+                          <h3 className="text-lg font-semibold text-amber-300 mb-2">
+                            {qa.question}
+                          </h3>
+                          <p className="text-gray-200 leading-relaxed">
+                            {qa.answer}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Contact Info */}
-          <div className="mt-12 bg-[#0F0F0F] border border-[#262626] text-white rounded-lg p-8 text-center">
-            <h3 className="text-2xl font-bold mb-4">
+          <div className="mt-12 bg-[#1a1a1a]/70 border border-[#262626] text-white rounded-lg p-8 text-center">
+            <h3 className="text-2xl font-bold mb-4 text-amber-400">
               Nie znalazłeś odpowiedzi na swoje pytanie?
             </h3>
             <p className="text-amber-200 mb-6">

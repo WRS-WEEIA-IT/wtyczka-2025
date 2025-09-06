@@ -35,7 +35,7 @@ export default function Navbar() {
       audio.src = '/western/gunshot.mp3';
       
       // Preload images
-      const imageUrls = ['/western/wooden-sign.png', '/western/bullet-hole.png', '/western/wooden-background.jpg'];
+  const imageUrls = ['/western/wooden-sign.svg', '/western/bullet-hole.png', '/western/wooden-background.jpg'];
       imageUrls.forEach(url => {
         const img = new Image();
         img.src = url;
@@ -68,35 +68,39 @@ export default function Navbar() {
   const handleNavigation = (e: React.MouseEvent, href: string) => {
     // Prevent default navigation
     e.preventDefault();
-    
     // Get click coordinates
     const x = e.clientX;
     const y = e.clientY;
-    
-    // Create bullet hole
-    const bulletHole = document.createElement('div');
-    bulletHole.className = 'bullet-hole';
-    bulletHole.style.left = `${x - 10}px`;
-    bulletHole.style.top = `${y - 10}px`;
-    document.body.appendChild(bulletHole);
-    
-  // (Removed gunshot flash effect)
-    
     // Play gunshot sound
-    try {
-      const gunshotSound = new Audio('/western/gunshot.mp3');
-      gunshotSound.volume = 0.3;
-      gunshotSound.play().catch(e => console.log('Audio playback error:', e));
-    } catch (error) {
-      console.error("Audio error:", error);
-    }
-    
-  // (No flash effect to remove)
-    
-    // Navigate after a delay (0.5s)
+    const audio = new Audio('/western/gunshot.mp3');
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+    // Create bullet icon
+    const bulletIcon = document.createElement('img');
+    bulletIcon.src = '/western/bullet.svg';
+    bulletIcon.alt = 'bullet';
+    bulletIcon.className = 'navbar-bullet';
+    bulletIcon.style.position = 'absolute';
+    bulletIcon.style.left = `${x - 12}px`;
+    bulletIcon.style.top = `${y - 12}px`;
+    bulletIcon.style.width = '24px';
+    bulletIcon.style.height = '24px';
+    bulletIcon.style.pointerEvents = 'none';
+    bulletIcon.style.zIndex = '9999';
+    bulletIcon.style.transition = 'transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s';
+    document.body.appendChild(bulletIcon);
+    // Animacja: powiększenie, zostaje i znika
+    setTimeout(() => {
+      bulletIcon.style.transform = 'scale(1.5)';
+    }, 30);
+    setTimeout(() => {
+      bulletIcon.style.opacity = '0';
+    }, 600);
+    setTimeout(() => { bulletIcon.remove(); }, 1100);
+    // Navigate after a delay (0.75s)
     setTimeout(() => {
       window.location.href = href;
-    }, 750); // 0.5 second delay
+    }, 750);
   };
 
   const handleLogout = async () => {
@@ -129,9 +133,11 @@ export default function Navbar() {
             {/* Desktop Navigation */}
             {!isMobile && (
               <div className="hidden md:flex flex-wrap justify-center items-center gap-3 py-2 western-nav-container mx-auto" style={{ margin: "0 auto", width: "100%", justifyContent: "center" }}>
+
+
               <a 
                 href="/" 
-                className="western-button"
+                className="western-button western-button--sign186 western-button--first"
                 onClick={(e) => handleNavigation(e, "/")}
               >
                 {t.nav.home}
@@ -139,7 +145,7 @@ export default function Navbar() {
 
               <a
                 href="/news"
-                className="western-button"
+                className="western-button western-button--sign186"
                 onClick={(e) => handleNavigation(e, "/news")}
               >
                 {t.nav.news}
@@ -147,7 +153,7 @@ export default function Navbar() {
 
                <a
                  href="/partners"
-                 className="western-button"
+                 className="western-button western-button--sign186"
                  onClick={(e) => handleNavigation(e, "/partners")}
                >
                  {t.nav.partners}
