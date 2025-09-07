@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { User, School, Info, Save, AlertTriangle } from "lucide-react";
+import { Check } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import {
@@ -17,29 +18,42 @@ import {
 import { handleSupabaseError } from "@/lib/supabase";
 
 // Schema walidacji dla formularza
+const EVENT_DATE = new Date("2025-10-23"); // data wydarzenia
+
 const registrationSchema = z.object({
   name: z.string().min(2, "Imię musi mieć co najmniej 2 znaki"),
   surname: z.string().min(2, "Nazwisko musi mieć co najmniej 2 znaki"),
-  dob: z.string().min(1, "Data urodzenia jest wymagana"),
+  dob: z.string()
+    .min(1, "Data urodzenia jest wymagana")
+    .refine((value) => {
+      const birthDate = new Date(value);
+      if (isNaN(birthDate.getTime())) return false;
+      let age = EVENT_DATE.getFullYear() - birthDate.getFullYear();
+      const m = EVENT_DATE.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && EVENT_DATE.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age >= 18;
+    }, { message: "Musisz mieć ukończone 18 lat w dniu wydarzenia" }),
   phoneNumber: z.string().min(9, "Numer telefonu musi mieć co najmniej 9 cyfr"),
   pesel: z.string().length(11, "PESEL musi mieć 11 cyfr"),
-  gender: z.enum(["male", "female", "other"]),
+  gender: z.enum(["male", "female", "other"],"Wybierz jedną z opcji"),
 
-  faculty: z.enum(["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"]),
+  faculty: z.enum(["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"],"Wybierz jedną z opcji"),
   studentNumber: z.string().min(1, "Numer indeksu jest wymagany"),
   studyField: z.string().min(1, "Kierunek studiów jest wymagany"),
-  studyLevel: z.enum(["bachelor", "master", "phd"]),
-  studyYear: z.enum(["1", "2", "3", "4"]),
+  studyLevel: z.enum(["bachelor", "master", "phd"],"Wybierz jedną z opcji"),
+  studyYear: z.enum(["1", "2", "3", "4"],"Wybierz jedną z opcji"),
 
-  dietName: z.enum(["standard", "vegetarian"]),
-  tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"]),
+  dietName: z.enum(["standard", "vegetarian"],"Wybierz jedną z opcji"),
+  tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"],"Wybierz jedną z opcji"),
   aboutWtyczka: z.enum([
     "social-media",
     "akcja-integracja",
     "friend",
     "stands",
     "other",
-  ]),
+  ],"Wybierz jedną z opcji"),
   aboutWtyczkaInfo: z.string().optional(),
 
   invoice: z.boolean(),
@@ -166,17 +180,14 @@ export default function RegistrationPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
-              Rejestracja już wysłana
+              Rejestracja wysłana pomyślnie
             </h1>
-            <p className="text-lg text-amber-400">
-              Twoja rejestracja została już pomyślnie wysłana
-            </p>
           </div>
 
           <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
             <div className="flex items-center space-x-4 mb-6">
-              <div className="bg-green-900 rounded-full p-3 shadow-lg">
-                <User className="h-8 w-8 text-green-400" />
+                <div className="bg-green-900 rounded-full p-3 shadow-lg">
+                  <Check className="h-8 w-8 text-green-400" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">
@@ -187,42 +198,53 @@ export default function RegistrationPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-semibold text-gray-200 mb-2">
+                <h3 className="font-semibold text-gray-200 mb-2 text-lg">
                   Dane osobowe
                 </h3>
-                <p className="text-sm text-gray-400">
+                <p className="text-base text-gray-400">
                   Email: {existingRegistration.email}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-base text-gray-400">
                   Telefon: {existingRegistration.phoneNumber}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-base text-gray-400">
                   Data urodzenia: {existingRegistration.dob.toLocaleDateString("pl-PL")}
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-gray-200 mb-2">
+                <h3 className="font-semibold text-gray-200 mb-2 text-lg">
                   Dane studenta
                 </h3>
-                <p className="text-sm text-gray-400">
+                <p className="text-base text-gray-400">
                   Wydział: {existingRegistration.faculty}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-base text-gray-400">
                   Nr indeksu: {existingRegistration.studentNumber}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-base text-gray-400">
                   Kierunek: {existingRegistration.studyField}
                 </p>
               </div>
             </div>
 
             <div className="mt-8 pt-6 border-t border-[#262626]">
-              <p className="text-sm text-gray-500 mb-4">
-                Data rejestracji: {existingRegistration.createdAt.toLocaleDateString("pl-PL")}
-              </p>
-
-              <div className="flex space-x-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <p className="text-base text-gray-500 mb-4 md:mb-0 text-center md:text-left">
+                  Data rejestracji: {existingRegistration.createdAt.toLocaleDateString("pl-PL")}
+                </p>
+                {/* Desktop: przycisk po prawej */}
+                <div className="hidden md:block">
+                  <Link
+                    href="/status"
+                    className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-semibold transition-colors shadow-md"
+                  >
+                    Sprawdź status
+                  </Link>
+                </div>
+              </div>
+              {/* Mobile: przycisk pod datą, wyśrodkowany */}
+              <div className="block md:hidden mt-4 flex justify-center items-center">
                 <Link
                   href="/status"
                   className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-semibold transition-colors shadow-md"
@@ -276,13 +298,13 @@ export default function RegistrationPage() {
             <div className="flex items-center space-x-2 mb-6">
               <User className="h-6 w-6 text-amber-400" />
               <h2 className="text-2xl font-bold text-white">
-                {t.forms.participantData}
+                {t('forms.participantData')}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.firstName} <span className="text-red-500">*</span>
+                  {t('forms.firstName')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -295,7 +317,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.lastName} <span className="text-red-500">*</span>
+                  {t('forms.lastName')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -308,7 +330,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.birthDate} <span className="text-red-500">*</span>
+                  {t('forms.birthDate')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -321,7 +343,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.phone} <span className="text-red-500">*</span>
+                  {t('forms.phone')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -334,7 +356,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.pesel} <span className="text-red-500">*</span>
+                  {t('forms.pesel')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -348,7 +370,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.gender} <span className="text-red-500">*</span>
+                  {t('forms.gender')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("gender")}
@@ -371,13 +393,13 @@ export default function RegistrationPage() {
             <div className="flex items-center space-x-2 mb-6">
               <School className="h-6 w-6 text-amber-400" />
               <h2 className="text-2xl font-bold text-white">
-                {t.forms.studentData}
+                {t('forms.studentData')}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.faculty} <span className="text-red-500">*</span>
+                  {t('forms.faculty')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("faculty")}
@@ -400,7 +422,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.studentNumber} <span className="text-red-500">*</span>
+                  {t('forms.studentNumber')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -413,7 +435,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.fieldOfStudy} <span className="text-red-500">*</span>
+                  {t('forms.fieldOfStudy')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -426,7 +448,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.studyLevel} <span className="text-red-500">*</span>
+                  {t('forms.studyLevel')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("studyLevel")}
@@ -443,7 +465,7 @@ export default function RegistrationPage() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.studyYear} <span className="text-red-500">*</span>
+                  {t('forms.studyYear')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("studyYear")}
@@ -467,13 +489,13 @@ export default function RegistrationPage() {
             <div className="flex items-center space-x-2 mb-6">
               <Info className="h-6 w-6 text-amber-400" />
               <h2 className="text-2xl font-bold text-white">
-                {t.forms.additionalInfo}
+                {t('forms.additionalInfo')}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.diet} <span className="text-red-500">*</span>
+                  {t('forms.diet')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("dietName")}
@@ -489,7 +511,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.tshirtSize} <span className="text-red-500">*</span>
+                  {t('forms.tshirtSize')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("tshirtSize")}
@@ -521,14 +543,14 @@ export default function RegistrationPage() {
                       </svg>
                     </span>
                     <span className="ml-3 text-gray-300">
-                      {t.forms.invoice}
+                      {t('forms.invoice')}
                     </span>
                   </label>
                 </div>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t.forms.howDidYouKnow} <span className="text-red-500">*</span>
+                  {t('forms.howDidYouKnow')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("aboutWtyczka")}
@@ -567,13 +589,14 @@ export default function RegistrationPage() {
                     </svg>
                   </span>
                   <span className="ml-3 text-gray-300">
-                    <button
-                      type="button"
-                      onClick={() => setShowRegulations(true)}
+                    <a
+                      href={process.env.NEXT_PUBLIC_REGULATIONS_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-amber-400 hover:text-amber-500 underline"
                     >
-                      {t.forms.acceptRegulations} <span className="text-red-500">*</span>
-                    </button>
+                      {t('forms.acceptRegulations')} <span className="text-red-500">*</span>
+                    </a>
                   </span>
                 </label>
               </div>
@@ -593,7 +616,7 @@ export default function RegistrationPage() {
                     </svg>
                   </span>
                   <span className="ml-3 text-gray-300">
-                    {t.forms.dataProcessingConsent} <span className="text-red-500">*</span>
+                    {t('forms.dataProcessingConsent')} <span className="text-red-500">*</span>
                   </span>
                 </label>
               </div>
@@ -611,60 +634,12 @@ export default function RegistrationPage() {
               className="bg-[#E7A801] hover:bg-amber-700 disabled:opacity-50 text-black px-12 py-4 rounded-xl font-semibold text-lg transition-colors inline-flex items-center space-x-2 shadow-md"
             >
               <Save className="h-5 w-5" />
-              <span>{isSubmitting ? "Wysyłanie..." : t.forms.submit}</span>
+              <span>{isSubmitting ? "Wysyłanie..." : t('forms.submit')}</span>
             </button>
           </div>
         </form>
 
         {/* Regulations Modal */}
-        {showRegulations && (
-          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-            <div className="bg-[#18181b] rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-[#262626] shadow-2xl">
-              <div className="p-6">
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  Regulamin Wtyczki 2025
-                </h2>
-                <div className="prose prose-invert text-gray-300 space-y-4">
-                  <p>
-                    <strong>§1. Informacje ogólne</strong>
-                    <br />
-                    Niniejszy regulamin określa zasady uczestnictwa w wydarzeniu
-                    Wtyczka 2025.
-                  </p>
-                  <p>
-                    <strong>§2. Uczestnictwo</strong>
-                    <br />W wydarzeniu mogą uczestniczyć studenci EEIA oraz innych
-                    wydziałów.
-                  </p>
-                  <p>
-                    <strong>§3. Opłaty</strong>
-                    <br />
-                    Rezygnacja z uczestnictwa mniej niż 10 dni przed wydarzeniem
-                    nie uprawnia do zwrotu wpłaty.
-                  </p>
-                  <p>
-                    <strong>§4. Przetwarzanie danych</strong>
-                    <br />
-                    Dane osobowe uczestników będą przetwarzane zgodnie z RODO.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Pellentesque habitant morbi tristique senectus et netus et
-                    malesuada fames ac turpis egestas.
-                  </p>
-                </div>
-                <div className="mt-6 text-center">
-                  <button
-                    onClick={() => setShowRegulations(false)}
-                    className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-2 rounded-xl font-semibold"
-                  >
-                    Zamknij
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

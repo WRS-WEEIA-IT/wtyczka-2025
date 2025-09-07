@@ -26,6 +26,28 @@ import {
   Bus,
 } from "lucide-react";
 import toast from "react-hot-toast";
+// Helper to show toast and limit to 3 visible
+const showLimitedToast = (content: string | number | React.ReactNode, options?: any) => {
+  // @ts-ignore: toast.promise is not used here
+  const activeToasts = toast?.toasts?.filter(t => t.visible);
+  if (activeToasts && activeToasts.length >= 3) {
+    activeToasts.forEach(t => toast.dismiss(t.id));
+  }
+  toast(content as any, {
+    ...options,
+    duration: 1200, // faster disappearance
+    style: {
+      background: '#232323',
+      color: 'white',
+      marginBottom: '16px', // positive margin so new toast is above previous
+      boxShadow: '0 2px 16px rgba(0,0,0,0.25)',
+      ...options?.style
+    },
+    position: 'bottom-right', // appear one after another in bottom right
+    // Move stack higher from bottom
+    containerStyle: { bottom: '80px', right: '24px' },
+  });
+};
 import Link from "next/link";
 import { createPayment, getPayment, PaymentRecord } from "@/usecases/payments";
 import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
@@ -48,7 +70,9 @@ const paymentSchema = z.object({
   emergencyContactNameSurname: z
     .string()
     .min(2, "Imię i nazwisko jest wymagane"),
-  emergencyContactPhone: z.string().min(9, "Numer telefonu jest wymagany"),
+  emergencyContactPhone: z.string()
+    .min(9, "Numer telefonu jest wymagany")
+    .regex(/^\d{9,}$/, "Numer telefonu musi zawierać tylko cyfry i mieć co najmniej 9 cyfr"),
   emergencyContactRelation: z
     .string()
     .min(1, "Stopień pokrewieństwa jest wymagany"),
@@ -70,7 +94,7 @@ type PaymentFormData = z.infer<typeof paymentSchema>;
 
 export default function PaymentPage() {
   const { user, loading } = useAuth();
-  const { t, language } = useLanguage();
+  const { t, language } = useLanguage() as { t: (key: string) => string; language: string };
 
   const realLang = language || "pl";
 
@@ -81,6 +105,7 @@ export default function PaymentPage() {
   const [existingPayment, setExistingPayment] = useState<PaymentRecord | null>(null);
   const [uploadedFile, setUploadedFile] = useState<FileUploadResult | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
+  const [isDragActive, setIsDragActive] = useState(false);
   const [daysUntilEvent, setDaysUntilEvent] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -292,7 +317,7 @@ export default function PaymentPage() {
       <div className="min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header with logo */}
-          <section className="border-b border-[#262626] text-white py-16 mb-8">
+          <section className="border-b border-[#262626] text-white py-16 mb-8 bg-[#18181b] rounded-2xl shadow-xl">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
                 Potwierdzenie płatności
@@ -317,14 +342,14 @@ export default function PaymentPage() {
 
           <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
             <div className="flex items-center space-x-4 mb-6">
-              <div className="bg-[#262626] rounded-full p-3">
+              <div className="bg-[#262626] rounded-full p-3 hidden xs:inline-block sm:inline-block md:inline-block lg:inline-block xl:inline-block">
                 <CreditCard className="h-8 w-8 text-amber-400" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white">
+              <div className="w-full">
+                <h2 className="text-2xl md:text-3xl font-bold text-white text-center xs:text-left sm:text-left md:text-left lg:text-left xl:text-left">
                   Potwierdzenie płatności
                 </h2>
-                <p className="text-amber-400 text-sm">
+                <p className="text-amber-400 text-sm text-center xs:text-left sm:text-left md:text-left lg:text-left xl:text-left">
                   Wysłano: {existingPayment.createdAt.toLocaleDateString()}
                 </p>
               </div>
@@ -428,10 +453,11 @@ export default function PaymentPage() {
                   href={existingPayment.paymentConfirmationFile.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center text-sm bg-[#E7A801] hover:bg-amber-700 text-black px-5 py-2.5 rounded-xl font-medium transition-colors"
+                  className="mt-2 flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row items-center justify-center text-sm bg-[#E7A801] hover:bg-amber-700 text-black px-5 py-2.5 rounded-xl font-medium transition-colors mx-auto xs:mx-0 sm:mx-0 md:mx-0 lg:mx-0 xl:mx-0"
+                  style={{ textAlign: 'center', maxWidth: 'fit-content' }}
                 >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Podgląd potwierdzenia
+                  <Eye className="h-4 w-4 mb-1 sm:mb-0 md:mb-0 lg:mb-0 xl:mb-0 sm:mr-2 md:mr-2 lg:mr-2 xl:mr-2" />
+                  <span>Podgląd potwierdzenia</span>
                 </a>
               </div>
             </div>
@@ -453,15 +479,6 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          {/* Event countdown section */}
-          <div className="mt-12 text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">Do Wtyczki 2025 pozostało:</h3>
-            <div className="bg-[#18181b] inline-flex items-center px-8 py-4 rounded-xl border border-[#262626]">
-              <Calendar className="h-6 w-6 text-amber-400 mr-3" />
-              <span className="text-3xl font-bold text-amber-400">{daysUntilEvent}</span>
-              <span className="ml-2 text-xl text-white">dni</span>
-            </div>
-          </div>
         </div>
       </div>
     );
@@ -520,7 +537,7 @@ export default function PaymentPage() {
     <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header like on news page, no logo */}
-        <section className="border-b border-[#262626] text-white py-16 mb-8">
+  <section className="border-b border-[#262626] text-white py-16 mb-8 bg-[#18181b] rounded-2xl shadow-xl">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
               Formularz płatności
@@ -535,17 +552,20 @@ export default function PaymentPage() {
         {!isAuthorized && (
           <div className="max-w-lg mx-auto">
             <div className="bg-[#18181b] rounded-2xl shadow-lg p-8 border border-[#262626]">
-              <div className="flex items-center mb-6">
-                <div className="bg-[#262626] rounded-full p-3">
-                  <Lock className="h-6 w-6 text-amber-400" />
-                </div>
-                <div className="ml-4">
-                  <h2 className="text-2xl font-bold text-white">
-                    Autoryzacja administratora
-                  </h2>
-                  <p className="text-gray-400">
-                    Podaj hasło aby odblokować formularz
-                  </p>
+              {/* Mobile: icon above title, Desktop: icon left of title */}
+              <div className="mb-6">
+                <div className="flex flex-col items-center md:flex-row md:items-center">
+                  <div className="bg-[#262626] rounded-full p-3 mb-4 md:mb-0 md:mr-4 flex-shrink-0">
+                    <Lock className="h-6 w-6 text-amber-400" />
+                  </div>
+                  <div className="text-center md:text-left">
+                    <h2 className="text-2xl font-bold text-white">
+                      Autoryzacja administratora
+                    </h2>
+                    <p className="text-gray-400">
+                      Podaj hasło aby odblokować formularz
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -559,6 +579,12 @@ export default function PaymentPage() {
                     {...register("adminPassword")}
                     className="w-full px-3 py-3 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 pr-10"
                     placeholder="Wprowadź hasło..."
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        checkAdminPassword();
+                      }
+                    }}
                   />
                   <button
                     type="button"
@@ -618,7 +644,7 @@ export default function PaymentPage() {
             handleSubmit(onSubmit)(e);
           }} className="space-y-8">
             <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
-              <div className="flex items-center space-x-2 mb-6 pb-4 border-b border-[#262626]">
+              <div className="flex items-center space-x-2 mb-6 pb-4">
                 <CreditCard className="h-6 w-6 text-amber-400" />
                 <h2 className="text-2xl font-bold text-white">
                   Informacje o płatności
@@ -629,71 +655,104 @@ export default function PaymentPage() {
                 <h3 className="text-lg font-medium text-amber-400 mb-3">
                   Dane do przelewu
                 </h3>
-                <div className="space-y-2 text-white">
-                  <p>
-                    <span className="text-gray-400">Numer konta:</span>{" "}
-                    <span className="font-mono bg-[#232323] px-2 py-1 rounded">
-                      {bankAccountDetails.accountNumber}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-gray-400">Odbiorca:</span>{" "}
-                    {bankAccountDetails.accountHolder}
-                  </p>
-                  <p>
-                    <span className="text-gray-400">Bank:</span>{" "}
-                    {bankAccountDetails.bankName}
-                  </p>
-                  <p>
-                    <span className="text-gray-400">Tytuł przelewu:</span>{" "}
-                    <span className="font-medium text-amber-400">
+                <div className="text-white">
+                  <div>
+                    <span className="text-gray-400 block">Numer konta:</span>
+                      <button
+                        type="button"
+                        className="font-mono bg-[#232323] px-2 py-1 rounded block break-words text-left w-full hover:bg-[#2c2c2c] focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                        style={{ marginTop: '2px', marginBottom: '2px' }}
+                        onClick={() => {
+                          navigator.clipboard.writeText(bankAccountDetails.accountNumber);
+                          showLimitedToast(
+                            <span style={{ color: 'white', fontWeight: 600 }}>Skopiowano numer konta do schowka</span>,
+                            { icon: '📋', duration: 2000, style: { background: '#232323', color: 'white' } }
+                          );
+                        }}
+                        aria-label="Kliknij, aby skopiować numer konta"
+                      >
+                        {bankAccountDetails.accountNumber}
+                      </button>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block">Odbiorca:</span>
+                    <span className="block break-words" style={{ marginTop: '2px', marginBottom: '2px' }}>{bankAccountDetails.accountHolder}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block">Bank:</span>
+                    <span className="block break-words" style={{ marginTop: '2px', marginBottom: '2px' }}>{bankAccountDetails.bankName}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block">Tytuł przelewu:</span>
+                    <span className="font-medium text-amber-400 block break-words" style={{ marginTop: '2px', marginBottom: '2px' }}>
                       {bankAccountDetails.transferTitle}
                     </span>
-                  </p>
-                  <p>
-                    <span className="text-gray-400">Kwota:</span>{" "}
-                    <span className="font-bold text-lg text-amber-400">
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block">Kwota:</span>
+                    <span className="font-bold text-lg text-amber-400 block break-words" style={{ marginTop: '2px', marginBottom: '2px' }}>
                       {bankAccountDetails.amount}
                     </span>
-                  </p>
+                  </div>
                 </div>
               </div>
 
               {/* Upload payment confirmation */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Potwierdzenie przelewu (max 5MB)<span className="text-red-500">*</span>
+                  <span className="block w-full font-medium text-gray-300 mb-2 text-xs sm:text-sm md:text-base lg:text-base xl:text-base" style={{maxWidth:'100%', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
+                    Potwierdzenie przelewu (max 5MB)
+                    <span className="text-red-500">*</span>
+                  </span>
                 </label>
                 {!uploadedFile ? (
                   <>
-                    <div className="border-2 border-dashed border-[#262626] rounded-xl p-6 text-center">
-                      <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-400 mb-4">
-                        Prześlij potwierdzenie płatności (PDF, JPG, PNG)
+                    <div
+                      className={`border-2 border-dashed border-[#262626] rounded-xl p-6 text-center cursor-pointer transition-colors ${isDragActive ? 'bg-[#b8860b]/60 border-[#b8860b]' : ''}`}
+                      onClick={() => fileInputRef.current?.click()}
+                      tabIndex={0}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}
+                      role="button"
+                      aria-label="Kliknij, aby wybrać plik do przesłania"
+                      onDragOver={e => { e.preventDefault(); setIsDragActive(true); }}
+                      onDragLeave={e => { e.preventDefault(); setIsDragActive(false); }}
+                      onDrop={e => {
+                        e.preventDefault();
+                        setIsDragActive(false);
+                        const files = e.dataTransfer.files;
+                        if (files && files.length > 0) {
+                          // symulacja eventu inputa
+                          handleFileUpload({ target: { files } } as React.ChangeEvent<HTMLInputElement>);
+                        }
+                      }}
+                    >
+                      <Upload className={`h-10 w-10 mx-auto mb-3 transition-colors duration-150 ${isDragActive ? 'text-amber-400' : 'text-gray-400'}`} />
+                      <p className={`mb-4 transition-colors duration-150 ${isDragActive ? 'text-amber-400 font-semibold' : 'text-gray-400'}`}
+                        style={{ minHeight: '1.5em' }}>
+                        {isDragActive ? 'Upuść plik tutaj' : 'Prześlij potwierdzenie płatności (PDF, JPG, PNG)'}
                       </p>
-                      <div className="relative">
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          onChange={handleFileUpload}
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          style={{ display: "none" }}
-                        />
-                        <button
-                          type="button"
-                          className="bg-[#E7A801] hover:bg-amber-700 text-black py-2 px-6 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center mx-auto"
-                          disabled={isFileUploading}
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          {isFileUploading ? (
-                            "Przesyłanie..."
-                          ) : (
-                            <>
-                              <Upload className="h-4 w-4 mr-2" /> Wybierz plik
-                            </>
-                          )}
-                        </button>
-                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        onChange={handleFileUpload}
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        style={{ display: "none" }}
+                      />
+                      <button
+                        type="button"
+                        className="bg-[#E7A801] hover:bg-amber-700 text-black py-2 px-6 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center mx-auto"
+                        disabled={isFileUploading}
+                        onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                      >
+                        {isFileUploading ? (
+                          "Przesyłanie..."
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4 mr-2" /> Wybierz plik
+                          </>
+                        )}
+                      </button>
+                      {/* Usunięto osobny komunikat, teraz jest w miejscu info tekstu powyżej */}
                     </div>
                     {/* Error message for missing file below the box */}
                     {errors.transferConfirmation && (
@@ -729,7 +788,7 @@ export default function PaymentPage() {
 
             {/* Student status & emergency contact */}
             <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
-              <div className="flex items-center space-x-2 mb-6 pb-4 border-b border-[#262626]">
+              <div className="flex items-center space-x-2 mb-6 pb-4">
                 <Shield className="h-6 w-6 text-amber-400" />
                 <h2 className="text-2xl font-bold text-white">
                   Informacje dodatkowe
@@ -881,7 +940,7 @@ export default function PaymentPage() {
 
             {/* Terms and conditions */}
             <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
-              <div className="flex items-center space-x-2 mb-6 pb-4 border-b border-[#262626]">
+              <div className="flex items-center space-x-2 mb-6 pb-4">
                 <AlertTriangle className="h-6 w-6 text-amber-400" />
                 <h2 className="text-2xl font-bold text-white">
                   Zgody i oświadczenia

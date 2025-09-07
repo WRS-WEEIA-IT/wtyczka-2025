@@ -233,12 +233,6 @@ export default function ContactsPage() {
           />
         </div>
       </section>
-
-
-
-
-
-
     </div>
   );
 }

@@ -145,4 +145,4 @@ export const LoopCarousel: React.FC<CarouselProps> = ({ items, renderItem }) => 
       )}
     </div>
   );
-  }
+}
