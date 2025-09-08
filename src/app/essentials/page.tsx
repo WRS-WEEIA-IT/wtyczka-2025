@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  Backpack,
   FileText,
   Shirt,
   Bath,
@@ -10,57 +9,96 @@ import {
   Bus,
   Star,
   AlertCircle,
-  CheckCircle,
   Loader2,
-  Save
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { EssentialItem, getEssentials } from "@/usecases/essentials";
 
 export default function EssentialsPage() {
+  const [openSections, setOpenSections] = useState<string[]>([]);
   const [essentials, setEssentials] = useState<EssentialItem[]>([]);
+  const [essentialsDocuments, setEssentialsDocuments] = useState<
+    EssentialItem[]
+  >([]);
+  const [essentialsClothing, setEssentialsClothing] = useState<EssentialItem[]>(
+    []
+  );
+  const [essentialsHygiene, setEssentialsHygiene] = useState<EssentialItem[]>(
+    []
+  );
+  const [essentialsElectronics, setEssentialsElectronics] = useState<
+    EssentialItem[]
+  >([]);
+  const [essentialsBus, setEssentialsBus] = useState<EssentialItem[]>([]);
+  const [essentialsOptional, setEssentialsOptional] = useState<EssentialItem[]>(
+    []
+  );
+
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<string[]>([]);
-  // Lokalny stan checkboxów: { [id]: boolean }
   const [checked, setChecked] = useState<{ [id: number]: boolean }>({});
-  
-  // Define category icons
-  const categoryIcons = {
-    documents: <FileText className="h-5 w-5" />,
-    clothing: <Shirt className="h-5 w-5" />,
-    hygiene: <Bath className="h-5 w-5" />,
-    electronics: <Laptop className="h-5 w-5" />,
-    bus: <Bus className="h-5 w-5" />,
-    optional: <Star className="h-5 w-5" />,
-  };
-  
-  // Define category translations
-  const categoryTranslations: { [key: string]: string } = {
-    documents: "Dokumenty",
-    clothing: "Ubrania",
-    hygiene: "Higiena",
-    electronics: "Elektronika",
-    bus: "W autokarze",
-    optional: "Opcjonalne"
+  const [checkedSection, setCheckedSection] = useState<{
+    [id: string]: boolean;
+  }>({});
+
+  const [currentChangedCategory, setCurrentChangedCategory] =
+    useState<string>("");
+
+  const toggleSection = (sectionId: string) => {
+    setOpenSections((prev) =>
+      prev.includes(sectionId)
+        ? prev.filter((id) => id !== sectionId)
+        : [...prev, sectionId]
+    );
   };
 
   useEffect(() => {
     const loadEssentials = async () => {
       try {
         setLoading(true);
-        const items = await getEssentials();
-        const uniqueCategories = Array.from(new Set(items.map(item => item.category)));
-        setEssentials(items);
-        setCategories(uniqueCategories);
-        // Ustaw domyślnie wszystko na nieodhaczone
+
+        const essentialsDb = await getEssentials();
+        setEssentials(essentialsDb);
+
+        setEssentialsDocuments(
+          essentialsDb.filter((item) => item.category === "documents")
+        );
+        setEssentialsClothing(
+          essentialsDb.filter((item) => item.category === "clothing")
+        );
+        setEssentialsHygiene(
+          essentialsDb.filter((item) => item.category === "hygiene")
+        );
+        setEssentialsElectronics(
+          essentialsDb.filter((item) => item.category === "electronics")
+        );
+        setEssentialsBus(
+          essentialsDb.filter((item) => item.category === "bus")
+        );
+        setEssentialsOptional(
+          essentialsDb.filter((item) => item.category === "optional")
+        );
+
         const initialChecked: { [id: number]: boolean } = {};
-        items.forEach(item => {
+        essentialsDb.forEach((item) => {
           initialChecked[item.id] = false;
         });
+
+        const initialCheckedSection: { [id: string]: boolean } = {};
+        [
+          "documents",
+          "clothing",
+          "hygiene",
+          "electronics",
+          "bus",
+          "optional",
+        ].forEach((category) => {
+          initialCheckedSection[category] = false;
+        });
+
         setChecked(initialChecked);
+        setCheckedSection(initialCheckedSection);
       } catch (error) {
         console.error("Error loading essentials:", error);
       } finally {
@@ -70,9 +108,59 @@ export default function EssentialsPage() {
     loadEssentials();
   }, []);
 
+  const essentialsData = [
+    {
+      id: "documents",
+      title: "Dokumenty",
+      icon: <FileText className="h-5 w-5" />,
+      items: essentialsDocuments,
+    },
+    {
+      id: "clothing",
+      title: "Ubrania",
+      icon: <Shirt className="h-5 w-5" />,
+      items: essentialsClothing,
+    },
+    {
+      id: "hygiene",
+      title: "Higiena",
+      icon: <Bath className="h-5 w-5" />,
+      items: essentialsHygiene,
+    },
+    {
+      id: "electronics",
+      title: "Elektronika",
+      icon: <Laptop className="h-5 w-5" />,
+      items: essentialsElectronics,
+    },
+    {
+      id: "bus",
+      title: "W autokarze",
+      icon: <Bus className="h-5 w-5" />,
+      items: essentialsBus,
+    },
+    {
+      id: "optional",
+      title: "Opcjonalne",
+      icon: <Star className="h-5 w-5" />,
+      items: essentialsOptional,
+    },
+  ];
 
+  useEffect(() => {
+    const categoryItems = essentials.filter(
+      (item) => item.category === currentChangedCategory
+    );
 
-
+    const allChecked = categoryItems.every(
+      (catItem) => checked[catItem.id] == true
+    );
+    setCheckedSection((prev) => ({
+      ...prev,
+      [currentChangedCategory]: allChecked,
+    }));
+    if (allChecked) toggleSection(currentChangedCategory);
+  }, [checked, currentChangedCategory]);
 
   return (
     <div className="min-h-screen">
@@ -89,14 +177,14 @@ export default function EssentialsPage() {
             <Link
               href="/registration"
               className="bg-[#E7A801] hover:bg-amber-700 min-w-[180px] border-[#262626] border rounded-xl px-6 py-3 font-semibold transition-colors backdrop-blur-sm text-black western-btn"
-              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
+              style={{ boxShadow: "0 4px 12px rgba(231, 168, 1, 0.4)" }}
             >
               Zapisz się
             </Link>
             <Link
               href="/news"
               className="bg-[#232323]/90 hover:bg-[#3a2c13] min-w-[180px] border-[#262626] border rounded-xl px-6 py-3 font-semibold transition-colors backdrop-blur-sm text-white western-btn"
-              style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)' }}
+              style={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.6)" }}
             >
               Aktualności
             </Link>
@@ -117,7 +205,8 @@ export default function EssentialsPage() {
             <ul className="text-amber-200 space-y-1 text-sm">
               <li>• Pamiętaj o udziale w odprawie przed wyjazdem!</li>
               <li>
-                • Zabierz tylko to, co naprawdę potrzebne - miejsce w autokarze jest ograniczone
+                • Zabierz tylko to, co naprawdę potrzebne - miejsce w autokarze
+                jest ograniczone
               </li>
               <li>• Oznacz swoje bagaże (imię, nazwisko, telefon)</li>
               <li>• Wszystkie leki trzymaj w bagażu podręcznym</li>
@@ -140,34 +229,68 @@ export default function EssentialsPage() {
               </div>
             ) : (
               <div className="space-y-6">
-                {categories.map((category) => (
-                  <div key={category} className="overflow-hidden mb-6 last:mb-0">
-                    <div className="w-full px-6 py-4 bg-[#232323] flex items-center text-left rounded-lg">
-                      <div className="text-amber-400 mr-3">
-                        {categoryIcons[category as keyof typeof categoryIcons] || <Backpack className="h-5 w-5" />}
+                {essentialsData.map((section) => (
+                  <div
+                    key={section.id}
+                    className="overflow-hidden mb-6 last:mb-0"
+                  >
+                    <button
+                      onClick={() => toggleSection(section.id)}
+                      className={`w-full px-6 py-4 bg-[#232323] hover:bg-[#2a2a2a] transition-colors flex items-center justify-between text-left rounded-lg ${
+                        checkedSection[section.id]
+                          ? "text-amber-300 line-through"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="text-amber-400 mr-3">
+                          {section.icon}
+                        </div>
+                        <h2 className="text-xl font-bold text-amber-400">
+                          {section.title}
+                        </h2>
                       </div>
-                      <h2 className="text-xl font-bold text-amber-400">
-                        {categoryTranslations[category] || category}
-                      </h2>
-                    </div>
-                    <div className="px-4 py-4 space-y-2 mt-3">
-                      {essentials.filter(item => item.category === category).map(item => (
-                        <label
-                          key={item.id}
-                          className="flex items-center border border-[#3a3a3a] rounded-lg p-4 bg-[#18181b] cursor-pointer transition-colors hover:border-amber-400"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked[item.id] || false}
-                            onChange={() => setChecked(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
-                            className="form-checkbox h-5 w-5 text-amber-500 rounded focus:ring-amber-400 border-amber-400 mr-4 transition-all duration-150"
-                          />
-                          <span className={`text-white text-base ${checked[item.id] ? 'line-through text-amber-300' : ''}`}>
-                            {item.item}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
+                      <div className="text-amber-400">
+                        {openSections.includes(section.id) ? (
+                          <ChevronDown className="h-5 w-5" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5" />
+                        )}
+                      </div>
+                    </button>
+
+                    {openSections.includes(section.id) && (
+                      <div className="px-4 py-4 space-y-2 mt-3">
+                        {section.items.map((item) => (
+                          <label
+                            key={item.id}
+                            className="flex items-center border border-[#3a3a3a] rounded-lg p-4 bg-[#18181b] cursor-pointer transition-colors hover:border-amber-400"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked[item.id]}
+                              onChange={() => {
+                                setChecked((prev) => ({
+                                  ...prev,
+                                  [item.id]: !prev[item.id],
+                                }));
+                                setCurrentChangedCategory(item.category);
+                              }}
+                              className="form-checkbox h-5 w-5 text-amber-500 rounded focus:ring-amber-400 border-amber-400 mr-4 transition-all duration-150"
+                            />
+                            <span
+                              className={`text-base ${
+                                checked[item.id]
+                                  ? "line-through text-amber-300"
+                                  : "text-white"
+                              }`}
+                            >
+                              {item.item}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -175,7 +298,7 @@ export default function EssentialsPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Contact for Questions */}
       <section className="py-16 bg-[#1a1a1a]/70 text-white border-t border-[#262626]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -187,7 +310,7 @@ export default function EssentialsPage() {
           </p>
           <div className="space-y-2">
             <p className="text-amber-300">
-              📧 Email: {" "}
+              📧 Email:{" "}
               <a
                 href="mailto:wtyczka2025@example.com"
                 className="underline hover:text-white"
@@ -196,7 +319,7 @@ export default function EssentialsPage() {
               </a>
             </p>
             <p className="text-amber-300">
-              📱 Telefon: {" "}
+              📱 Telefon:{" "}
               <a href="tel:+48123456789" className="underline hover:text-white">
                 +48 123 456 789
               </a>
@@ -207,4 +330,3 @@ export default function EssentialsPage() {
     </div>
   );
 }
-

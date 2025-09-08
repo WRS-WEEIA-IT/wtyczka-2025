@@ -11,7 +11,7 @@ export async function getEssentials(): Promise<EssentialItem[]> {
   try {
     const { data, error } = await supabase
       .from('essentials')
-      .select('*')
+      .select('id, category, item')
       .order('id', { ascending: true });
 
     if (error) throw error;
