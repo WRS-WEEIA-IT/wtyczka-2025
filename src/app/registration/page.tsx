@@ -298,13 +298,13 @@ export default function RegistrationPage() {
             <div className="flex items-center space-x-2 mb-6">
               <User className="h-6 w-6 text-amber-400" />
               <h2 className="text-2xl font-bold text-white">
-                {t('forms.participantData')}
+                {t.forms.participantData}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.firstName')} <span className="text-red-500">*</span>
+                  {t.forms.firstName} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -317,7 +317,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.lastName')} <span className="text-red-500">*</span>
+                  {t.forms.lastName} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -330,7 +330,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.birthDate')} <span className="text-red-500">*</span>
+                  {t.forms.birthDate} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -343,7 +343,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.phone')} <span className="text-red-500">*</span>
+                  {t.forms.phone} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -356,7 +356,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.pesel')} <span className="text-red-500">*</span>
+                  {t.forms.pesel} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -370,7 +370,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.gender')} <span className="text-red-500">*</span>
+                  {t.forms.gender} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("gender")}
@@ -393,13 +393,13 @@ export default function RegistrationPage() {
             <div className="flex items-center space-x-2 mb-6">
               <School className="h-6 w-6 text-amber-400" />
               <h2 className="text-2xl font-bold text-white">
-                {t('forms.studentData')}
+                {t.forms.studentData}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.faculty')} <span className="text-red-500">*</span>
+                  {t.forms.faculty} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("faculty")}
@@ -422,7 +422,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.studentNumber')} <span className="text-red-500">*</span>
+                  {t.forms.studentNumber} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -435,7 +435,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.fieldOfStudy')} <span className="text-red-500">*</span>
+                  {t.forms.fieldOfStudy} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -448,7 +448,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.studyLevel')} <span className="text-red-500">*</span>
+                  {t.forms.studyLevel} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("studyLevel")}
@@ -465,7 +465,7 @@ export default function RegistrationPage() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.studyYear')} <span className="text-red-500">*</span>
+                  {t.forms.studyYear} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("studyYear")}
@@ -489,13 +489,13 @@ export default function RegistrationPage() {
             <div className="flex items-center space-x-2 mb-6">
               <Info className="h-6 w-6 text-amber-400" />
               <h2 className="text-2xl font-bold text-white">
-                {t('forms.additionalInfo')}
+                {t.forms.additionalInfo}
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.diet')} <span className="text-red-500">*</span>
+                  {t.forms.diet} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("dietName")}
@@ -511,7 +511,7 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.tshirtSize')} <span className="text-red-500">*</span>
+                  {t.forms.tshirtSize} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("tshirtSize")}
@@ -543,14 +543,14 @@ export default function RegistrationPage() {
                       </svg>
                     </span>
                     <span className="ml-3 text-gray-300">
-                      {t('forms.invoice')}
+                      {t.forms.invoice}
                     </span>
                   </label>
                 </div>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  {t('forms.howDidYouKnow')} <span className="text-red-500">*</span>
+                  {t.forms.howDidYouKnow} <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("aboutWtyczka")}
@@ -595,7 +595,7 @@ export default function RegistrationPage() {
                       rel="noopener noreferrer"
                       className="text-amber-400 hover:text-amber-500 underline"
                     >
-                      {t('forms.acceptRegulations')} <span className="text-red-500">*</span>
+                      {t.forms.acceptRegulations} <span className="text-red-500">*</span>
                     </a>
                   </span>
                 </label>
@@ -616,7 +616,7 @@ export default function RegistrationPage() {
                     </svg>
                   </span>
                   <span className="ml-3 text-gray-300">
-                    {t('forms.dataProcessingConsent')} <span className="text-red-500">*</span>
+                    {t.forms.dataProcessingConsent} <span className="text-red-500">*</span>
                   </span>
                 </label>
               </div>
@@ -634,7 +634,7 @@ export default function RegistrationPage() {
               className="bg-[#E7A801] hover:bg-amber-700 disabled:opacity-50 text-black px-12 py-4 rounded-xl font-semibold text-lg transition-colors inline-flex items-center space-x-2 shadow-md"
             >
               <Save className="h-5 w-5" />
-              <span>{isSubmitting ? "Wysyłanie..." : t('forms.submit')}</span>
+              <span>{isSubmitting ? "Wysyłanie..." : t.forms.submit}</span>
             </button>
           </div>
         </form>
