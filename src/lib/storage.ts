@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { AuthUser } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 
 export interface FileUploadResult {
   url: string;
@@ -19,7 +19,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function uploadPaymentConfirmation(
   file: File,
-  user: AuthUser
+  user: User
 ): Promise<FileUploadResult> {
   try {
     if (!ALLOWED_PAYMENT_FILE_TYPES.includes(file.type)) {
@@ -30,9 +30,11 @@ export async function uploadPaymentConfirmation(
       throw new Error('Plik jest za duży. Maksymalny rozmiar to 5MB');
     }
 
-    const timestamp = Date.now();
+    const uuid = (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const fileExtension = file.name.split('.').pop();
-    const fileName = `wplata-${user.email}-${timestamp}.${fileExtension}`;
+    const fileName = `wplata-${uuid}.${fileExtension}`;
 
     const { error: uploadError } = await supabase.storage
       .from('wtyczka-wplaty-2025')

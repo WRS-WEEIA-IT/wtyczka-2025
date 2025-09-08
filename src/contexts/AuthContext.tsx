@@ -8,12 +8,12 @@ import {
   ReactNode,
 } from "react";
 import { supabase } from "@/lib/supabase";
-import type { AuthUser } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 
 import toast from "react-hot-toast";
 
 interface AuthContextType {
-  user: AuthUser | null;
+  user: User | null;
   loading: boolean;
   authLogin: (email: string, password: string) => Promise<void>;
   authRegister: (email: string, password: string) => Promise<void>;
@@ -24,7 +24,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

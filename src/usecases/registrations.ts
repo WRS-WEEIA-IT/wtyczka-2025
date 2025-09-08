@@ -1,4 +1,4 @@
-import { AuthUser } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { supabase } from '@/lib/supabase';
 
 export interface RegistrationRecord {
@@ -9,7 +9,7 @@ export interface RegistrationRecord {
   dob: Date;
   email: string;
   phoneNumber: string;
-  pesel: number;
+  pesel: string;
   gender: 'male' | 'female' | 'other';
 
   faculty: 'w1' | 'w2' | 'w3' | 'w4' | 'w5' | 'w6' | 'w7' | 'w8' | 'w9';
@@ -40,56 +40,19 @@ export interface RegistrationRecord {
 }
 
 export const createRegistration = async (
-  user: AuthUser,
+  user: User,
   registrationData: Omit<RegistrationRecord, 'id' | 'userId' | 'email' | 'createdAt' | 'updatedAt'>
 ): Promise<string> => {
   try {
-    const { data, error } = await supabase.from('registrations').insert([
-      {
-        over18: true, // TODO: zrobić check do tego.
-        userId: user.id,
-
-        name: registrationData.name,
-        surname: registrationData.surname,
-        dob: registrationData.dob,
-        email: user.email,
-        phoneNumber: registrationData.phoneNumber,
-        pesel: registrationData.pesel,
-        gender: registrationData.gender,
-
-        faculty: registrationData.faculty,
-        studentNumber: registrationData.studentNumber,
-        studyField: registrationData.studyField,
-        studyLevel: registrationData.studyLevel,
-        studyYear: registrationData.studyYear,
-
-        dietName: registrationData.dietName,
-        tshirtSize: registrationData.tshirtSize,
-
-        invoice: registrationData.invoice,
-        invoiceName: registrationData.invoiceName,
-        invoiceSurname: registrationData.invoiceSurname,
-        invoiceId: registrationData.invoiceId,
-        invoiceAddress: registrationData.invoiceAddress,
-
-        aboutWtyczka: registrationData.aboutWtyczka,
-        aboutWtyczkaInfo: registrationData.aboutWtyczkaInfo,
-
-        regAccept: registrationData.regAccept,
-        rodoAccept: registrationData.rodoAccept,
-
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ]).select();
-
-    if (error || !data || !data[0]) {
-      throw error || new Error('No registration created');
-    }
-
-    return data[0].id;
+    const res = await fetch('/api/registrations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: { id: user.id, email: user.email }, registration: registrationData })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || 'Failed to create registration');
+    return json.id as string;
   } catch (error) {
-
     console.error('Error creating registration:', error);
     throw new Error('Failed to create registration');
   }
@@ -97,14 +60,10 @@ export const createRegistration = async (
 
 export const getRegistration = async (userId: string): Promise<RegistrationRecord | null> => {
   try {
-    const { data, error } = await supabase
-      .from('registrations')
-      .select('*')
-      .eq('userId', userId)
-      .limit(1)
-      .single();
-    if (error || !data) return null;
-    
+    const res = await fetch(`/api/registrations?userId=${encodeURIComponent(userId)}`);
+    const json = await res.json();
+    const data = json?.data;
+    if (!data) return null;
     return {
       ...data,
       dob: new Date(data.dob),

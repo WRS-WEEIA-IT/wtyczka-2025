@@ -1,4 +1,4 @@
-import { AuthUser } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { supabase } from '@/lib/supabase';
 
 export interface PaymentRecord {
@@ -32,20 +32,18 @@ export interface PaymentRecord {
 }
 
 export async function createPayment(
-  user: AuthUser,
+  user: User,
   paymentData: Omit<PaymentRecord, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
   try {
-    const { data, error } = await supabase.from('payments').insert([
-      {
-        ...paymentData,
-        userId: user.id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ]).select();
-    if (error || !data || !data[0]) throw error || new Error('No payment created');
-    return data[0].id;
+    const res = await fetch('/api/payments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: { id: user.id }, payment: paymentData })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || 'Failed to create payment');
+    return json.id as string;
   } catch (error) {
     console.error('Error creating payment:', error);
     throw new Error('Failed to create payment');
@@ -54,13 +52,10 @@ export async function createPayment(
 
 export const getPayment = async (userId: string): Promise<PaymentRecord | null> => {
   try {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('userId', userId)
-      .limit(1)
-      .single();
-    if (error || !data) return null;
+    const res = await fetch(`/api/payments?userId=${encodeURIComponent(userId)}`);
+    const json = await res.json();
+    const data = json?.data;
+    if (!data) return null;
     return {
       ...data,
       createdAt: new Date(data.createdAt),
