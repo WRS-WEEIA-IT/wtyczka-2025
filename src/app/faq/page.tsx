@@ -44,7 +44,7 @@ export default function FAQPage() {
         const data = await getFAQ();
 
         setFaqGeneral(data.filter((item) => item.category === "general"));
-        setFaqPayments(data.filter((item) => item.category === "payments"));
+        setFaqPayments(data.filter((item) => item.category === "cost"));
         setFaqTransport(data.filter((item) => item.category === "transport"));
         setFaqAccommodation(
           data.filter((item) => item.category === "accommodation")
