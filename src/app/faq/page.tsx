@@ -9,9 +9,10 @@ import {
   Bus,
   Utensils,
   Phone,
+  Mountain,
 } from "lucide-react";
 
-import { getFAQByCategory, QuestionRecord } from "@/usecases/faq";
+import { getFAQ, QuestionRecord } from "@/usecases/faq";
 
 import Image from "next/image";
 
@@ -22,6 +23,9 @@ export default function FAQPage() {
   const [faqPayments, setFaqPayments] = useState<QuestionRecord[]>([]);
   const [faqTransport, setFaqTransport] = useState<QuestionRecord[]>([]);
   const [faqAccommodation, setFaqAccommodation] = useState<QuestionRecord[]>(
+    []
+  );
+  const [faqEntertainment, setFaqEntertainment] = useState<QuestionRecord[]>(
     []
   );
   const [faqContact, setFaqContact] = useState<QuestionRecord[]>([]);
@@ -37,20 +41,18 @@ export default function FAQPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [general, payments, transport, accommodation, contact] =
-          await Promise.all([
-            getFAQByCategory("general"),
-            getFAQByCategory("cost"),
-            getFAQByCategory("transport"),
-            getFAQByCategory("accommodation"),
-            getFAQByCategory("contact"),
-          ]);
+        const data = await getFAQ();
 
-        setFaqGeneral(general);
-        setFaqPayments(payments);
-        setFaqTransport(transport);
-        setFaqAccommodation(accommodation);
-        setFaqContact(contact);
+        setFaqGeneral(data.filter((item) => item.category === "general"));
+        setFaqPayments(data.filter((item) => item.category === "payments"));
+        setFaqTransport(data.filter((item) => item.category === "transport"));
+        setFaqAccommodation(
+          data.filter((item) => item.category === "accommodation")
+        );
+        setFaqEntertainment(
+          data.filter((item) => item.category === "entertainment")
+        );
+        setFaqContact(data.filter((item) => item.category === "contact"));
       } catch (error) {
         console.error("Error fetching FAQ data:", error);
       }
@@ -85,13 +87,18 @@ export default function FAQPage() {
       questions: faqAccommodation,
     },
     {
+      id: "entertainment",
+      title: "Rozrywka",
+      icon: <Mountain className="h-5 w-5" />,
+      questions: faqEntertainment,
+    },
+    {
       id: "contact",
       title: "Kontakt i pomoc",
       icon: <Phone className="h-5 w-5" />,
       questions: faqContact,
     },
   ];
-
 
   return (
     <div className="min-h-screen">
@@ -166,7 +173,7 @@ export default function FAQPage() {
             </p>
             <div className="space-y-2">
               <p className="text-amber-300">
-                📧 Email: {" "}
+                📧 Email:{" "}
                 <a
                   href="mailto:wtyczka2025@example.com"
                   className="underline hover:text-white"
@@ -175,7 +182,7 @@ export default function FAQPage() {
                 </a>
               </p>
               <p className="text-amber-300">
-                📱 Telefon: {" "}
+                📱 Telefon:{" "}
                 <a
                   href="tel:+48123456789"
                   className="underline hover:text-white"
