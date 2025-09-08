@@ -20,8 +20,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     email: "",
     password: "",
     confirmPassword: "",
-    firstName: "",
-    lastName: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -67,8 +65,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       email: "",
       password: "",
       confirmPassword: "",
-      firstName: "",
-      lastName: "",
     });
   };
 
@@ -94,46 +90,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    {t.auth.firstName}
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      required
-                      className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                      value={formData.firstName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, firstName: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    {t.auth.lastName}
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      required
-                      className="w-full pl-10 pr-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                      value={formData.lastName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lastName: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">
                 {t.auth.email}
@@ -232,7 +188,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               onClick={switchMode}
               className="text-amber-400 hover:text-amber-500 text-sm font-semibold"
             >
-              {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount} {" "}
+              {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount}{" "}
               <span className="underline">
                 {isLogin ? t.auth.register : t.auth.login}
               </span>
