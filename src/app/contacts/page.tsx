@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useAuth } from "@/contexts/AuthContext";
 import { Phone, Mail, MessageCircle, Clock, MapPin, Users } from "lucide-react";
 
@@ -19,10 +18,7 @@ type Contact = {
 };
 
 export default function ContactsPage() {
-  const { user, loading } = useAuth();
-
-  // Mock data - w prawdziwej aplikacji te dane byłyby pobierane z Firebase
-  const isQualified = true; // Tu będzie logika sprawdzania statusu z bazy danych
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -30,50 +26,6 @@ export default function ContactsPage() {
         <div className="text-center">
           <div className="text-6xl mb-4">🤠</div>
           <div className="text-xl text-amber-400">Ładowanie...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg">
-          <div className="text-6xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-amber-400 mb-4">
-            Dostęp ograniczony
-          </h1>
-          <p className="text-gray-300 mb-6">
-            Aby zobaczyć kontakty, musisz się najpierw zalogować.
-          </p>
-          <Link
-            href="/"
-            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-md font-semibold transition-colors"
-          >
-            Wróć do strony głównej
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isQualified) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="max-w-md mx-auto text-center p-8 bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg">
-          <div className="text-6xl mb-4">⏳</div>
-          <h1 className="text-2xl font-bold text-amber-400 mb-4">
-            Kontakty niedostępne
-          </h1>
-          <p className="text-gray-300 mb-6">
-            Kontakty do koordynatorów są dostępne tylko dla zakwalifikowanych uczestników.
-          </p>
-          <Link
-            href="/status"
-            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-md font-semibold transition-colors"
-          >
-            Sprawdź swój status
-          </Link>
         </div>
       </div>
     );
@@ -236,4 +188,3 @@ export default function ContactsPage() {
     </div>
   );
 }
-
