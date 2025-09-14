@@ -444,11 +444,9 @@ export default function PartnersPage() {
       
       {/* Western-themed footer */}
       <div className="mt-24 mb-8 w-full text-center">
-        <div className="inline-block px-8 py-3 border-b border-amber-400">
-          <p className="text-amber-200 text-3xl font-bold tracking-wide" style={{ fontFamily: "var(--font-rye), fantasy, 'Copperplate Gothic', serif", textShadow: "0 1px 3px #00000055" }}>
-            Każdy partner jest na wagę złota!
-          </p>
-        </div>
+        <p className="text-amber-200 text-3xl font-bold tracking-wide" style={{ fontFamily: "var(--font-rye), fantasy, 'Copperplate Gothic', serif", textShadow: "0 1px 3px #00000055" }}>
+          Każdy partner jest na wagę złota!
+        </p>
       </div>
     </div>
   );

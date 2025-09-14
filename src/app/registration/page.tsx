@@ -132,7 +132,7 @@ export default function RegistrationPage() {
           </p>
           <Link
             href="/"
-            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-bold tracking-wider uppercase transition-colors western-btn"
+            className="bg-[#E7A801] hover:bg-amber-700 text-black px-6 py-3 rounded-xl font-bold tracking-wider uppercase transition-colors western-btn block w-full break-words"
             style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
           >
             Wróć do strony głównej
