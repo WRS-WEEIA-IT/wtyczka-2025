@@ -26,10 +26,22 @@ import {
   Bus,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { createPayment, getPayment, PaymentRecord } from "@/usecases/payments";
+import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
+import { handleSupabaseError } from "@/lib/supabase";
+import Image from "next/image";
+import {
+  uploadPaymentConfirmation,
+  validatePaymentFile,
+  formatFileSize,
+  FileUploadResult,
+} from "@/lib/storage";
+
 // Helper to show toast and limit to 3 visible
 const showLimitedToast = (content: string | number | React.ReactNode, options?: any) => {
   // @ts-ignore: toast.promise is not used here
-  const activeToasts = toast?.toasts?.filter(t => t.visible);
+  const activeToasts: toast.Toast[] = toast?.toasts?.filter(t => t.visible);
   if (activeToasts && activeToasts.length >= 3) {
     activeToasts.forEach(t => toast.dismiss(t.id));
   }
@@ -48,17 +60,6 @@ const showLimitedToast = (content: string | number | React.ReactNode, options?: 
     containerStyle: { bottom: '80px', right: '24px' },
   });
 };
-import Link from "next/link";
-import { createPayment, getPayment, PaymentRecord } from "@/usecases/payments";
-import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
-import { handleSupabaseError } from "@/lib/supabase";
-import Image from "next/image";
-import {
-  uploadPaymentConfirmation,
-  validatePaymentFile,
-  formatFileSize,
-  FileUploadResult,
-} from "@/lib/storage";
 
 // Schema walidacji dla formularza płatności
 const paymentSchema = z.object({
@@ -94,7 +95,7 @@ type PaymentFormData = z.infer<typeof paymentSchema>;
 
 export default function PaymentPage() {
   const { user, loading } = useAuth();
-  const { t, language } = useLanguage() as { t: (key: string) => string; language: string };
+  const { t, language } = useLanguage();
 
   const realLang = language || "pl";
 
@@ -157,17 +158,25 @@ export default function PaymentPage() {
 
   const adminPassword = watch("adminPassword");
 
-  const checkAdminPassword = () => {
-    const correctPassword =
-      process.env.NEXT_PUBLIC_PAYMENT_FORM_PASSWORD || "admin123";
-    if (adminPassword === correctPassword) {
-      setIsAuthorized(true);
-      toast.success("Dostęp do formularza płatności został aktywowany");
-    } else {
-      setError("adminPassword", {
-        type: "manual",
-        message: "Nieprawidłowe hasło administratora",
+  const checkAdminPassword = async () => {
+    try {
+      const res = await fetch('/api/verify-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPassword })
       });
+      const data = await res.json();
+      if (res.ok && data?.ok) {
+        setIsAuthorized(true);
+        toast.success("Dostęp do formularza płatności został aktywowany");
+      } else if (res.status === 401) {
+        setError("adminPassword", { type: "manual", message: "Nieprawidłowe hasło administratora" });
+      } else {
+        const msg = data?.error || "Błąd weryfikacji hasła";
+        toast.error(msg);
+      }
+    } catch (e) {
+      toast.error("Błąd połączenia z serwerem");
     }
   };
 
@@ -261,7 +270,6 @@ export default function PaymentPage() {
       setExistingPayment(payment);
     } catch (error) {
       console.error("Submit error:", error);
-      alert('Błąd wysyłki: ' + (error instanceof Error ? error.message : String(error)));
       const errorMessage = handleSupabaseError(error, realLang);
       toast.error(`Wystąpił błąd: ${errorMessage}`);
     } finally {

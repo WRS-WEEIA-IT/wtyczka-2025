@@ -23,8 +23,8 @@ const EVENT_DATE = new Date("2025-10-23"); // data wydarzenia
 const registrationSchema = z.object({
   name: z.string().min(2, "Imię musi mieć co najmniej 2 znaki"),
   surname: z.string().min(2, "Nazwisko musi mieć co najmniej 2 znaki"),
-  dob: z.string()
-    .min(1, "Data urodzenia jest wymagana")
+  dob: z
+    .string().min(1, "Data urodzenia jest wymagana")
     .refine((value) => {
       const birthDate = new Date(value);
       if (isNaN(birthDate.getTime())) return false;
@@ -35,11 +35,13 @@ const registrationSchema = z.object({
       }
       return age >= 18;
     }, { message: "Musisz mieć ukończone 18 lat w dniu wydarzenia" }),
-  phoneNumber: z.string().min(9, "Numer telefonu musi mieć co najmniej 9 cyfr"),
-  pesel: z.string().length(11, "PESEL musi mieć 11 cyfr"),
-  gender: z.enum(["male", "female", "other"],"Wybierz jedną z opcji"),
+  phoneNumber: z
+    .string().regex(/^\d{9}$/, "Numer telefonu musi zawierać 9 cyfr"),
+  pesel: z
+    .string().regex(/^\d{11}$/, "PESEL musi składać się z 11 cyfr"),
+  gender: z.enum(["male", "female", "other"], "Wybierz płeć"),
 
-  faculty: z.enum(["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"],"Wybierz jedną z opcji"),
+  faculty: z.enum(["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"], "Wybierz wydział"),
   studentNumber: z.string().min(1, "Numer indeksu jest wymagany"),
   studyField: z.string().min(1, "Kierunek studiów jest wymagany"),
   studyLevel: z.enum(["bachelor", "master", "phd"],"Wybierz jedną z opcji"),
@@ -151,7 +153,6 @@ export default function RegistrationPage() {
       const formData = {
         ...data,
         dob: dobDate,
-        pesel: parseInt(data.pesel),
         studentNumber: parseInt(data.studentNumber),
         studyYear: parseInt(data.studyYear),
       } as Omit<
