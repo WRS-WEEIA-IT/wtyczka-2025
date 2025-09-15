@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
-import { Rye, Playfair_Display } from "next/font/google";
+import { Libre_Baskerville, Tagesschrift } from "next/font/google";
 import "./globals.css";
 import "./background-styles.css";
 import "./western-buttons.css";
+import "./fonts-override.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 
-// Rye for titles and western elements
-const rye = Rye({
-  subsets: ["latin"],
+// Tagesschrift for headings and titles
+const tagesschrift = Tagesschrift({
+  subsets: ["latin", "latin-ext"],
   weight: ["400"],
-  variable: "--font-rye",
+  variable: "--font-tagesschrift",
 });
 
-// Playfair Display for normal text with better support for Polish characters
-const playfair = Playfair_Display({
+// Libre Baskerville for normal text with better readability
+const libreBaskerville = Libre_Baskerville({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-playfair",
+  weight: ["400", "700"],
+  variable: "--font-libre-baskerville",
 });
 
 export const metadata: Metadata = {
@@ -33,8 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pl" className={`${rye.variable} ${playfair.variable}`}>
-      <body className={`${playfair.className} antialiased text-white`}>
+    <html lang="pl" className={`${tagesschrift.variable} ${libreBaskerville.variable}`}>
+      <body className={`${libreBaskerville.className} antialiased text-white`}>
         <div className="background-container">
           <div className="background-content">
             <img src="/background.svg" alt="Background" className="background-svg" />
