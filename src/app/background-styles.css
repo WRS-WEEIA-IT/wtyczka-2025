@@ -1,14 +1,14 @@
-/* Western-style Roboto Slab for homepage buttons */
+/* Western-style buttons using Tagesschrift */
 .western-btn-roboto {
-  font-family: 'Roboto Slab', 'Times New Roman', serif !important;
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif !important;
   text-transform: uppercase;
   letter-spacing: 0.13em;
   text-shadow: 1px 2px 0 #00000022, 0 1px 0 #E7A80144;
   font-weight: 700;
 }
-/* Western title font with fallback for Polish characters */
+/* Western title font using Tagesschrift */
 .western-title {
-  font-family: 'Rye', 'Playfair Display', 'Roboto Slab', 'Times New Roman', serif;
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
   letter-spacing: 0.08em;
 }
 /* Homepage animated buttons */

@@ -1,25 +1,29 @@
 /* Font utility classes for consistent typography */
-.font-rye {
-  font-family: var(--font-rye), fantasy, serif;
+.font-tagesschrift {
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
 }
-.font-playfair {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
+.font-libre-baskerville {
+  font-family: var(--font-libre-baskerville), 'Libre Baskerville', serif;
 }
 
-/* Example: apply .font-rye to all h1, h2, h3, h4, h5, h6 */
+/* Apply Tagesschrift to all headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-rye), fantasy, serif;
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
   letter-spacing: 0.03em;
 }
 
-/* Example: apply .font-playfair to all p, span, li, label, a, button, input, textarea, etc. */
+/* Apply Libre Baskerville to all body text elements */
 p, span, li, label, a, button, input, textarea, th, td, div, section, article {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-family: var(--font-libre-baskerville), 'Libre Baskerville', serif;
 }
 
-/* Optionally, override for .western-title if needed */
+/* Western title class using Tagesschrift */
 .western-title {
-  font-family: var(--font-rye), fantasy, serif;
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
+  letter-spacing: 0.08em;
+}
+.western-title {
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
 }
 @keyframes toast-bottom-in {
   from {
@@ -59,15 +63,15 @@ p, span, li, label, a, button, input, textarea, th, td, div, section, article {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-libre-baskerville), 'Libre Baskerville', serif;
 }
 
 .western-title {
-  font-family: var(--font-rye), fantasy;
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
 }
 
 h1, h2, h3 {
-  font-family: var(--font-rye), fantasy;
+  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
 }
 
 @layer base {
