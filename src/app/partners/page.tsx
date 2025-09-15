@@ -527,7 +527,7 @@ export default function PartnersPage() {
         </div>
       </div>
       
-      {/* Western-themed footer */}
+     {/* Western-themed footer */}
       {goldenBarsVisible && (
         <div className="mt-16 mb-8 w-full text-center">
           <motion.div 

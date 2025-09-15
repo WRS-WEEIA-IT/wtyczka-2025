@@ -76,12 +76,12 @@ export default function HomePage() {
           </div>
 
 
-          <div className="flex flex-col sm:flex-row mt-10 gap-3 w-full justify-center items-center mb-2" style={{overflowX: 'visible'}}>
-            <span className="relative group">
+          <div className="flex flex-col sm:flex-row mt-10 gap-6 sm:gap-3 w-full justify-center items-center mb-2" style={{overflowX: 'visible'}}>
+            <span className="relative group flex-1 min-w-[180px] max-w-xs w-full">
               <span className="zapisz-glow" aria-hidden="true"></span>
               <Link
                 href="/registration"
-                className="homepage-btn zapisz-btn western-btn-roboto min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-white bg-[#E7A801] hover:bg-yellow-400 transition-all duration-200 border-none shadow-none relative overflow-hidden"
+                className="homepage-btn zapisz-btn western-btn-roboto flex-1 min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-white bg-[#E7A801] hover:bg-yellow-400 transition-all duration-200 border-none shadow-none relative overflow-hidden"
                 style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
               >
                 ZAPISZ SIĘ
@@ -90,7 +90,7 @@ export default function HomePage() {
 
             <Link
               href="/faq"
-              className="homepage-btn western-btn-roboto min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-[#E7A801] bg-[#232323] hover:bg-[#18181b] transition-all duration-200 border-none shadow-none relative overflow-hidden"
+              className="homepage-btn western-btn-roboto flex-1 min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-[#E7A801] bg-[#232323] hover:bg-[#18181b] transition-all duration-200 border-none shadow-none relative overflow-hidden mb-0"
               style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
             >
               DOWIEDZ SIĘ WIĘCEJ

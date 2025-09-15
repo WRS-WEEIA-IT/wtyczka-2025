@@ -144,14 +144,14 @@ export default function ContactsPage() {
 
       {/* Coordinators */}
       <section className="py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
             Koordynatorzy wydarzenia
           </h2>
           <LoopCarousel
             items={coordinators}
             renderItem={(coordinator) => (
-              <div className="bg-[#232323] rounded-xl shadow-lg p-6 border border-[#262626] w-full max-w-xl mx-auto flex flex-col items-center">
+              <div className="bg-[#232323]/60 border border-[#262626] rounded-xl p-8 mx-auto flex flex-col items-center backdrop-blur-md w-full max-w-[440px] min-w-[260px]">
                 {/* Miejsce na zdjęcie */}
                 <div className="w-24 h-24 rounded-full bg-[#18181b] flex items-center justify-center mb-4 overflow-hidden">
                   {/* Możesz podmienić na <Image src={coordinator.avatarUrl} ... /> jeśli dodasz url */}
