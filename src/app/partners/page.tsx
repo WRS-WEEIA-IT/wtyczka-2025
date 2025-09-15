@@ -35,6 +35,9 @@ const CATEGORY_STYLES = {
 };
 
 export default function PartnersPage() {
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   const [isChestOpen, setIsChestOpen] = useState(false);
   const [goldenBarsVisible, setGoldenBarsVisible] = useState(false);
   const [chestVisible, setChestVisible] = useState(true);
@@ -198,6 +201,7 @@ export default function PartnersPage() {
   // Determine if we have any partners to display
   const hasAnyPartners = categoriesWithPartners.length > 0;
 
+  if (!isMounted) return null;
   return (
     <div ref={containerRef} className={`min-h-screen flex flex-col items-center justify-start py-10 px-4 overflow-x-hidden relative`}>
       {/* Add blurred background overlay similar to navbar */}
@@ -546,9 +550,8 @@ export default function PartnersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="inline-block px-8 py-3 border-b border-amber-400"
           >
-            <p className="text-amber-200 text-3xl font-bold tracking-wide" style={{ fontFamily: "var(--font-rye), fantasy, 'Copperplate Gothic', serif", textShadow: "0 1px 3px #00000055" }}>
+            <p className="text-amber-200 text-3xl font-bold tracking-wide" style={{ fontFamily: "var(--font-rye), fantasy, 'Copperplate Gothic', serif" }}>
               {hasAnyPartners 
                 ? 'Nasi partnerzy są na wagę złota - dziękujemy za wsparcie!'
                 : 'Odkryj naszych wspaniałych partnerów!'}

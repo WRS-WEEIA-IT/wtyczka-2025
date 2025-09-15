@@ -14,6 +14,10 @@ import { useEffect, useState } from "react";
 export default function NewsPage() {
   const { t } = useLanguage();
 
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
+
   const [noMorePosts, setNoMorePosts] = useState<boolean>(false);
   const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,6 +51,7 @@ export default function NewsPage() {
     loadPosts();
   };
 
+  if (!isMounted) return null;
   return (
     <div className="min-h-screen">
       <section className="border-b border-[#262626] text-white py-16">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import Image from 'next/image';
 import { Mail, Facebook } from 'lucide-react';
 import { TeamMember as TeamMemberType } from '@/usecases/team-members';
@@ -13,6 +14,16 @@ interface TeamMemberCardProps {
 
 export default function TeamMemberCard({ member }: TeamMemberCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  // Kopiowanie maila do schowka i toast
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(member.email);
+      toast.success('Skopiowano mail do schowka!');
+    } catch {
+      toast.error('Nie udało się skopiować maila');
+    }
+  };
   
   return (
     <div 
@@ -32,26 +43,34 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
       </div>
       <h2 className={styles.memberName}>{member.name}</h2>
       {member.role && <p className={styles.memberRole}>{member.role}</p>}
-      
-      <a href={`mailto:${member.email}`} className={styles.memberContact}>
-        <Mail size={16} className={isHovered ? 'animate-bounce' : ''} />
-        <span className={styles.emailLink}>{member.email}</span>
-      </a>
-      
-      <div className={styles.socialLinks}>
-        <a 
-          href={member.facebookUrl} 
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.facebookLink}
-        >
-          <Facebook 
-            size={20} 
-            className={isHovered ? 'animate-pulse' : ''} 
-            color={isHovered ? '#ffffff' : '#E7A801'} 
-          />
-          <span style={{ fontWeight: 500 }}>Facebook</span>
+      <div style={{ flexGrow: 1 }} />
+      <div className={styles.contactBottom}>
+        <a href={`mailto:${member.email}`} className={styles.memberContact}>
+          <Mail size={16} className={isHovered ? 'animate-bounce' : ''} />
+          <span 
+            className={styles.emailLink}
+            style={{ cursor: 'pointer' }}
+            title="Kliknij, aby skopiować mail"
+            onClick={handleCopyEmail}
+          >
+            {member.email}
+          </span>
         </a>
+        <div className={styles.socialLinks}>
+          <a 
+            href={member.facebookUrl} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.facebookLink}
+          >
+            <Facebook 
+              size={20} 
+              className={isHovered ? 'animate-pulse' : ''} 
+              color={isHovered ? '#ffffff' : '#E7A801'} 
+            />
+            <span style={{ fontWeight: 500 }}>Facebook</span>
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -17,6 +17,9 @@ import { getFAQ, QuestionRecord } from "@/usecases/faq";
 import Image from "next/image";
 
 export default function FAQPage() {
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   const [openSections, setOpenSections] = useState<string[]>([]);
 
   const [faqGeneral, setFaqGeneral] = useState<QuestionRecord[]>([]);
@@ -100,6 +103,7 @@ export default function FAQPage() {
     },
   ];
 
+  if (!isMounted) return null;
   return (
     <div className="min-h-screen">
       {/* FAQ Content */}
