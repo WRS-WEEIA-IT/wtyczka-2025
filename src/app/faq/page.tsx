@@ -175,19 +175,19 @@ export default function FAQPage() {
               <p className="text-amber-300">
                 📧 Email:{" "}
                 <a
-                  href="mailto:wtyczka2025@example.com"
+                  href="mailto:wtyczka@samorzad.p.lodz.pl"
                   className="underline hover:text-white"
                 >
-                  wtyczka2025@example.com
+                  wtyczka@samorzad.p.lodz.pl
                 </a>
               </p>
               <p className="text-amber-300">
                 📱 Telefon:{" "}
                 <a
-                  href="tel:+48123456789"
+                  href="tel:690150650"
                   className="underline hover:text-white"
                 >
-                  +48 123 456 789
+                  690 150 650
                 </a>
               </p>
             </div>

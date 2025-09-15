@@ -35,8 +35,8 @@ export default function ContactsPage() {
     {
       name: "Anna Kowalska",
       role: "Główny Koordynator",
-      email: "anna.kowalska@example.com",
-      phone: "+48 123 456 789",
+      email: "wtyczka@samorzad.p.lodz.pl",
+      phone: "690 150 650",
       availability: "Pon-Pt 9:00-17:00",
       responsibilities: [
         "Ogólne pytania",
@@ -47,24 +47,24 @@ export default function ContactsPage() {
     {
       name: "Michał Nowak",
       role: "Koordynator Logistyki",
-      email: "michal.nowak@example.com",
-      phone: "+48 234 567 890",
+      email: "wtyczka@samorzad.p.lodz.pl",
+      phone: "690 150 650",
       availability: "Pon-Pt 10:00-18:00",
       responsibilities: ["Transport", "Zakwaterowanie", "Wyżywienie"],
     },
     {
       name: "Katarzyna Wiśniewska",
       role: "Koordynator Programu",
-      email: "katarzyna.wisniewska@example.com",
-      phone: "+48 345 678 901",
+      email: "wtyczka@samorzad.p.lodz.pl",
+      phone: "690 150 650",
       availability: "Pon-Śr, Pt 8:00-16:00",
       responsibilities: ["Program wydarzenia", "Warsztaty", "Aktywności"],
     },
     {
       name: "Tomasz Zieliński",
       role: "Koordynator Finansowy",
-      email: "tomasz.zielinski@example.com",
-      phone: "+48 456 789 012",
+      email: "wtyczka@samorzad.p.lodz.pl",
+      phone: "690 150 650",
       availability: "Wt-Czw 12:00-20:00",
       responsibilities: ["Płatności", "Faktury", "Zwroty kosztów"],
     },
@@ -73,7 +73,7 @@ export default function ContactsPage() {
   const emergencyContacts = [
     {
       title: "Dyżur organizatorów podczas wydarzenia",
-      phone: "+48 500 600 700",
+      phone: "690 150 650",
       availability: "24/7 podczas Wtyczki 2025",
       description: "Numer dostępny tylko w czasie trwania wydarzenia",
     },
@@ -118,10 +118,10 @@ export default function ContactsPage() {
                   <strong>Email główny:</strong>
                   <br />
                   <a
-                    href="mailto:wtyczka2025@example.com"
+                    href="mailto:wtyczka@samorzad.p.lodz.pl"
                     className="text-amber-400 hover:underline"
                   >
-                    wtyczka2025@example.com
+                    wtyczka@samorzad.p.lodz.pl
                   </a>
                 </p>
               </div>
@@ -130,10 +130,10 @@ export default function ContactsPage() {
                   <strong>Telefon biura:</strong>
                   <br />
                   <a
-                    href="tel:+48123000000"
+                    href="tel:690150650"
                     className="text-amber-400 hover:underline"
                   >
-                    +48 123 000 000
+                    690 150 650
                   </a>
                 </p>
               </div>
