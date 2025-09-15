@@ -21,6 +21,9 @@ import {
 } from '@/components/ui/carousel';
 
 export default function ContactsPage() {
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   const { t } = useLanguage();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [api, setApi] = useState<CarouselApi>();
@@ -77,6 +80,7 @@ export default function ContactsPage() {
     };
   }, [api]);
 
+  if (!isMounted) return null;
   return (
     <div className={styles.contactsContainer}>
       <div className="pageOverlay"></div>

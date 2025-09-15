@@ -75,6 +75,9 @@ const registrationSchema = z.object({
 type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 export default function RegistrationPage() {
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   const { user, loading } = useAuth();
   const { t, language } = useLanguage();
 
@@ -110,6 +113,7 @@ export default function RegistrationPage() {
   }, [user]);
 
   // Redirect to login if not authenticated
+  if (!isMounted) return null;
   if (loading) {
     return (
       <div className="wtyczka-loading-container">

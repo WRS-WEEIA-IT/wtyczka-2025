@@ -17,6 +17,9 @@ import Link from "next/link";
 import { EssentialItem, getEssentials } from "@/usecases/essentials";
 
 export default function EssentialsPage() {
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [essentials, setEssentials] = useState<EssentialItem[]>([]);
   const [essentialsDocuments, setEssentialsDocuments] = useState<
@@ -162,6 +165,7 @@ export default function EssentialsPage() {
     if (allChecked) toggleSection(currentChangedCategory);
   }, [checked, currentChangedCategory]);
 
+  if (!isMounted) return null;
   return (
     <div className="min-h-screen">
       {/* Hero Section */}

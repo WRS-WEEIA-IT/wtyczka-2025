@@ -18,6 +18,9 @@ import { getPayment, PaymentRecord } from "@/usecases/payments";
 import Image from "next/image";
 
 export default function StatusPage() {
+  // Hydration fix
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   const { user, loading } = useAuth();
   const { t } = useLanguage();
   const [registration, setRegistration] = useState<RegistrationRecord | null>(
@@ -124,6 +127,7 @@ export default function StatusPage() {
     statusType = 'qualified';
   }
 
+  if (!isMounted) return null;
   return (
     <div className="min-h-screen py-8">
       {/* Hero Section */}

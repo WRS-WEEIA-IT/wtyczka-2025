@@ -9,6 +9,8 @@ import Link from "next/link";
 import "./western-navbar.css";
 
 export default function Navbar() {
+  // Stan do obsługi dropdowna 'Informacje dla uczestnika' na desktopie
+  const [isParticipantDropdownOpen, setIsParticipantDropdownOpen] = useState(false);
   const { user, authLogout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,7 +46,7 @@ export default function Navbar() {
     
     // Handle responsive menu based on screen size
     const handleResize = () => {
-      const isMobileView = window.innerWidth < 768;
+      const isMobileView = window.innerWidth <= 768;
       setIsMobile(isMobileView);
       if (!isMobileView && isMenuOpen) {
         setIsMenuOpen(false);
@@ -120,13 +122,13 @@ export default function Navbar() {
           <div className="flex justify-center items-center w-full">
             {/* Mobile menu button - only show in mobile view */}
             {isMobile && (
-              <div className="md:hidden">
+              <div>
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                       className="western-icon-button"
-                       style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', width: '160px', height: '80px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
-                       onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.cursor = 'pointer'; }}
-                       onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+                  className="western-icon-button"
+                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', width: '160px', height: '80px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.cursor = 'pointer'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
                 >
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -166,59 +168,87 @@ export default function Navbar() {
                </a>
 
               <div className="relative group">
-                <button 
+                <button
                   className="western-button"
                   style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
+                  onClick={() => setIsParticipantDropdownOpen((open) => !open)}
+                  onMouseEnter={() => setIsParticipantDropdownOpen(true)}
+                  onMouseLeave={() => setIsParticipantDropdownOpen(false)}
                 >
                   {t.nav.participantInfo}
                 </button>
-                <div className="western-parent-chain group-hover:opacity-100 group-hover:visible opacity-0 invisible transition-all duration-300">
-                  <div className="western-parent-chain-link"></div>
-                  <div className="western-parent-chain-link"></div>
-                </div>
-                <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', flexDirection: 'column', gap: '0'}}>
+                {/* Łańcuchy pomiędzy tabliczką a regulaminem pojawiają się tylko gdy dropdown jest otwarty */}
+                {isParticipantDropdownOpen && (
+                  <div className="western-parent-chain western-dropdown-animated" style={{transitionDelay: '40ms'}}>
+                    <div className="western-parent-chain-link"></div>
+                    <div className="western-parent-chain-link"></div>
+                  </div>
+                )}
+                <div
+                  className="western-dropdown top-full left-0"
+                  style={{
+                    opacity: isParticipantDropdownOpen ? 1 : 0,
+                    visibility: isParticipantDropdownOpen ? 'visible' : 'hidden',
+                    backgroundColor: 'transparent',
+                    boxShadow: 'none',
+                    border: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0',
+                    transition: 'all 0.3s',
+                  }}
+                  onMouseEnter={() => setIsParticipantDropdownOpen(true)}
+                  onMouseLeave={() => setIsParticipantDropdownOpen(false)}
+                >
                   <a
                     href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms' }}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '200ms' }}
+                    onClick={() => setIsParticipantDropdownOpen(false)}
                   >
                     {t.nav.regulations}
                   </a>
-                  <div className="chain-container western-dropdown-animated" style={{transitionDelay: '80ms'}}>
-                    <div className="chain-link"></div>
-                    <div className="chain-link"></div>
-                  </div>
+                  {isParticipantDropdownOpen && (
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '200ms'}}>
+                      <div className="chain-link" style={{transitionDelay: '200ms'}}></div>
+                      <div className="chain-link" style={{transitionDelay: '200ms'}}></div>
+                    </div>
+                  )}
                   <a
                     href="/essentials"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
-                    onClick={(e) => handleNavigation(e, "/essentials")}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '400ms' }}
+                    onClick={(e) => { handleNavigation(e, "/essentials"); setIsParticipantDropdownOpen(false); }}
                   >
                     {t.nav.essentials}
                   </a>
-                  <div className="chain-container western-dropdown-animated" style={{transitionDelay: '240ms'}}>
-                    <div className="chain-link"></div>
-                    <div className="chain-link"></div>
-                  </div>
+                  {isParticipantDropdownOpen && (
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
+                      <div className="chain-link" style={{transitionDelay: '400ms'}}></div>
+                      <div className="chain-link" style={{transitionDelay: '400ms'}}></div>
+                    </div>
+                  )}
                   <a
                     href="/faq"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
-                    onClick={(e) => handleNavigation(e, "/faq")}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '600ms' }}
+                    onClick={(e) => { handleNavigation(e, "/faq"); setIsParticipantDropdownOpen(false); }}
                   >
                     {t.nav.faq}
                   </a>
-                  <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
-                    <div className="chain-link"></div>
-                    <div className="chain-link"></div>
-                  </div>
+                  {isParticipantDropdownOpen && (
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '600ms'}}>
+                      <div className="chain-link" style={{transitionDelay: '600ms'}}></div>
+                      <div className="chain-link" style={{transitionDelay: '600ms'}}></div>
+                    </div>
+                  )}
                   <a
                     href="/contacts"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
-                    onClick={(e) => handleNavigation(e, "/contacts")}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '800ms' }}
+                    onClick={(e) => { handleNavigation(e, "/contacts"); setIsParticipantDropdownOpen(false); }}
                   >
                     {t.nav.contacts}
                   </a>
