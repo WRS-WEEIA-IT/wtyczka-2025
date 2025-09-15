@@ -112,10 +112,14 @@ export default function RegistrationPage() {
   // Redirect to login if not authenticated
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="wtyczka-loading-container">
         <div className="text-center">
-          <div className="text-6xl mb-4">🤠</div>
-          <div className="text-xl text-amber-400">Ładowanie...</div>
+          <img 
+            src="/logo.svg" 
+            alt="Wtyczka Logo" 
+            className="wtyczka-loading-logo" 
+          />
+          <div className="wtyczka-loading-text">Ładowanie...</div>
         </div>
       </div>
     );

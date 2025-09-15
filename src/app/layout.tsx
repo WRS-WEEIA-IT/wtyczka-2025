@@ -4,6 +4,7 @@ import "./globals.css";
 import "./background-styles.css";
 import "./western-buttons.css";
 import "./fonts-override.css";
+import "./loading-animation.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
