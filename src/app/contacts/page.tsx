@@ -1,194 +1,133 @@
 "use client";
 
-import { useAuth } from "@/contexts/AuthContext";
-import { Phone, Mail, MessageCircle, Clock, MapPin, Users } from "lucide-react";
+import { useState, useEffect, useRef } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTeamMembers, TeamMember } from '@/usecases/team-members';
+import TeamMemberCard from '@/components/TeamMemberCard';
+import styles from './contacts.module.css';
+import './team-animations.css';
+import './carousel-dots.css';
+import './contacts-background.css';
+import { Mail, Facebook } from 'lucide-react';
+import Image from 'next/image';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { LoopCarousel } from "@/components/LoopCarousel";
-
-type Contact = {
-  name: string;
-  role: string;
-  email: string;
-  phone: string;
-  availability: string;
-  responsibilities: string[];
-};
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 export default function ContactsPage() {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="wtyczka-loading-container">
-        <div className="text-center">
-          <img 
-            src="/logo.svg" 
-            alt="Wtyczka Logo" 
-            className="wtyczka-loading-logo" 
-          />
-          <div className="wtyczka-loading-text">Ładowanie...</div>
-        </div>
-      </div>
-    );
-  }
-
-  const coordinators: Contact[] = [
-    {
-      name: "Anna Kowalska",
-      role: "Główny Koordynator",
-      email: "wtyczka@samorzad.p.lodz.pl",
-      phone: "690 150 650",
-      availability: "Pon-Pt 9:00-17:00",
-      responsibilities: [
-        "Ogólne pytania",
-        "Problemy z rejestracją",
-        "Informacje o wydarzeniu",
-      ],
-    },
-    {
-      name: "Michał Nowak",
-      role: "Koordynator Logistyki",
-      email: "wtyczka@samorzad.p.lodz.pl",
-      phone: "690 150 650",
-      availability: "Pon-Pt 10:00-18:00",
-      responsibilities: ["Transport", "Zakwaterowanie", "Wyżywienie"],
-    },
-    {
-      name: "Katarzyna Wiśniewska",
-      role: "Koordynator Programu",
-      email: "wtyczka@samorzad.p.lodz.pl",
-      phone: "690 150 650",
-      availability: "Pon-Śr, Pt 8:00-16:00",
-      responsibilities: ["Program wydarzenia", "Warsztaty", "Aktywności"],
-    },
-    {
-      name: "Tomasz Zieliński",
-      role: "Koordynator Finansowy",
-      email: "wtyczka@samorzad.p.lodz.pl",
-      phone: "690 150 650",
-      availability: "Wt-Czw 12:00-20:00",
-      responsibilities: ["Płatności", "Faktury", "Zwroty kosztów"],
-    },
-  ];
-
-  const emergencyContacts = [
-    {
-      title: "Dyżur organizatorów podczas wydarzenia",
-      phone: "690 150 650",
-      availability: "24/7 podczas Wtyczki 2025",
-      description: "Numer dostępny tylko w czasie trwania wydarzenia",
-    },
-    {
-      title: "Nagłe przypadki medyczne",
-      phone: "112",
-      availability: "24/7",
-      description: "Numer alarmowy - służby ratunkowe",
-    },
-  ];
+  const { t } = useLanguage();
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    // Get the team members when the component mounts
+    const members = getTeamMembers();
+    setTeamMembers(members);
+    
+    // Automatyczne przewijanie strony w dół po załadowaniu
+    setTimeout(() => {
+      window.scrollTo({
+        top: 200,
+        behavior: 'smooth'
+      });
+    }, 500);
+  }, []);
+  
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+ 
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+    
+    // Upewnij się, że karuzela startuje od pierwszego kadrowicza (id=1)
+    api.scrollTo(0);
+ 
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+    
+    // Automatyczne przewijanie karuzeli co 5 sekund
+    const autoplayInterval = setInterval(() => {
+      api.scrollNext();
+    }, 5000);
+    
+    // Zatrzymaj automatyczne przewijanie przy interakcji użytkownika
+    const handleUserInteraction = () => {
+      clearInterval(autoplayInterval);
+    };
+    
+    window.addEventListener('mousemove', handleUserInteraction);
+    window.addEventListener('touchstart', handleUserInteraction);
+    
+    // Usuń nasłuchiwanie eventów przy odmontowaniu komponentu
+    return () => {
+      clearInterval(autoplayInterval);
+      window.removeEventListener('mousemove', handleUserInteraction);
+      window.removeEventListener('touchstart', handleUserInteraction);
+    };
+  }, [api]);
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="border-b border-[#262626] text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
-            Kontakty do organizatorów
-          </h1>
-          <p className="text-xl text-gray-200">
-            Lista kontaktów do organizatorów wydarzenia Wtyczka 2025
-          </p>
-          <p className="text-sm text-amber-300 mt-2">
-            Dostępne dla zakwalifikowanych uczestników
-          </p>
-        </div>
-      </section>
+    <div className={styles.contactsContainer}>
+      <div className="pageOverlay"></div>
+      <h1 className={`${styles.pageTitle} fadeIn`}>Kadra Wyjazdu</h1>
+      <p className={`${styles.pageDescription} fadeIn`} style={{ animationDelay: '0.2s' }}>
+        Poznaj osoby organizujące obóz adaptacyjny Wtyczka 2025. W razie pytań możesz się z nami skontaktować bezpośrednio poprzez email lub Facebook.
+      </p>
 
-      {/* General Contact Info */}
-      <section className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[#232323] border border-[#262626] rounded-xl p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <MessageCircle className="h-6 w-6 text-amber-400" />
-              <h3 className="text-xl font-bold text-amber-300">
-                Ogólne informacje kontaktowe
-              </h3>
-            </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-gray-200">
-                  <strong>Email główny:</strong>
-                  <br />
-                  <a
-                    href="mailto:wtyczka@samorzad.p.lodz.pl"
-                    className="text-amber-400 hover:underline"
-                  >
-                    wtyczka@samorzad.p.lodz.pl
-                  </a>
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-200">
-                  <strong>Telefon biura:</strong>
-                  <br />
-                  <a
-                    href="tel:690150650"
-                    className="text-amber-400 hover:underline"
-                  >
-                    690 150 650
-                  </a>
-                </p>
-              </div>
-            </div>
+      <div className={styles.carouselContainer}>
+        {/* Carousel for all devices showing 3 cards at once on desktop */}
+        <Carousel 
+          className="w-full mx-auto"
+          opts={{
+            align: "center",
+            loop: true,
+            dragFree: true,
+            containScroll: "trimSnaps",
+            skipSnaps: false,
+          }}
+          setApi={setApi}
+        >
+          <CarouselContent className="-ml-4">
+            {teamMembers.map((member) => (
+              <CarouselItem 
+                key={member.id} 
+                className="pl-4 basis-full xs:basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/3"
+              >
+                <div className="h-full">
+                  <TeamMemberCard member={member} />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          {/* Wskaźnik pozycji (kropki) */}
+          <div className="carouselDots mb-4">
+            {Array.from({ length: count }).map((_, index) => (
+              <button
+                key={index}
+                className={`carouselDot ${current === index ? 'carouselDotActive' : ''}`}
+                onClick={() => api?.scrollTo(index)}
+                aria-label={`Przejdź do slajdu ${index + 1} z ${count}`}
+              />
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Coordinators */}
-      <section className="py-8">
-  <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
-            Koordynatorzy wydarzenia
-          </h2>
-          <LoopCarousel
-            items={coordinators}
-            renderItem={(coordinator) => (
-              <div className="bg-[#232323]/60 border border-[#262626] rounded-xl p-8 mx-auto flex flex-col items-center backdrop-blur-md w-full max-w-[440px] min-w-[260px]">
-                {/* Miejsce na zdjęcie */}
-                <div className="w-24 h-24 rounded-full bg-[#18181b] flex items-center justify-center mb-4 overflow-hidden">
-                  {/* Możesz podmienić na <Image src={coordinator.avatarUrl} ... /> jeśli dodasz url */}
-                  <Users className="h-12 w-12 text-amber-400" />
-                </div>
-                <h3 className="text-xl font-bold text-amber-300 text-center mb-2">
-                  {coordinator.name}
-                </h3>
-                <div className="space-y-3 w-full">
-                  <div className="flex items-center space-x-2 justify-center">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <a
-                      href={`mailto:${coordinator.email}`}
-                      className="text-amber-400 hover:underline text-sm"
-                    >
-                      {coordinator.email}
-                    </a>
-                  </div>
-                  <div className="flex items-center space-x-2 justify-center">
-                    <Phone className="h-4 w-4 text-gray-400" />
-                    <a
-                      href={`tel:${coordinator.phone}`}
-                      className="text-amber-400 hover:underline text-sm"
-                    >
-                      {coordinator.phone}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
-          />
-        </div>
-      </section>
+          
+          <div className="flex justify-center mt-8 gap-24">
+            <CarouselPrevious className={`${styles.carouselArrow}`} />
+            <CarouselNext className={`${styles.carouselArrow}`} />
+          </div>
+        </Carousel>
+      </div>
     </div>
   );
 }

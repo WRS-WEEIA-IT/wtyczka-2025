@@ -1,0 +1,224 @@
+.contactsContainer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.pageTitle {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #E7A801;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.pageDescription {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #f0f0f0;
+}
+
+.teamGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.carouselContainer {
+  max-width: 1200px;
+  margin: 2rem auto;
+  position: relative;
+  padding: 0 2.5rem;
+}
+
+.memberCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.75rem;
+  background-color: rgba(15, 15, 15, 0.75);
+  border: 1px solid #353535;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 420px;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.memberCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+  border-color: #E7A801;
+  background-color: rgba(20, 20, 20, 0.8);
+}
+
+.avatarContainer {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  border: 3px solid #E7A801;
+  box-shadow: 0 0 15px rgba(231, 168, 1, 0.3);
+}
+
+.memberName {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.memberRole {
+  font-size: 1.05rem;
+  color: #E7A801;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.memberContact {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.3rem 0;
+  color: #f0f0f0;
+  font-size: 0.95rem;
+  max-width: 100%;
+  word-break: break-all;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.memberContact:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.memberContact svg {
+  min-width: 16px;
+  color: #E7A801;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.facebookLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: rgba(24, 119, 242, 0.2); /* Facebook blue, semi-transparent */
+  color: #E7A801;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(231, 168, 1, 0.4);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.facebookLink:hover {
+  transform: translateY(-2px);
+  background-color: rgba(24, 119, 242, 0.3);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(231, 168, 1, 0.3);
+}
+
+.emailLink {
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+.emailLink:hover {
+  color: #E7A801;
+}
+
+/* Mobile responsiveness */
+@media (min-width: 640px) {
+  .teamGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .teamGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .teamGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* For small devices we'll use the carousel view */
+@media (max-width: 639px) {
+  .desktopView {
+    display: none;
+  }
+  
+  .mobileView {
+    display: block;
+  }
+}
+
+/* For larger devices we'll use the grid view */
+@media (min-width: 640px) {
+  .desktopView {
+    display: block;
+  }
+  
+  .mobileView {
+    display: none;
+  }
+}
+
+/* Additional styling for carousel navigation */
+.carouselControls {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+}
+
+.carouselArrow {
+  background-color: #E7A801;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.carouselArrow:hover:not(:disabled) {
+  transform: scale(1.1);
+  background-color: #f0b214;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.carouselArrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
