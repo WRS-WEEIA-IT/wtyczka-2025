@@ -12,12 +12,12 @@ import {
   CATEGORY_DISPLAY_NAMES 
 } from '../../usecases/partners';
 
-// Different styling for different categories
+// Using the same styling for all categories (based on patronat style)
 const CATEGORY_STYLES = {
   partner: {
-    barFilter: "brightness(1) saturate(1)",
-    logoBackground: "from-white to-gray-100",
-    borderColor: "border-amber-700",
+    barFilter: "brightness(1.1) saturate(1.1) hue-rotate(10deg)",
+    logoBackground: "from-amber-50 to-amber-100",
+    borderColor: "border-amber-800",
     headingColor: "text-amber-300"
   },
   patronat: {
@@ -27,9 +27,9 @@ const CATEGORY_STYLES = {
     headingColor: "text-amber-200"
   },
   kolo: {
-    barFilter: "brightness(1) saturate(1)", // Taki sam filtr jak dla partnerów
-    logoBackground: "from-white to-gray-100", // Taki sam background jak dla partnerów
-    borderColor: "border-amber-700", 
+    barFilter: "brightness(1.1) saturate(1.1) hue-rotate(10deg)",
+    logoBackground: "from-amber-50 to-amber-100",
+    borderColor: "border-amber-800", 
     headingColor: "text-amber-300"
   }
 };
@@ -475,29 +475,41 @@ export default function PartnersPage() {
                                 style={{ cursor: partner.website ? 'pointer' : 'default' }}
                               >
                                 <div className={`w-full h-full flex flex-col relative`}>
-                                  {/* Using the SVG gold ingot as background */}
+                                  {/* Using the SVG gold ingot as background with enhanced effects */}
                                   <div className="absolute inset-0 w-full h-full">
                                     <img 
                                       src="/western/ingot.svg" 
                                       alt="Gold Ingot" 
-                                      className="w-full h-full object-contain"
-                                      style={{ filter: categoryStyle.barFilter }}
+                                      className="w-full h-full object-contain ingot-hover-glow"
+                                      style={{ 
+                                        filter: categoryStyle.barFilter,
+                                        transition: "all 0.3s ease"
+                                      }}
                                     />
                                   </div>
                                   
-                                  {/* Partner logo - uproszczona wersja */}
+                                  {/* Partner logo - enhanced version with improved styling */}
                                   <div className="relative flex flex-col h-full z-10">
                                     {/* Partner logo area positioned over the ingot */}
                                     <div className="flex-grow flex items-center justify-center p-3 mt-2">
-                                      <div className={`w-[90%] h-[90%] bg-gradient-to-br ${categoryStyle.logoBackground} rounded-md overflow-hidden flex items-center justify-center border-2 ${categoryStyle.borderColor}`} style={{boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1), 0 1px 3px rgba(255,215,0,0.3)"}}>
+                                      <div 
+                                        className={`w-[90%] h-[90%] bg-gradient-to-br ${categoryStyle.logoBackground} rounded-md overflow-hidden flex items-center justify-center border-2 ${categoryStyle.borderColor}`} 
+                                        style={{
+                                          boxShadow: "inset 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(255,215,0,0.4)",
+                                          transition: "all 0.3s ease"
+                                        }}
+                                      >
                                         {partner.logo ? (
                                           <img
                                             src={partner.logo}
                                             alt={partner.name}
                                             className="max-w-[85%] max-h-[85%] w-auto h-auto object-contain"
+                                            style={{
+                                              filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.1))"
+                                            }}
                                           />
                                         ) : (
-                                          <div className="text-gray-700 text-center text-sm p-2 font-medium">
+                                          <div className="text-amber-900 text-center text-sm p-2 font-medium" style={{textShadow: "0 1px 1px rgba(255,255,255,0.5)"}}>
                                             {partner.name}
                                           </div>
                                         )}

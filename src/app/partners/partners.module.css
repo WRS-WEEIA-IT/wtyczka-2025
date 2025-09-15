@@ -67,18 +67,19 @@
   height: auto;
 }
 
-/* Gold ingot styling for partner cards */
+/* Enhanced gold ingot styling for all partner cards */
 .gridItem {
   transform-style: preserve-3d;
-  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
-  transition: all 0.2s ease;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4)) brightness(1.1) saturate(1.1);
+  transition: all 0.3s ease;
   z-index: 1;
   position: relative;
   cursor: pointer;
 }
 
 .gridItem:hover {
-  filter: drop-shadow(0 12px 18px rgba(255, 215, 0, 0.3));
+  filter: drop-shadow(0 12px 18px rgba(255, 215, 0, 0.5)) brightness(1.2) saturate(1.2);
+  transform: translateY(-5px) scale(1.03);
   z-index: 5;
 }
 

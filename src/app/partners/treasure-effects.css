@@ -40,6 +40,22 @@
   }
 }
 
+/* Gold ingot glow effect - enhances the gold appearance */
+.ingot-hover-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+  transition: filter 0.3s ease;
+}
+
+/* Gold shimmering effect */
+@keyframes goldShimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .gold-sparkle {
   position: absolute;
   width: 15px;
