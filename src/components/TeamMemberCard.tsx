@@ -41,7 +41,14 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
           className={isHovered ? 'scale-105 transition-transform duration-300' : 'transition-transform duration-300'}
         />
       </div>
-      <h2 className={styles.memberName}>{member.name}</h2>
+      <h2 className={styles.memberName}>
+        {(() => {
+          const [first, ...rest] = member.name.split(' ');
+          return <>
+            {first}<br />{rest.join(' ')}
+          </>;
+        })()}
+      </h2>
       {member.role && <p className={styles.memberRole}>{member.role}</p>}
       <div style={{ flexGrow: 1 }} />
       <div className={styles.contactBottom}>
@@ -53,7 +60,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
             title="Kliknij, aby skopiować mail"
             onClick={handleCopyEmail}
           >
-            {member.email}
+            Skopiuj adres email
           </span>
         </a>
         <div className={styles.socialLinks}>

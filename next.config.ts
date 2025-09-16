@@ -19,6 +19,12 @@ module.exports = {
                 port: '',
                 pathname: '/storage/v1/object/public/post-imgs/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'bvzdouqtahdyiaaxywsw.supabase.co',
+                port: '',
+                pathname: '/storage/v1/object/public/kadra/**',
+            },
         ],
     },
 };

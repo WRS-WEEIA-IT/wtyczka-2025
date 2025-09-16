@@ -155,9 +155,9 @@
   color: #ffffff;
   font-size: clamp(0.7em, 1.5vw, 0.85em);
   transition: color 0.2s ease, font-size 0.2s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .emailLink:hover {
