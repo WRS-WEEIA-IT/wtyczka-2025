@@ -130,27 +130,13 @@ export default function StatusPage() {
   if (!isMounted) return null;
   return (
     <div className="min-h-screen py-8">
-      {/* Hero Section */}
-      <section className="border-b border-[#262626] text-white py-16 mb-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
-            Status Twojej aplikacji
-          </h1>
-          <p className="text-xl text-gray-200">
-            Sprawdź status swojej rejestracji i płatności na Wtyczkę 2025
-          </p>
-          <p className="text-sm text-amber-300 mt-2">
-            Zalogowany jako: <span className="font-semibold">{user.email}</span>
-          </p>
-        </div>
-      </section>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
 
         {/* Status Overview */}
         <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center mt-4">
-            Ogólny status aplikacji
+            Status Twojej Aplikacji
           </h2>
 
           <div className="flex items-center justify-center mb-6">

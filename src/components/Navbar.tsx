@@ -138,32 +138,32 @@ export default function Navbar() {
               <div className="hidden md:flex flex-wrap justify-center items-center gap-3 py-2 western-nav-container mx-auto" style={{ margin: "0 auto", width: "100%", justifyContent: "center" }}>
 
 
-              <a 
+              <Link 
         href="/" 
         className="western-button western-button--sign186 western-button--first"
       style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                 onClick={(e) => handleNavigation(e, "/")}
               >
                 {t.nav.home}
-              </a>
+              </Link>
 
-              <a
+              <Link
         href="/news"
         className="western-button western-button--sign186"
       style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                 onClick={(e) => handleNavigation(e, "/news")}
               >
                 {t.nav.news}
-              </a>
+              </Link>
 
-               <a
+               <Link
        href="/partners"
        className="western-button western-button--sign186"
      style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                  onClick={(e) => handleNavigation(e, "/partners")}
                >
                  {t.nav.partners}
-               </a>
+               </Link>
 
               <div className="relative group">
                 <button 
@@ -190,51 +190,51 @@ export default function Navbar() {
                     <div className="chain-link"></div>
                     <div className="chain-link"></div>
                   </div>
-                  <a
+                  <Link
                     href="/essentials"
                     className="western-button western-button--sign186 western-dropdown-animated"
                     style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
                     onClick={(e) => handleNavigation(e, "/essentials")}
                   >
                     {t.nav.essentials}
-                  </a>
+                  </Link>
                   <div className="chain-container western-dropdown-animated" style={{transitionDelay: '240ms'}}>
                     <div className="chain-link"></div>
                     <div className="chain-link"></div>
                   </div>
-                  <a
+                  <Link
                     href="/faq"
                     className="western-button western-button--sign186 western-dropdown-animated"
                     style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
                     onClick={(e) => handleNavigation(e, "/faq")}
                   >
                     {t.nav.faq}
-                  </a>
+                  </Link>
                   <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
                     <div className="chain-link"></div>
                     <div className="chain-link"></div>
                   </div>
-                  <a
+                  <Link
                     href="/contacts"
                     className="western-button western-button--sign186 western-dropdown-animated"
                     style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
                     onClick={(e) => handleNavigation(e, "/contacts")}
                   >
                     {t.nav.contacts}
-                  </a>
+                  </Link>
                 </div>
               </div>
 
               {user && (
                 <>
-                  <a
+                  <Link
                     href="/status"
                     className="western-button western-button--sign186"
                     style={{ backgroundImage: 'url(/western/sign420.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                     onClick={(e) => handleNavigation(e, "/status")}
                   >
                     Status
-                  </a>
+                  </Link>
                 </>
               )}
 
@@ -271,7 +271,7 @@ export default function Navbar() {
           {isMenuOpen && isMobile && (
             <div className="md:hidden py-2 border-t border-[#8B4513] western-mobile-menu w-full">
               <div className="flex flex-col px-2 pb-2 overflow-y-auto overflow-x-hidden max-h-screen" style={{rowGap: '3px'}}>
-                <a
+                <Link
                   href="/"
                   className="western-button text-center"
                   style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
@@ -280,9 +280,9 @@ export default function Navbar() {
                   onClick={(e) => handleNavigation(e, "/")}
                 >
                   {t.nav.home}
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/news"
                   className="western-button text-center"
                   style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
@@ -291,9 +291,9 @@ export default function Navbar() {
                   onClick={(e) => handleNavigation(e, "/news")}
                 >
                   {t.nav.news}
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/partners"
                   className="western-button text-center"
                   style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
@@ -302,7 +302,7 @@ export default function Navbar() {
                   onClick={(e) => handleNavigation(e, "/partners")}
                 >
                   {t.nav.partners}
-                </a>
+                </Link>
 
                 <div className="space-y-3">
                   <a
@@ -316,7 +316,7 @@ export default function Navbar() {
                   >
                     {t.nav.regulations}
                   </a>
-                  <a
+                  <Link
                     href="/essentials"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
@@ -325,8 +325,8 @@ export default function Navbar() {
                     onClick={(e) => handleNavigation(e, "/essentials")}
                   >
                     {t.nav.essentials}
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/faq" 
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
@@ -335,8 +335,8 @@ export default function Navbar() {
                     onClick={(e) => handleNavigation(e, "/faq")}
                   >
                     {t.nav.faq}
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/contacts"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', transition: 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)' }}
@@ -345,19 +345,19 @@ export default function Navbar() {
                     onClick={(e) => handleNavigation(e, "/contacts")}
                   >
                     {t.nav.contacts}
-                  </a>
+                  </Link>
                 </div>
 
                 {user && (
                   <>
-                    <a
+                    <Link
                       href="/status"
                       className="western-button text-center"
                       style={{ backgroundImage: 'url(/western/sign420.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
                       onClick={(e) => handleNavigation(e, "/status")}
                     >
                       Status
-                    </a>
+                    </Link>
                   </>
                 )}
 
