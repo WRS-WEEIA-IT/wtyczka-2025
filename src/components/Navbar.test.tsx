@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Navbar from './Navbar';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
 
 // Mock the required hooks
 jest.mock('@/contexts/AuthContext', () => ({
@@ -38,7 +36,6 @@ jest.mock('@/contexts/LanguageContext', () => ({
 }));
 
 // Mock window.location
-const mockNavigate = jest.fn();
 Object.defineProperty(window, 'location', {
   value: {
     href: '',

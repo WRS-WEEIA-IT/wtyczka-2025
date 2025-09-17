@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import Image from "next/image";
 import { User, School, Info, Save, AlertTriangle } from "lucide-react";
 import { Check } from "lucide-react";
 import toast from "react-hot-toast";
@@ -143,7 +144,6 @@ export default function RegistrationPage() {
   const realLang = language || "pl";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showRegulations, setShowRegulations] = useState(false);
   const [existingRegistration, setExistingRegistration] =
     useState<RegistrationRecord | null>(null);
 
@@ -177,10 +177,12 @@ export default function RegistrationPage() {
     return (
       <div className="wtyczka-loading-container">
         <div className="text-center">
-          <img 
+          <Image 
             src="/logo.svg" 
             alt="Wtyczka Logo" 
-            className="wtyczka-loading-logo" 
+            className="wtyczka-loading-logo"
+            width={150}
+            height={150}
           />
           <div className="wtyczka-loading-text">Ładowanie...</div>
         </div>

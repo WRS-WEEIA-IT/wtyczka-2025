@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Menu, X, DoorOpen, Users } from "lucide-react";
+import { Menu, X, DoorOpen } from "lucide-react";
 import AuthModal from "./AuthModal";
 import Link from "next/link";
 import "./western-navbar.css";
@@ -43,6 +43,9 @@ export default function Navbar() {
         img.src = url;
       });
     };
+    
+    // Call preloadResources
+    preloadResources();
     
     // Handle responsive menu based on screen size
     const handleResize = () => {

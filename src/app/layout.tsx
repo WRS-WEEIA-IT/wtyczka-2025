@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville } from "next/font/google";
 import localFont from "next/font/local";
+import Image from "next/image";
 import "./globals.css";
 import "./background-styles.css";
 import "./western-buttons.css";
@@ -40,7 +41,7 @@ export default function RootLayout({
       <body className={`${libreBaskerville.className} antialiased text-white`}>
         <div className="background-container">
           <div className="background-content">
-            <img src="/background.svg" alt="Background" className="background-svg" />
+            <Image src="/background.svg" alt="Background" className="background-svg" fill priority />
             <div className="background-overlay-top"></div>
             <div className="background-overlay-bottom"></div>
           </div>

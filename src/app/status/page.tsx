@@ -3,6 +3,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   CheckCircle,
   XCircle,
@@ -11,18 +12,20 @@ import {
   CreditCard,
 } from "lucide-react";
 import Link from "next/link";
-import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
+
 
 
 import { getPayment, PaymentRecord } from "@/usecases/payments";
-import Image from "next/image";
+import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
+
+
 
 export default function StatusPage() {
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => { setIsMounted(true); }, []);
   const { user, loading } = useAuth();
-  const { t } = useLanguage();
+  useLanguage();
   const [registration, setRegistration] = useState<RegistrationRecord | null>(
     null
   );
@@ -57,10 +60,12 @@ export default function StatusPage() {
     return (
       <div className="wtyczka-loading-container">
         <div className="text-center">
-          <img 
-            src="/logo.svg" 
+          <Image 
+            src="/logo.svg"
             alt="Wtyczka Logo" 
-            className="wtyczka-loading-logo" 
+            className="wtyczka-loading-logo"
+            width={150}
+            height={150}
           />
           <div className="wtyczka-loading-text">Ładowanie...</div>
         </div>
@@ -100,15 +105,7 @@ export default function StatusPage() {
     return <Clock className="h-6 w-6 text-yellow-500" />;
   };
 
-  const getStatusText = (completed: boolean, isQualified?: boolean) => {
-    if (isQualified === false) {
-      return t.forms.notQualified;
-    }
-    if (completed) {
-      return t.forms.qualified;
-    }
-    return t.forms.pending;
-  };
+
 
 
   // Nowa logika statusu

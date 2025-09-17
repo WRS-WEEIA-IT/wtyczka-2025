@@ -25,6 +25,12 @@ module.exports = {
                 port: '',
                 pathname: '/storage/v1/object/public/kadra/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'bvzdouqtahdyiaaxywsw.supabase.co',
+                port: '',
+                pathname: '/storage/v1/object/public/loga-firm/**',
+            },
         ],
     },
 };

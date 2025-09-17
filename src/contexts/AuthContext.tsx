@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase.auth]);
 
   async function authLogin(email: string, password: string) {
     try {

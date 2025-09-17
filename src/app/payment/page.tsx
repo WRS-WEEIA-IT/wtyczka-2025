@@ -16,14 +16,10 @@ import {
   Upload,
   X,
   FileText,
-  Calendar,
-  MapPin,
-  UserRound,
   CheckCircle,
   Shield,
   Phone,
   Ambulance,
-  Bus,
   ArrowRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -103,7 +99,7 @@ type PaymentFormData = z.infer<typeof paymentSchema>;
 
 export default function PaymentPage() {
   const { user, loading } = useAuth();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const realLang = language || "pl";
 
@@ -237,7 +233,7 @@ export default function PaymentPage() {
 
     setIsFileUploading(true);
     try {
-      const uploadResult = await uploadPaymentConfirmation(file, user);
+  const uploadResult = await uploadPaymentConfirmation(file);
       setUploadedFile(uploadResult);
       toast.success("Plik został przesłany pomyślnie!");
     } catch (error) {
@@ -332,10 +328,12 @@ export default function PaymentPage() {
     return (
       <div className="wtyczka-loading-container">
         <div className="text-center">
-          <img 
+          <Image 
             src="/logo.svg" 
             alt="Wtyczka Logo" 
-            className="wtyczka-loading-logo" 
+            className="wtyczka-loading-logo"
+            width={150}
+            height={150}
           />
           <div className="wtyczka-loading-text">Ładowanie...</div>
         </div>

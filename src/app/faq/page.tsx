@@ -14,8 +14,6 @@ import {
 
 import { getFAQ, QuestionRecord } from "@/usecases/faq";
 
-import Image from "next/image";
-
 export default function FAQPage() {
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);

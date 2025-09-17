@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import type { User } from "@supabase/supabase-js";
 
 export interface FileUploadResult {
   url: string;
@@ -8,7 +7,7 @@ export interface FileUploadResult {
   fileType: string;
 }
 
-const ALLOWED_PAYMENT_FILE_TYPES = [
+const ALLOWED_PAYMENT_FILE_TYPES = [ 
   'application/pdf',
   'image/png',
   'image/jpeg',
@@ -19,7 +18,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function uploadPaymentConfirmation(
   file: File,
-  user: User
+    // user: User
 ): Promise<FileUploadResult> {
   try {
     if (!ALLOWED_PAYMENT_FILE_TYPES.includes(file.type)) {

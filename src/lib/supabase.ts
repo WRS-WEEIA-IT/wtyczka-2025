@@ -22,8 +22,11 @@ export const supabase = createClient(
 
 import { translations } from './translations';
 export function handleSupabaseError(error: unknown, lang: 'pl' | 'en'): string {
+  const defaultLang = 'pl';
+  const useLang = translations[lang as keyof typeof translations] ? lang : defaultLang;
+  
   if (error instanceof Error) {
-    return error.message || translations[lang].errors.unexpected;
+    return error.message || translations[useLang as 'pl'].errors.unexpected;
   }
-  return translations[lang].errors.unexpected;
+  return translations[useLang as 'pl'].errors.unexpected;
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { X, Mail, Lock, User } from "lucide-react";
+import { X, Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface AuthModalProps {

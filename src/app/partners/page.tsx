@@ -2,6 +2,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import styles from './partners.module.css';
 import './treasure-effects.css'; // Import our new treasure effects
 import { 
@@ -35,13 +36,14 @@ const CATEGORY_STYLES = {
 };
 
 export default function PartnersPage() {
+  // State needed for UI logic (used in code below)
+  // ...existing code...
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => { setIsMounted(true); }, []);
   const [isChestOpen, setIsChestOpen] = useState(false);
   const [goldenBarsVisible, setGoldenBarsVisible] = useState(false);
-  const [chestVisible, setChestVisible] = useState(true);
-  const [barsInGrid, setBarsInGrid] = useState(false);
+  // ...existing code...
   const [partnersByCategory, setPartnersByCategory] = useState<Record<PartnerCategory, PartnerType[]>>({
     partner: [],
     patronat: [],
@@ -53,7 +55,7 @@ export default function PartnersPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const chestPositionRef = useRef({x: 0, y: 0});
-  const [dustParticles, setDustParticles] = useState<Array<{id: number, left: string, size: string, duration: string}>>([]);
+  // ...existing code...
 
   // Automatyczne przewijanie na górę strony przy ładowaniu/odświeżaniu
   useEffect(() => {
@@ -73,16 +75,8 @@ export default function PartnersPage() {
   }, [loading]);
   
   // Add window resize event handler to trigger re-render for responsive grid
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  // ...existing code...
   
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   
   // Fetch partners from the database
   useEffect(() => {
@@ -163,7 +157,6 @@ export default function PartnersPage() {
         }
         
         // Show bars in grid layout
-        setBarsInGrid(true);
         setGoldenBarsVisible(true);
         
         // Scroll down to see the gold bars
@@ -180,19 +173,10 @@ export default function PartnersPage() {
   };
   
   // Handle partner card click - redirect to partner website
-  const handlePartnerClick = (partner: PartnerType) => {
-    if (partner.website) {
-      window.open(partner.website, "_blank", "noopener,noreferrer");
-    }
-  };
+  // ...existing code...
   
   // Get total count of all partners
-  const getTotalPartnersCount = (): number => {
-    return PARTNER_CATEGORIES.reduce(
-      (count, category) => count + (partnersByCategory[category]?.length || 0),
-      0
-    );
-  };
+  // ...existing code...
 
   // Find any categories with partners
   const categoriesWithPartners = PARTNER_CATEGORIES.filter(
@@ -237,7 +221,7 @@ export default function PartnersPage() {
       {/* Main treasure chest container */}
       <div className="relative z-1 w-full max-w-md mx-auto mt-8">
         <AnimatePresence>
-          {chestVisible && Object.values(partnersByCategory).some(arr => arr.length > 0) && !loading && (
+          {Object.values(partnersByCategory).some(arr => arr.length > 0) && !loading && (
             <motion.div 
               ref={chestRef}
               className={`w-full aspect-square max-w-md mx-auto ${styles.treasureChest}`}
@@ -419,16 +403,14 @@ export default function PartnersPage() {
                           transition={{ duration: 0.5 }}
                         >
                         {partners.map((partner, idx) => {
-                          // Obliczamy pozycję początkową sztabki - wewnątrz skrzyni
-                          const chestCenterX = chestRef.current ? chestRef.current.getBoundingClientRect().width / 2 : 0;
-                          const chestY = chestRef.current ? chestRef.current.getBoundingClientRect().top : 100;
+                          // ...existing code...
                           
                           // Animation sequence delay - sztabki wypadają jedna po drugiej
                           const sequentialDelay = 0.1 * idx + 0.2;
                           
                           // Losowe przesunięcie od środka skrzyni
                           const randomOffsetX = (Math.random() * 60 - 30); // -30px to +30px
-                          const randomOffsetY = (Math.random() * 20); // 0 to +20px (aby były nieco ponad sobą)
+                          // ...existing code...
                           const randomRotation = Math.random() * 180 - 90; // -90deg to +90deg
                           
                           return (
@@ -482,10 +464,12 @@ export default function PartnersPage() {
                                 <div className={`w-full h-full flex flex-col relative`}>
                                   {/* Using the SVG gold ingot as background with enhanced effects */}
                                   <div className="absolute inset-0 w-full h-full">
-                                    <img 
+                                    <Image 
                                       src="/western/ingot.svg" 
                                       alt="Gold Ingot" 
                                       className="w-full h-full object-contain ingot-hover-glow"
+                                      width={200}
+                                      height={100}
                                       style={{ 
                                         filter: categoryStyle.barFilter,
                                         transition: "all 0.3s ease"
@@ -505,10 +489,12 @@ export default function PartnersPage() {
                                         }}
                                       >
                                         {partner.logo ? (
-                                          <img
+                                          <Image
                                             src={partner.logo}
                                             alt={partner.name}
                                             className="max-w-[85%] max-h-[85%] w-auto h-auto object-contain"
+                                            width={100}
+                                            height={60}
                                             style={{
                                               filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.1))"
                                             }}

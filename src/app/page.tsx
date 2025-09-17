@@ -4,11 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect, Suspense } from "react";
 import {
   Calendar,
-  Users,
-  Award,
   Facebook,
-  MapPin,
-  UserRound,
 } from "lucide-react";
 import Image from "next/image";
 import {

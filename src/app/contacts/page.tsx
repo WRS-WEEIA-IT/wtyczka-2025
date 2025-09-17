@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useState, useEffect } from 'react';
 import { getTeamMembers, TeamMember } from '@/usecases/team-members';
 import TeamMemberCard from '@/components/TeamMemberCard';
 import styles from './contacts.module.css';
 import './team-animations.css';
 import './carousel-dots.css';
 import './contacts-background.css';
-import { Mail, Facebook } from 'lucide-react';
-import Image from 'next/image';
 
 import {
   Carousel,
@@ -24,7 +21,6 @@ export default function ContactsPage() {
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => { setIsMounted(true); }, []);
-  const { t } = useLanguage();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
