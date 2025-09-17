@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { Lock, ArrowRight } from "lucide-react";
-// Blokada widoczności strony kontaktowej na podstawie daty
-function isContactOpen() {
-  if (typeof window === 'undefined') return true;
-  const openDateStr = process.env.NEXT_PUBLIC_CONTACT_DATE;
-  if (!openDateStr) return true;
-  const now = new Date();
-  const openDate = new Date(openDateStr);
-  return now >= openDate;
+// Ta funkcja sprawdza dostępność strony kontaktowej poprzez zapytanie API
+// Rzeczywista kontrola dostępu odbywa się na serwerze
+async function isContactOpen() {
+  try {
+    const res = await fetch('/api/check-access/contacts');
+    const data = await res.json();
+    return res.ok && data.access === true;
+  } catch (error) {
+    console.error("Error checking contact access:", error);
+    return false;
+  }
 }
 import { getTeamMembers, TeamMember } from '@/usecases/team-members';
 import TeamMemberCard from '@/components/TeamMemberCard';
@@ -28,31 +31,52 @@ import {
 } from '@/components/ui/carousel';
 
 export default function ContactsPage() {
-  const [isContactVisible, setIsContactVisible] = useState(true);
+  // Start with content hidden until access is confirmed
+  const [isContactVisible, setIsContactVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-    // Sprawdź widoczność kontaktów po stronie klienta
-    const openDateStr = process.env.NEXT_PUBLIC_CONTACT_DATE;
-    if (openDateStr) {
-      const now = new Date();
-      const openDate = new Date(openDateStr);
-      setIsContactVisible(now >= openDate);
-    } else {
-      setIsContactVisible(true);
-    }
-  }, []);
-
+  
   // Stan do karuzeli
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [api, setApi] = useState<CarouselApi | undefined>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
-
+  
   useEffect(() => {
-    // Pobierz członków zespołu po zamontowaniu
-    setTeamMembers(getTeamMembers());
+    setIsMounted(true);
+    // Sprawdzenie dostępu wyłącznie przez API - serwer decyduje o dostępie
+    fetch('/api/check-access/contacts')
+      .then(res => res.json())
+      .then(data => {
+        setIsContactVisible(data.access === true);
+        
+        // Only fetch team members if access is granted
+        if (data.access === true) {
+          // Get team members through API
+          return fetch('/api/team-members')
+            .then(res => {
+              if (!res.ok) throw new Error('Failed to fetch team members');
+              return res.json();
+            })
+            .then(data => {
+              setTeamMembers(data.teamMembers || []);
+              setIsLoading(false);
+            })
+            .catch(error => {
+              console.error("Error fetching team members:", error);
+              setIsLoading(false);
+            });
+        } else {
+          setIsLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error checking contacts access:", error);
+        // W przypadku błędu API, blokujemy dostęp
+        setIsContactVisible(false);
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -76,6 +100,25 @@ export default function ContactsPage() {
   }, [api]);
 
   if (!isMounted) return null;
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className={styles.contactsContainer}>
+        <div className="pageOverlay"></div>
+        <div
+          style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh',
+            background: 'rgba(24,24,27,0.95)', borderRadius: '2rem', padding: '3rem', margin: '2rem auto', maxWidth: 600, boxShadow: '0 0 32px #0008',
+          }}
+        >
+          <div style={{ fontSize: '24px', color: '#f0f0f0' }}>Ładowanie...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show access denied message
   if (!isContactVisible) {
     return (
       <div className={styles.contactsContainer}>

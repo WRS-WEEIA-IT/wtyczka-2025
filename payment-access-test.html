@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Form Access Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #3e8e41;
+        }
+        .endpoint {
+            background-color: #e9f5fe;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid #1a73e8;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Form Access Test</h1>
+        <p>This tool helps test the payment form access control. It checks the API endpoints and shows detailed responses.</p>
+    </div>
+    
+    <div class="container">
+        <h2>1. Test Payment-Form API Endpoint</h2>
+        <div class="endpoint">/api/check-access/payment-form</div>
+        <button onclick="testPaymentFormAccess()">Test Payment Form Access</button>
+        <pre id="payment-form-result">Click the button to test...</pre>
+    </div>
+    
+    <div class="container">
+        <h2>2. Test Legacy Payment API Endpoint</h2>
+        <div class="endpoint">/api/check-access/payment</div>
+        <button onclick="testPaymentAccess()">Test Legacy Payment Access</button>
+        <pre id="payment-result">Click the button to test...</pre>
+    </div>
+    
+    <div class="container">
+        <h2>3. Environment Variables Debug</h2>
+        <div class="endpoint">/api/debug/env (if available)</div>
+        <button onclick="testEnvDebug()">Test Environment Variables</button>
+        <pre id="env-result">Click the button to test...</pre>
+    </div>
+    
+    <script>
+        async function testPaymentFormAccess() {
+            try {
+                document.getElementById('payment-form-result').textContent = 'Loading...';
+                const response = await fetch('/api/check-access/payment-form');
+                const data = await response.json();
+                document.getElementById('payment-form-result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('payment-form-result').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testPaymentAccess() {
+            try {
+                document.getElementById('payment-result').textContent = 'Loading...';
+                const response = await fetch('/api/check-access/payment');
+                const data = await response.json();
+                document.getElementById('payment-result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('payment-result').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testEnvDebug() {
+            try {
+                document.getElementById('env-result').textContent = 'Loading...';
+                const response = await fetch('/api/debug/env');
+                const data = await response.json();
+                document.getElementById('env-result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('env-result').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

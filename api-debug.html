@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Debug Tool</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        button {
+            background-color: #0070f3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0051a2;
+        }
+        pre {
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        .endpoint-url {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 5px;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Debug Tool</h1>
+        <p>Use this tool to test API endpoints and view responses directly in the browser.</p>
+        
+        <h2>Payment Access API</h2>
+        <div class="endpoint-url">/api/check-access/payment</div>
+        <button onclick="testPaymentAccess()">Test Payment Access</button>
+        
+        <h2>Environment Variables Debug</h2>
+        <div class="endpoint-url">/api/debug/env</div>
+        <button onclick="testEnvDebug()">Test Environment Variables</button>
+        
+        <h2>Response</h2>
+        <pre id="response">Click a button to send a request...</pre>
+    </div>
+
+    <script>
+        async function testPaymentAccess() {
+            try {
+                document.getElementById('response').textContent = 'Loading...';
+                const response = await fetch('/api/check-access/payment');
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function testEnvDebug() {
+            try {
+                document.getElementById('response').textContent = 'Loading...';
+                const response = await fetch('/api/debug/env');
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

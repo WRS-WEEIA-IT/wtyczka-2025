@@ -44,6 +44,7 @@ Kompleksowy serwis internetowy dla wydarzenia integracyjno-szkoleniowego **Wtycz
 - **Firebase Authentication** - autoryzacja Google i email
 - **Firebase Firestore** - baza danych NoSQL z regułami bezpieczeństwa
 - **Firebase Hosting** - hosting aplikacji
+- **Environment Variables** - konfiguracja dynamiczna aplikacji
 
 ### Narzędzia deweloperskie:
 
@@ -136,7 +137,34 @@ npm run dev
 # 5. Otwórz http://localhost:3000
 ```
 
-## �️ Struktura bazy danych
+## 🔧 Konfiguracja
+
+### Zmienne środowiskowe
+
+Aplikacja używa pliku `.env` do konfiguracji. Stwórz plik `.env` w głównym katalogu projektu z następującymi zmiennymi:
+
+```
+# Daty dostępu
+PAYMENT_OPEN_DATE=2025-01-01       # Data otwarcia formularza płatności (YYYY-MM-DD)
+CONTACT_OPEN_DATE=2025-01-15       # Data otwarcia sekcji kontaktowej (YYYY-MM-DD)
+
+# Hasła dostępowe
+PAYMENT_FORM_PASSWORD=tajne_haslo  # Hasło do formularza płatności
+```
+
+### Aktualizacja dat dostępu
+
+Dla szybkiej aktualizacji dat i haseł, możesz użyć dostarczonych skryptów PowerShell:
+
+```powershell
+# Aktualizacja daty otwarcia formularza płatności
+.\update-payment-date.ps1 -paymentDate "2025-02-15"
+
+# Aktualizacja haseł i dat dostępu
+.\update-security.ps1 -contactDate "2025-02-01" -paymentDate "2025-02-15" -adminPassword "nowe_haslo"
+```
+
+## 📊 Struktura bazy danych
 
 ### Kolekcja `registrations`
 

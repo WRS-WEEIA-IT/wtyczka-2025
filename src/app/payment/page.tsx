@@ -115,21 +115,32 @@ export default function PaymentPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Payment open date logic
-  const [isPaymentOpen, setIsPaymentOpen] = useState(true);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false); // Start with closed
+  const [isPageLoading, setIsPageLoading] = useState(true); // Add loading state
   const [paymentOpenDate, setPaymentOpenDate] = useState<string | null>(null);
 
   useEffect(() => {
-    // Read PAYMENT_OPEN_DATE from env (Next.js exposes only NEXT_PUBLIC_*)
-    // So we need to expose it as NEXT_PUBLIC_PAYMENT_OPEN_DATE in .env.local
-    const openDate = process.env.NEXT_PUBLIC_PAYMENT_OPEN_DATE || process.env.PAYMENT_OPEN_DATE;
-    setPaymentOpenDate(openDate || null);
-    if (openDate) {
-      const today = new Date();
-      const open = new Date(openDate);
-      setIsPaymentOpen(today >= open);
-    } else {
-      setIsPaymentOpen(true); // fallback: always open
-    }
+    // Sprawdzanie dostępności formularza płatności wyłącznie przez API
+    fetch('/api/check-access/payment-form')
+      .then(res => res.json())
+      .then(data => {
+        console.log('Payment access API response:', data);
+        // Ensure we're being strict about the access check
+        const accessAllowed = data.access === true;
+        setIsPaymentOpen(accessAllowed);
+        
+        // Jeśli API zwróci informację o dacie, ustawmy ją do wyświetlania
+        if (data.date) {
+          setPaymentOpenDate(data.date);
+        }
+        setIsPageLoading(false); // Mark loading as complete
+      })
+      .catch((error) => {
+        console.error("Error checking payment access:", error);
+        // W przypadku błędu API, blokujemy dostęp
+        setIsPaymentOpen(false);
+        setIsPageLoading(false); // Mark loading as complete even on error
+      });
   }, []);
 
   // Calculate days until event
@@ -204,17 +215,21 @@ export default function PaymentPage() {
         body: JSON.stringify({ password: adminPassword })
       });
       const data = await res.json();
+      
+      // Check if the password is correct
       if (res.ok && data?.ok) {
+        // If password is correct, authorize the user regardless of date
+        // The API already checks if we should allow access
         setIsAuthorized(true);
         toast.success("Dostęp do formularza płatności został aktywowany");
       } else if (res.status === 401) {
         setError("adminPassword", { type: "manual", message: "Nieprawidłowe hasło!" });
       } else {
         const msg = data?.error || "Błąd weryfikacji hasła";
-        toast.error(msg);
+        setError("adminPassword", { type: "manual", message: msg });
       }
     } catch (e) {
-      toast.error("Błąd połączenia z serwerem");
+      setError("adminPassword", { type: "manual", message: "Błąd połączenia z serwerem" });
     }
   };
 
@@ -616,19 +631,103 @@ export default function PaymentPage() {
           </div>
         </section>
 
-        {/* Admin Password Section */}
-        {!isAuthorized && (
-          <div className="max-w-lg mx-auto">
-            {!isPaymentOpen ? (
-              <div className="bg-[#18181b] rounded-2xl shadow-lg p-8 border border-[#262626] text-center">
-                <div className="mb-6">
-                  <Lock className="h-10 w-10 text-amber-400 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-white mb-2">Formularz płatności niedostępny</h2>
-                  <p className="text-gray-400 mb-2">
-                    Możliwość autoryzacji i wysyłania formularza płatności zostanie wkrótce otwarta.
-                  </p>
-                  <p className="text-gray-400 text-sm">Sprawdź aktualności na stronie, aby być na bieżąco!</p>
+        {/* Payment Access Section */}
+        <div className="max-w-lg mx-auto">
+          {isPageLoading ? (
+            // Loading state
+            <div className="bg-[#18181b] rounded-2xl shadow-lg p-8 border border-[#262626] text-center">
+              <div className="mb-6 flex flex-col items-center justify-center" style={{ minHeight: '120px' }}>
+                <div className="text-xl text-white">Ładowanie...</div>
+              </div>
+            </div>
+          ) : !isPaymentOpen ? (
+            // Payment form not yet available
+            <div className="bg-[#18181b] rounded-2xl shadow-lg p-8 border border-[#262626] text-center">
+              <div className="mb-6">
+                <Lock className="h-10 w-10 text-amber-400 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-white mb-2">Formularz płatności niedostępny</h2>
+                <p className="text-gray-400 mb-2">
+                  Możliwość autoryzacji i wysyłania formularza płatności zostanie wkrótce otwarta.
+                </p>
+                <br></br>
+                <p className="text-gray-400 text-sm">Sprawdź aktualności na stronie, aby być na bieżąco!</p>
+              </div>
+              <Link
+                href="/news"
+                className="text-amber-400 hover:text-amber-300 text-sm inline-flex items-center transition-colors"
+              >
+                <ArrowRight className="h-4 w-4 mr-1" />
+                <span>Przejdź do aktualności</span>
+              </Link>
+            </div>
+          ) : !isAuthorized ? (
+            // Password authorization section (only shown when payment date is reached)
+            <div className="bg-[#18181b] rounded-2xl shadow-lg p-8 border border-[#262626]">
+              <div className="mb-6">
+                <div className="flex flex-col items-center md:flex-row md:items-center">
+                  <div className="bg-[#262626] rounded-full p-3 mb-4 md:mb-0 md:mr-4 flex-shrink-0">
+                    <Lock className="h-6 w-6 text-amber-400" />
+                  </div>
+                  <div className="text-center md:text-left">
+                    <h2 className="text-2xl font-bold text-white">
+                      Autoryzacja hasłem
+                    </h2>
+                    <p className="text-gray-400">
+                      Podaj tajny kod aby odblokować formularz
+                    </p>
+                  </div>
                 </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Hasło:
+                </label>
+                <div className="relative">
+                  <input
+                    type={isPasswordVisible ? "text" : "password"}
+                    {...register("adminPassword")}
+                    className="w-full px-3 py-3 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 pr-10"
+                    placeholder="Wprowadź hasło..."
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        checkAdminPassword();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-amber-400"
+                  >
+                    {isPasswordVisible ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.adminPassword && (
+                  <p className="mt-2 text-red-500 text-sm">
+                    {errors.adminPassword.message}
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={checkAdminPassword}
+                className="w-full bg-[#E7A801] hover:bg-amber-700 text-black py-3 px-4 rounded-xl font-semibold transition-colors flex items-center justify-center"
+              >
+                <Lock className="h-5 w-5 mr-2" />
+                <span>Weryfikuj hasło</span>
+              </button>
+              
+              <div className="mt-6 text-center pt-6 border-t border-[#262626]">
+                <p className="text-gray-400 text-sm mb-2">
+                  Nie znasz tajnego hasła? Śledź na bieżąco aktualności!
+                </p>
                 <Link
                   href="/news"
                   className="text-amber-400 hover:text-amber-300 text-sm inline-flex items-center transition-colors"
@@ -637,86 +736,9 @@ export default function PaymentPage() {
                   <span>Przejdź do aktualności</span>
                 </Link>
               </div>
-            ) : (
-              <div className="bg-[#18181b] rounded-2xl shadow-lg p-8 border border-[#262626]">
-                {/* Mobile: icon above title, Desktop: icon left of title */}
-                <div className="mb-6">
-                  <div className="flex flex-col items-center md:flex-row md:items-center">
-                    <div className="bg-[#262626] rounded-full p-3 mb-4 md:mb-0 md:mr-4 flex-shrink-0">
-                      <Lock className="h-6 w-6 text-amber-400" />
-                    </div>
-                    <div className="text-center md:text-left">
-                      <h2 className="text-2xl font-bold text-white">
-                        Autoryzacja hasłem
-                      </h2>
-                      <p className="text-gray-400">
-                        Podaj tajny kod aby odblokować formularz
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Hasło administratora
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={isPasswordVisible ? "text" : "password"}
-                      {...register("adminPassword")}
-                      className="w-full px-3 py-3 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 pr-10"
-                      placeholder="Wprowadź hasło..."
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          checkAdminPassword();
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-amber-400"
-                    >
-                      {isPasswordVisible ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.adminPassword && (
-                    <p className="mt-2 text-red-500 text-sm">
-                      {errors.adminPassword.message}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={checkAdminPassword}
-                  className="w-full bg-[#E7A801] hover:bg-amber-700 text-black py-3 px-4 rounded-xl font-semibold transition-colors flex items-center justify-center"
-                >
-                  <Lock className="h-5 w-5 mr-2" />
-                  <span>Weryfikuj hasło</span>
-                </button>
-                
-                <div className="mt-6 text-center pt-6 border-t border-[#262626]">
-                  <p className="text-gray-400 text-sm mb-2">
-                    Nie znasz tajnego hasła? Śledź na bieżąco aktualności!
-                  </p>
-                  <Link
-                    href="/news"
-                    className="text-amber-400 hover:text-amber-300 text-sm inline-flex items-center transition-colors"
-                  >
-                    <ArrowRight className="h-4 w-4 mr-1" />
-                    <span>Przejdź do aktualności</span>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          ) : null}
+        </div>
 
         {/* Payment form - visible only when authorized */}
         {isAuthorized && (
