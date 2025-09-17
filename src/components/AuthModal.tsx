@@ -22,12 +22,76 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+  const [passwordChecklist, setPasswordChecklist] = useState({
+    length: false,
+    lower: false,
+    upper: false,
+    digit: false,
+    special: false,
+  });
+  const validatePassword = (password: string) => {
+    const checklist = {
+      length: password.length >= 8,
+      lower: /[a-z]/.test(password),
+      upper: /[A-Z]/.test(password),
+      digit: /[0-9]/.test(password),
+      special: /[^A-Za-z0-9]/.test(password),
+    };
+    setPasswordChecklist(checklist);
+    if (!password) return "Pole hasło jest wymagane.";
+    const allValid = Object.values(checklist).every(Boolean);
+    if (!allValid) return "Hasło nie spełnia wszystkich wymagań.";
+    return null;
+  };
 
   if (!isOpen) return null;
+
+  const validateEmail = (email: string) => {
+    if (!email) return "Pole email jest wymagane.";
+    // Simple email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return "Sprawdź poprawność wpisywanego maila.";
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+
+    // Custom email validation
+    const emailValidation = validateEmail(formData.email);
+    setEmailError(emailValidation);
+    // Custom password validation (only for register)
+    let passwordValidation = null;
+    let confirmPasswordValidation = null;
+    if (!isLogin) {
+      passwordValidation = validatePassword(formData.password);
+      setPasswordError(passwordValidation);
+      if (!formData.confirmPassword) {
+        confirmPasswordValidation = "Pole potwierdzenia hasła jest wymagane.";
+      } else if (formData.password !== formData.confirmPassword) {
+        confirmPasswordValidation = t.errors.passwordsDontMatch || "Hasła nie są takie same.";
+      }
+      setConfirmPasswordError(confirmPasswordValidation);
+    } else {
+      setPasswordChecklist({
+        length: false,
+        lower: false,
+        upper: false,
+        digit: false,
+        special: false,
+      });
+      setPasswordError(null);
+      setConfirmPasswordError(null);
+    }
+    if (emailValidation || passwordValidation || confirmPasswordValidation) {
+      setLoading(false);
+      return;
+    }
 
     try {
       if (isLogin) {
@@ -93,16 +157,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
               <input
-                type="email"
-                required
+                type="text"
                 className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  if (emailError) setEmailError(null);
+                }}
                 placeholder={t.auth.email}
               />
             </div>
+            {emailError && (
+              <div className="text-red-500 text-xs mt-2 font-medium">{emailError}</div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -112,16 +179,28 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
               <input
                 type="password"
-                required
-                minLength={6}
                 className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value });
+                  if (!isLogin) validatePassword(e.target.value);
+                  if (passwordError) setPasswordError(null);
+                }}
                 placeholder={t.auth.password}
               />
             </div>
+            {!isLogin && (
+              <ul className="text-red-500 text-xs mt-2 font-medium space-y-1">
+                <li className={passwordChecklist.length ? "text-green-600" : ""}>• min. 8 znaków</li>
+                <li className={passwordChecklist.lower ? "text-green-600" : ""}>• mała litera</li>
+                <li className={passwordChecklist.upper ? "text-green-600" : ""}>• wielka litera</li>
+                <li className={passwordChecklist.digit ? "text-green-600" : ""}>• cyfra</li>
+                <li className={passwordChecklist.special ? "text-green-600" : ""}>• znak specjalny</li>
+              </ul>
+            )}
+            {passwordError && (
+              <div className="text-red-500 text-xs mt-2 font-medium">{passwordError}</div>
+            )}
           </div>
           {!isLogin && (
             <div>
@@ -132,19 +211,21 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
                 <input
                   type="password"
-                  required
-                  minLength={6}
                   className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
                   value={formData.confirmPassword}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setFormData({
                       ...formData,
                       confirmPassword: e.target.value,
-                    })
-                  }
+                    });
+                    if (confirmPasswordError) setConfirmPasswordError(null);
+                  }}
                   placeholder={t.auth.confirmPassword}
                 />
               </div>
+              {confirmPasswordError && (
+                <div className="text-red-500 text-xs mt-2 font-medium">{confirmPasswordError}</div>
+              )}
             </div>
           )}
           <button

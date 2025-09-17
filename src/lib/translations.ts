@@ -39,7 +39,11 @@ export const translations: Record<'pl' | 'en', Translations> = {
       alreadyHaveAccount: "Masz już konto?",
       dontHaveAccount: "Nie masz konta?",
       loginSuccess: "Zalogowano pomyślnie!",
-      registerSuccess: "Zarejestrowano pomyślnie!"
+      registerSuccess: "Zarejestrowano pomyślnie! Potwierdź rejestrację na email!",
+      emailConfirmation: "Potwierdź rejestrację",
+      emailConfirmationText: "Aby dokończyć rejestrację, kliknij w link aktywacyjny wysłany na adres:",
+      checkSpamFolder: "Sprawdź folder spam, jeśli nie widzisz wiadomości w skrzynce odbiorczej.",
+      understand: "Rozumiem"
     },
     forms: {
       participantData: "Dane uczestnika",
@@ -97,7 +101,7 @@ export const translations: Record<'pl' | 'en', Translations> = {
       unexpected: "Wystąpił nieoczekiwany błąd",
       required: "To pole jest wymagane",
       invalidEmail: "Nieprawidłowy adres email",
-      passwordTooShort: "Hasło musi mieć co najmniej 6 znaków",
+      passwordTooShort: "Hasło musi mieć co najmniej 8 znaków",
       passwordsDontMatch: "Hasła nie są identyczne"
     }
   },
@@ -139,7 +143,11 @@ export const translations: Record<'pl' | 'en', Translations> = {
       alreadyHaveAccount: "Already have an account?",
       dontHaveAccount: "Don't have an account?",
       loginSuccess: "Login successful!",
-      registerSuccess: "Registration successful!"
+      registerSuccess: "Registration successful! Please confirm your email!",
+      emailConfirmation: "Confirm Registration",
+      emailConfirmationText: "To complete your registration, click the activation link sent to:",
+      checkSpamFolder: "Check your spam folder if you don't see the message in your inbox.",
+      understand: "I understand"
     },
     forms: {
       participantData: "Participant Data",
@@ -197,7 +205,7 @@ export const translations: Record<'pl' | 'en', Translations> = {
       unexpected: "An unexpected error occurred",
       required: "This field is required",
       invalidEmail: "Invalid email address",
-      passwordTooShort: "Password must be at least 6 characters",
+      passwordTooShort: "Password must be at least 8 characters",
       passwordsDontMatch: "Passwords don't match"
     }
   }

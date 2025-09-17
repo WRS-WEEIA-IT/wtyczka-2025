@@ -39,6 +39,10 @@ export interface Translations {
     dontHaveAccount: string;
     loginSuccess: string;
     registerSuccess: string;
+    emailConfirmation: string;
+    emailConfirmationText: string;
+    checkSpamFolder: string;
+    understand: string;
   };
   forms: {
     participantData: string;
