@@ -202,9 +202,9 @@ export default function Navbar() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms' }}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms' }}
                   >
-                    {t.nav.regulations}
+                    <div style={{marginTop: '8px'}}>{t.nav.regulations}</div>
                   </a>
                   <div className="chain-container western-dropdown-animated" style={{transitionDelay: '80ms'}}>
                     <div className="chain-link"></div>
@@ -213,10 +213,10 @@ export default function Navbar() {
                   <Link
                     href="/essentials"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
                     onClick={(e) => handleNavigation(e, "/essentials")}
                   >
-                    {t.nav.essentials}
+                    <div style={{marginTop: '8px'}}>{t.nav.essentials}</div>
                   </Link>
                   <div className="chain-container western-dropdown-animated" style={{transitionDelay: '240ms'}}>
                     <div className="chain-link"></div>
@@ -225,10 +225,10 @@ export default function Navbar() {
                   <Link
                     href="/faq"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
                     onClick={(e) => handleNavigation(e, "/faq")}
                   >
-                    {t.nav.faq}
+                    <div style={{marginTop: '8px'}}>{t.nav.faq}</div>
                   </Link>
                   <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
                     <div className="chain-link"></div>
@@ -237,10 +237,10 @@ export default function Navbar() {
                   <Link
                     href="/contacts"
                     className="western-button western-button--sign186 western-dropdown-animated"
-                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
+                    style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
                     onClick={(e) => handleNavigation(e, "/contacts")}
                   >
-                    {t.nav.contacts}
+                    <div style={{marginTop: '8px'}}>{t.nav.contacts}</div>
                   </Link>
                 </div>
                 {/* Dropdown na kliknięcie z łańcuchami */}
@@ -257,9 +257,9 @@ export default function Navbar() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="western-button western-button--sign186 western-dropdown-animated"
-                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms', position: 'relative', zIndex: 102 }}
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms', position: 'relative', zIndex: 102 }}
                     >
-                      {t.nav.regulations}
+                      <div style={{marginTop: '8px'}}>{t.nav.regulations}</div>
                     </a>
                     {/* Pozostałe przyciski */}
                     <div className="chain-container western-dropdown-animated" style={{transitionDelay: '80ms'}}>
@@ -269,10 +269,10 @@ export default function Navbar() {
                     <Link
                       href="/essentials"
                       className="western-button western-button--sign186 western-dropdown-animated"
-                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
                       onClick={(e) => handleNavigation(e, "/essentials")}
                     >
-                      {t.nav.essentials}
+                      <div style={{marginTop: '8px'}}>{t.nav.essentials}</div>
                     </Link>
                     <div className="chain-container western-dropdown-animated" style={{transitionDelay: '240ms'}}>
                       <div className="chain-link"></div>
@@ -281,10 +281,10 @@ export default function Navbar() {
                     <Link
                       href="/faq"
                       className="western-button western-button--sign186 western-dropdown-animated"
-                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
                       onClick={(e) => handleNavigation(e, "/faq")}
                     >
-                      {t.nav.faq}
+                      <div style={{marginTop: '8px'}}>{t.nav.faq}</div>
                     </Link>
                     <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
                       <div className="chain-link"></div>
@@ -293,10 +293,10 @@ export default function Navbar() {
                     <Link
                       href="/contacts"
                       className="western-button western-button--sign186 western-dropdown-animated"
-                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '145% 135%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
                       onClick={(e) => handleNavigation(e, "/contacts")}
                     >
-                      {t.nav.contacts}
+                      <div style={{marginTop: '8px'}}>{t.nav.contacts}</div>
                     </Link>
                   </div>
                 )}
