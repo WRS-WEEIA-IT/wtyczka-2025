@@ -149,6 +149,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <h2 className="text-3xl font-bold text-amber-400 text-center mb-8 drop-shadow-lg">
           {isLogin ? t.auth.login : t.auth.register}
         </h2>
+        <div className="mb-6 text-center">
+          <span className="block text-sm text-gray-300 bg-[#18181b]/80 rounded-lg px-4 py-2 mb-2">
+            Jeśli chcesz usunąć wszelkie swoje dane z systemu, skontaktuj się mailowo:
+            <a href="mailto:wtyczka@samorzad.p.lodz.pl" className="text-amber-400 hover:underline ml-1">wtyczka@samorzad.p.lodz.pl</a>
+          </span>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
