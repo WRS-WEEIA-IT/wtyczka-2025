@@ -49,7 +49,7 @@ export default function Navbar() {
     
     // Handle responsive menu based on screen size
     const handleResize = () => {
-      const isMobileView = window.innerWidth < 768;
+      const isMobileView = window.innerWidth <= 768;
       setIsMobile(isMobileView);
       if (!isMobileView && isMenuOpen) {
         setIsMenuOpen(false);
@@ -125,7 +125,7 @@ export default function Navbar() {
           <div className="flex justify-center items-center w-full">
             {/* Mobile menu button - only show in mobile view */}
             {isMobile && (
-              <div className="md:hidden">
+              <div>
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                        className="western-icon-button"
