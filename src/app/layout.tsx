@@ -38,6 +38,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl" className={`${tagesschrift.variable} ${libreBaskerville.variable}`}>
+      <head>
+        <link rel="icon" href="/logo.ico" />
+      </head>
       <body className={`${libreBaskerville.className} antialiased text-white`}>
         <div className="background-container">
           <div className="background-content">
