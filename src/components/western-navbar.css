@@ -443,7 +443,7 @@ html, body {
   top: 92%;
   height: 30px;
   width: 100%;
-  z-index: 39;
+  z-index: 39 !important;
   margin-top: -8px;
   display: flex;
   justify-content: space-between;

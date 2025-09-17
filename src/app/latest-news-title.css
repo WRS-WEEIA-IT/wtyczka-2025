@@ -1,0 +1,5 @@
+@media screen and (max-width: 350px) {
+  .latest-news-title {
+    font-size: 0.75rem !important;
+  }
+}

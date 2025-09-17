@@ -1,3 +1,22 @@
+/* Responsive font sizes for latest news title */
+.latest-news-title {
+  font-size: 2rem;
+}
+@media screen and (max-width: 500px) {
+  .latest-news-title {
+    font-size: 1.25rem !important;
+  }
+}
+@media screen and (max-width: 350px) {
+  .latest-news-title {
+    font-size: 0.95rem !important;
+  }
+}
+@media screen and (max-width: 350px) {
+  .latest-news-title {
+    font-size: 1.4rem !important;
+  }
+}
 /* Font utility classes for consistent typography */
 .font-tagesschrift {
   font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;

@@ -117,16 +117,16 @@ export default function HomePage() {
 
       {/* Latest News Section */}
       <section className="py-8 px-4 flex-1">
-        <div className="w-full h-full px-4 sm:px-6 lg:px-8 flex flex-col flex-1 home-content-container max-w-6xl mx-auto">
-          <div className="text-center mb-10 pt-8">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#E7A801] uppercase tracking-widest drop-shadow-lg western-title">
-              {t.home.latestNews}
+        <div className="w-full h-full px-4 sm:px-6 lg:px-8 flex flex-col flex-1 home-content-container max-w-6xl mx-auto justify-center items-center text-center">
+          <div className="mb-10 pt-8 w-full flex flex-col justify-center items-center text-center">
+            <h2 className="latest-news-title text-base xs:text-xl sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-extrabold text-[#E7A801] uppercase tracking-widest drop-shadow-lg western-title text-center w-full break-words">
+                {t.home.latestNews}
             </h2>
-            <div className="star-divider">
+            <div className="star-divider w-full flex justify-center items-center text-center">
               <span className="text-[#E7A801] text-2xl select-none">★ ★</span>
             </div>
-            <div className="flex justify-center">
-              <span className="inline-block text-lg text-gray-300 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1">Wiadomości z saloonu</span>
+            <div className="flex justify-center w-full text-center">
+              <span className="inline-block text-lg text-gray-300 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1 text-center">Wiadomości z saloonu</span>
             </div>
           </div>
 

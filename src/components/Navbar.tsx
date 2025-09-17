@@ -116,7 +116,15 @@ export default function Navbar() {
     }
   };
 
-  // Usunięto funkcję przełączania języków
+  // Toggle dla opcji uczestnika
+  const [showParticipantDropdown, setShowParticipantDropdown] = useState(false);
+  // Usuwam isParticipantHovered, dodaję funkcję sprawdzającą widoczność hover menu
+  const isHoverMenuVisible = () => {
+    const hoverMenu = document.querySelector('.western-dropdown.group-hover\\:opacity-100');
+    if (!hoverMenu) return false;
+    const style = window.getComputedStyle(hoverMenu);
+    return style.visibility === 'visible' && style.opacity === '1';
+  };
 
   return (
     <>
@@ -170,17 +178,24 @@ export default function Navbar() {
                  {t.nav.partners}
                </Link>
 
-              <div className="relative group">
-                <button 
+              <div className="relative group" style={{position: 'relative', zIndex: 20}}>
+                <button
                   className="western-button"
-                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}
+                  style={{ backgroundImage: 'url(/western/wooden-sign.png)', backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'transparent', boxShadow: 'none', border: 'none', position: 'relative' }}
+                  onClick={() => {
+                    if (!isHoverMenuVisible()) {
+                      setShowParticipantDropdown((prev) => !prev);
+                    }
+                  }}
                 >
                   {t.nav.participantInfo}
                 </button>
+                {/* Przeniesiony div western-parent-chain za przycisk */}
                 <div className="western-parent-chain group-hover:opacity-100 group-hover:visible opacity-0 invisible transition-all duration-300">
                   <div className="western-parent-chain-link"></div>
                   <div className="western-parent-chain-link"></div>
                 </div>
+                {/* Dropdown na hover (oryginalny) */}
                 <div className="western-dropdown top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300" style={{backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', flexDirection: 'column', gap: '0'}}>
                   <a
                     href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
@@ -228,6 +243,63 @@ export default function Navbar() {
                     {t.nav.contacts}
                   </Link>
                 </div>
+                {/* Dropdown na kliknięcie z łańcuchami */}
+                {showParticipantDropdown && !isHoverMenuVisible() && (
+                  <div className="western-dropdown top-full left-0 opacity-100 visible transition-all duration-300" style={{backgroundColor: 'transparent', boxShadow: 'none', border: 'none', display: 'flex', flexDirection: 'column', gap: '0', position: 'absolute', zIndex: 100}}>
+                    {/* Łańcuchy za tabliczkami regulamin i info */}
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '80ms', marginTop: '-15px' }}>
+                      <div className="western-parent-chain-link"></div>
+                      <div className="western-parent-chain-link"></div>
+                    </div>
+                    {/* Przycisk regulamin */}
+                    <a
+                      href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="western-button western-button--sign186 western-dropdown-animated"
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '0ms', position: 'relative', zIndex: 102 }}
+                    >
+                      {t.nav.regulations}
+                    </a>
+                    {/* Pozostałe przyciski */}
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '80ms'}}>
+                      <div className="chain-link"></div>
+                      <div className="chain-link"></div>
+                    </div>
+                    <Link
+                      href="/essentials"
+                      className="western-button western-button--sign186 western-dropdown-animated"
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '160ms' }}
+                      onClick={(e) => handleNavigation(e, "/essentials")}
+                    >
+                      {t.nav.essentials}
+                    </Link>
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '240ms'}}>
+                      <div className="chain-link"></div>
+                      <div className="chain-link"></div>
+                    </div>
+                    <Link
+                      href="/faq"
+                      className="western-button western-button--sign186 western-dropdown-animated"
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '320ms' }}
+                      onClick={(e) => handleNavigation(e, "/faq")}
+                    >
+                      {t.nav.faq}
+                    </Link>
+                    <div className="chain-container western-dropdown-animated" style={{transitionDelay: '400ms'}}>
+                      <div className="chain-link"></div>
+                      <div className="chain-link"></div>
+                    </div>
+                    <Link
+                      href="/contacts"
+                      className="western-button western-button--sign186 western-dropdown-animated"
+                      style={{ backgroundImage: 'url(/western/sign186.svg)', backgroundSize: '160% 160%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: 'rgba(0,0,0,0)', boxShadow: 'none', border: 'none', minHeight: '96px', transitionDelay: '480ms' }}
+                      onClick={(e) => handleNavigation(e, "/contacts")}
+                    >
+                      {t.nav.contacts}
+                    </Link>
+                  </div>
+                )}
               </div>
 
               {user && (
