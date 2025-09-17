@@ -10,7 +10,7 @@ import "./western-navbar.css";
 
 export default function Navbar() {
   const { user, authLogout } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -19,7 +19,9 @@ export default function Navbar() {
   useEffect(() => {
     // Create audio context for sound effects (to ensure they can play)
     const initializeAudio = () => {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      type AudioContextType = typeof window.AudioContext;
+      const AudioContext: AudioContextType = window.AudioContext || 
+        ((window as unknown) as { webkitAudioContext: AudioContextType }).webkitAudioContext;
       if (AudioContext) {
         const audioCtx = new AudioContext();
         audioCtx.resume().catch(console.error);

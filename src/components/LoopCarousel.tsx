@@ -1,11 +1,11 @@
 import React from "react";
 
-type CarouselProps = {
-  items: any[];
-  renderItem: (item: any, index: number) => React.ReactNode;
+type CarouselProps<T> = {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
 };
 
-export const LoopCarousel: React.FC<CarouselProps> = ({ items, renderItem }) => {
+export const LoopCarousel = <T,>({ items, renderItem }: CarouselProps<T>) => {
   const [current, setCurrent] = React.useState(0);
   const [isMobile, setIsMobile] = React.useState(false);
   const touchStartX = React.useRef<number | null>(null);
@@ -116,7 +116,7 @@ export const LoopCarousel: React.FC<CarouselProps> = ({ items, renderItem }) => 
               >
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
-              {items.map((_, idx) => (
+              {items.map((_item: T, idx: number) => (
                 <span
                   key={idx}
                   className={`w-2 h-2 rounded-full ${idx === current ? "bg-amber-400" : "bg-gray-400"}`}
@@ -135,7 +135,7 @@ export const LoopCarousel: React.FC<CarouselProps> = ({ items, renderItem }) => 
       )}
       {!isMobile && (
         <div className="flex items-center gap-2 mt-4">
-          {items.map((_, idx) => (
+          {items.map((_item: T, idx: number) => (
             <span
               key={idx}
               className={`w-2 h-2 rounded-full ${idx === current ? "bg-amber-400" : "bg-gray-400"}`}

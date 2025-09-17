@@ -41,10 +41,15 @@ export const createGunshotFlash = (): HTMLElement => {
 };
 
 // Handle navigation with shooting delay
+// Type for Next.js router object with push method
+interface RouterWithPush {
+  push: (url: string) => Promise<boolean>;
+}
+
 export const handleWesternNavigation = (
   e: React.MouseEvent,
   href: string,
-  router: any
+  router: RouterWithPush
 ): void => {
   // Prevent default navigation
   e.preventDefault();

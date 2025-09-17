@@ -39,27 +39,29 @@ import {
   FileUploadResult,
 } from "@/lib/storage";
 
-// Helper to show toast and limit to 3 visible
-const showLimitedToast = (content: string | number | React.ReactNode, options?: any) => {
-  // @ts-ignore: toast.promise is not used here
-  const activeToasts: toast.Toast[] = toast?.toasts?.filter(t => t.visible);
-  if (activeToasts && activeToasts.length >= 3) {
-    activeToasts.forEach(t => toast.dismiss(t.id));
+// Helper to show toast
+const showLimitedToast = (
+  content: React.ReactNode, 
+  options?: {
+    duration?: number,
+    icon?: React.ReactNode
   }
-  toast(content as any, {
-    ...options,
-    duration: 1200, // faster disappearance
-    style: {
-      background: '#232323',
-      color: 'white',
-      marginBottom: '16px', // positive margin so new toast is above previous
-      boxShadow: '0 2px 16px rgba(0,0,0,0.25)',
-      ...options?.style
-    },
-    position: 'bottom-right', // appear one after another in bottom right
-    // Move stack higher from bottom
-    containerStyle: { bottom: '80px', right: '24px' },
-  });
+) => {
+  // Use toast's standard notification
+  return toast.custom(
+    (t) => (
+      <div 
+        className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-[#232323] text-white shadow-lg rounded-lg pointer-events-auto flex items-center p-4`}
+      >
+        {options?.icon && <div className="mr-2">{options.icon}</div>}
+        <div>{content}</div>
+      </div>
+    ),
+    { 
+      duration: options?.duration || 1200,
+      position: 'bottom-right'
+    }
+  );
 };
 
 // Schema walidacji dla formularza płatności
@@ -766,8 +768,8 @@ export default function PaymentPage() {
                         onClick={() => {
                           navigator.clipboard.writeText(bankAccountDetails.accountNumber);
                           showLimitedToast(
-                            <span style={{ color: 'white', fontWeight: 600 }}>Skopiowano numer konta do schowka</span>,
-                            { icon: '📋', duration: 2000, style: { background: '#232323', color: 'white' } }
+                            <span style={{ fontWeight: 600 }}>Skopiowano numer konta do schowka</span>,
+                            { icon: '📋', duration: 2000 }
                           );
                         }}
                         aria-label="Kliknij, aby skopiować numer konta"

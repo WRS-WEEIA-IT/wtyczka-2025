@@ -1,6 +1,6 @@
 import { Translations } from '@/types/translations';
 
-export const translations: Record<'pl' | 'en', Translations> = {
+export const translations: Record<'pl', Translations> = {
   pl: {
     nav: {
       home: "Strona główna",
@@ -103,110 +103,6 @@ export const translations: Record<'pl' | 'en', Translations> = {
       invalidEmail: "Nieprawidłowy adres email",
       passwordTooShort: "Hasło musi mieć co najmniej 8 znaków",
       passwordsDontMatch: "Hasła nie są identyczne"
-    }
-  },
-  en: {
-    nav: {
-      home: "Home",
-      news: "News",
-      register: "Register",
-      login: "Login",
-      logout: "Logout",
-      participantInfo: "Participant Information",
-      regulations: "Regulations",
-      essentials: "Participant Essentials",
-      faq: "FAQ",
-  contacts: "Contacts",
-  partners: "Partners"
-    },
-    home: {
-      title: "Wtyczka 2025",
-      subtitle: "EEIA Integration and Training Trip",
-      theme: "Theme: Western",
-      countdown: "Days until event",
-      latestNews: "Latest news",
-      viewAllNews: "View all news",
-      sponsors: "Our sponsors",
-      welcomeMessage: "Welcome to the official website of Wtyczka 2025 event!",
-      eventDescription: "Join us for an unforgettable integration and training trip in the Wild West atmosphere!"
-    },
-    auth: {
-      login: "Login",
-      register: "Register",
-      email: "Email",
-      password: "Password",
-      confirmPassword: "Confirm Password",
-      firstName: "First Name",
-      lastName: "Last Name",
-      loginWithGoogle: "Login with Google",
-      registerWithGoogle: "Register with Google",
-      alreadyHaveAccount: "Already have an account?",
-      dontHaveAccount: "Don't have an account?",
-      loginSuccess: "Login successful!",
-      registerSuccess: "Registration successful! Please confirm your email!",
-      emailConfirmation: "Confirm Registration",
-      emailConfirmationText: "To complete your registration, click the activation link sent to:",
-      checkSpamFolder: "Check your spam folder if you don't see the message in your inbox.",
-      understand: "I understand"
-    },
-    forms: {
-      participantData: "Participant Data",
-      studentData: "Student Data",
-      additionalInfo: "Additional Information",
-      firstName: "First Name",
-      lastName: "Last Name",
-      birthDate: "Birth Date",
-      phone: "Phone",
-      pesel: "PESEL",
-      gender: "Gender",
-      faculty: "Faculty",
-      studentNumber: "Student Number",
-      fieldOfStudy: "Field of Study",
-      studyLevel: "Study Level",
-      studyYear: "Study Year",
-      diet: "Diet",
-      tshirtSize: "T-shirt Size",
-      invoice: "Invoice",
-      howDidYouKnow: "How did you know about Wtyczka?",
-      acceptRegulations: "I accept the regulations",
-      dataProcessingConsent: "I consent to data processing by the University",
-      privacyPolicy: "I have read the privacy policy",
-      submit: "Submit Form",
-      status: "Application Status",
-      qualified: "Qualified",
-      notQualified: "Not Qualified",
-      pending: "Pending",
-      formCompleted: "Form Completed"
-    },
-    payment: {
-      title: "Payment Form",
-      studentStatus: "Student Status",
-      politechnika: "Lodz University of Technology",
-      otherUniversity: "Other University",
-      noStudent: "I'm not a student",
-      emergencyContact: "Emergency Contact Person",
-      transport: "Do you want to use transport provided by Wtyczka?",
-      medicalConditions: "Do you have any medical conditions or allergies?",
-      medications: "What medications do you take?",
-      transferConfirmation: "I confirm the transfer has been made",
-      ageConfirmation: "I confirm that I am 18 years old or older",
-      cancellationPolicy: "I understand that cancellation less than 10 days before the event means no refund",
-      accountDetails: "Account details for payment",
-      passwordRequired: "Administrator password required"
-    },
-    supabaseErrors: {
-      permissionDenied: "Insufficient permissions to perform this operation",
-      notFound: "Record not found",
-      alreadyExists: "Record already exists",
-      unauthenticated: "Unauthenticated access",
-      default: "Database error occurred"
-    },
-    errors: {
-      unexpected: "An unexpected error occurred",
-      required: "This field is required",
-      invalidEmail: "Invalid email address",
-      passwordTooShort: "Password must be at least 8 characters",
-      passwordsDontMatch: "Passwords don't match"
     }
   }
 };

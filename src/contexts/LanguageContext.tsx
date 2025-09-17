@@ -4,15 +4,13 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   ReactNode,
 } from "react";
-import { Language, Translations } from "@/types/translations";
+import { Translations } from "@/types/translations";
 import { translations } from "@/lib/translations";
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: 'pl';
   t: Translations;
 }
 
@@ -21,25 +19,11 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>("pl");
-
-  useEffect(() => {
-    // Load language from localStorage on mount
-    const saved = localStorage.getItem("language") as Language;
-    if (saved && (saved === "pl" || saved === "en")) {
-      setLanguage(saved);
-    }
-  }, []);
-
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
-    localStorage.setItem("language", lang);
-  };
+  const [language] = useState<'pl'>('pl');
 
   const value = {
     language,
-    setLanguage: handleSetLanguage,
-    t: translations[language],
+    t: translations.pl,
   };
 
   return (

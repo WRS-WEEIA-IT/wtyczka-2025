@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Libre_Baskerville, Tagesschrift } from "next/font/google";
+import { Libre_Baskerville } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import "./background-styles.css";
 import "./western-buttons.css";
@@ -10,11 +11,11 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 
-// Tagesschrift for headings and titles
-const tagesschrift = Tagesschrift({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400"],
+// Tagesschrift for headings and titles - using local font
+const tagesschrift = localFont({
+  src: '../../public/fonts/Tagesschrift.ttf',
   variable: "--font-tagesschrift",
+  display: 'swap',
 });
 
 // Libre Baskerville for normal text with better readability

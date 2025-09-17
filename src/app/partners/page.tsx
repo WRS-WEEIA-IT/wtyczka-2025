@@ -109,10 +109,11 @@ export default function PartnersPage() {
           console.warn('No partners data received from API');
           setError('Nie znaleziono partnerów w bazie danych');
         }
-      } catch (err: any) {
+      } catch (err: Error | unknown) {
         console.error('Error fetching partners:', err);
         // Show more detailed error to help with debugging
-        setError(`Nie udało się pobrać danych partnerów: ${err.message || 'Nieznany błąd'}`);
+        const errorMessage = err instanceof Error ? err.message : 'Nieznany błąd';
+        setError(`Nie udało się pobrać danych partnerów: ${errorMessage}`);
       } finally {
         setLoading(false);
       }

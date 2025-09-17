@@ -1,4 +1,4 @@
-export type Language = 'pl' | 'en';
+export type Language = 'pl';
 
 export interface Translations {
   nav: {
