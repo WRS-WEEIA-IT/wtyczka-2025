@@ -24,6 +24,7 @@ import {
   Phone,
   Ambulance,
   Bus,
+  ArrowRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -70,16 +71,20 @@ const paymentSchema = z.object({
   }),
   emergencyContactNameSurname: z
     .string()
-    .min(2, "Imię i nazwisko jest wymagane"),
+    .min(2, "Imię i nazwisko jest wymagane")
+    .max(255, "Imię i nazwisko nie może przekraczać 255 znaków")
+    .regex(/^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\s]+$/, "Imię i nazwisko może zawierać tylko litery i spacje"),
   emergencyContactPhone: z.string()
-    .min(9, "Numer telefonu jest wymagany")
-    .regex(/^\d{9,}$/, "Numer telefonu musi zawierać tylko cyfry i mieć co najmniej 9 cyfr"),
+    .min(9, "Numer telefonu musi mieć co najmniej 9 znaków")
+    .max(20, "Numer telefonu jest za długi")
+    .regex(/^[0-9+]+$/, "Numer telefonu może zawierać tylko cyfry i znak '+'"),
   emergencyContactRelation: z
     .string()
-    .min(1, "Stopień pokrewieństwa jest wymagany"),
+    .min(1, "Stopień pokrewieństwa jest wymagany")
+    .max(50, "Stopień pokrewieństwa nie może przekraczać 50 znaków"),
   needsTransport: z.boolean(),
-  medicalConditions: z.string().optional(),
-  medications: z.string().optional(),
+  medicalConditions: z.string().max(512, "Stan zdrowia nie może przekraczać 512 znaków").optional(),
+  medications: z.string().max(512, "Lista przyjmowanych leków nie może przekraczać 512 znaków").optional(),
   transferConfirmation: z.boolean().refine((val) => val === true, {
     message: "Musisz potwierdzić wykonanie przelewu",
   }),
@@ -149,10 +154,26 @@ export default function PaymentPage() {
     trigger,
     getValues
   } = useForm<PaymentFormData>({
-  resolver: zodResolver(paymentSchema),
-  defaultValues: { needsTransport: false, studentStatus: "" },
-  mode: "onChange"
+    resolver: zodResolver(paymentSchema),
+    defaultValues: { needsTransport: false, studentStatus: "" },
+    mode: "onChange"
   });
+
+  // Character count for textareas
+  useEffect(() => {
+    const updateCharCount = (elementId: string, value: string | undefined) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.textContent = value ? String(value.length) : '0';
+      }
+    };
+    
+    const medicalConditions = watch("medicalConditions");
+    const medications = watch("medications");
+    
+    updateCharCount('medicalConditionsCharCount', medicalConditions);
+    updateCharCount('medicationsCharCount', medications);
+  }, [watch]);
 
   const [showErrorTooltip, setShowErrorTooltip] = useState(false);
 
@@ -170,7 +191,7 @@ export default function PaymentPage() {
         setIsAuthorized(true);
         toast.success("Dostęp do formularza płatności został aktywowany");
       } else if (res.status === 401) {
-        setError("adminPassword", { type: "manual", message: "Nieprawidłowe hasło administratora" });
+        setError("adminPassword", { type: "manual", message: "Nieprawidłowe hasło!" });
       } else {
         const msg = data?.error || "Błąd weryfikacji hasła";
         toast.error(msg);
@@ -281,8 +302,8 @@ export default function PaymentPage() {
     accountNumber: "12 3456 7890 1234 5678 9012 3456",
     accountHolder: "Samorząd Studencki EEIA",
     bankName: "Bank Przykładowy",
-    transferTitle: `Wtyczka 2025 - ${user?.email}`,
-    amount: `${process.env.PAYMENT_AMOUNT || "850"}zł`,
+    transferTitle: userRegistration ? `Wtyczka2025 - ${userRegistration.name} ${userRegistration.surname}` : `Wtyczka 2025 - ${user?.email}`,
+    amount: "499zł",
   };
 
   // Redirect to login if not authenticated
@@ -328,45 +349,61 @@ export default function PaymentPage() {
     return (
       <div className="min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header with logo */}
-          <section className="border-b border-[#262626] text-white py-16 mb-8 bg-[#18181b] rounded-2xl shadow-xl">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
-                Potwierdzenie płatności
+          {/* Szary/blur prostokąt za komunikatem */}
+          <div className="relative flex justify-center mb-8">
+            <div
+              className="absolute inset-0 mx-auto w-full max-w-xl h-full rounded-2xl"
+              style={{
+                background: 'rgba(36,36,36,0.85)',
+                filter: 'blur(2.5px)',
+                zIndex: 0,
+              }}
+            ></div>
+            <div className="relative z-10 w-full max-w-xl mx-auto text-center py-8 px-4 flex flex-col items-center">
+              <div className="inline-flex items-center justify-center bg-green-900 rounded-full p-4 shadow-lg mb-4">
+                <CheckCircle className="h-12 w-12 text-green-400" />
+              </div>
+              <h1 className="text-3xl font-bold text-amber-400 mb-2">
+                Formularz płatności przyjęty!
               </h1>
-              <p className="text-xl text-gray-200">
-                Sprawdź status i szczegóły swojej płatności za Wtyczkę 2025
+              <p className="text-lg text-gray-300">
+                Dziękujemy za wypełnienie formularza płatności
               </p>
             </div>
-          </section>
-
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center bg-green-900 rounded-full p-4 shadow-lg mb-4">
-              <CheckCircle className="h-12 w-12 text-green-400" />
-            </div>
-            <h1 className="text-3xl font-bold text-amber-400 mb-2">
-              Formularz płatności przyjęty!
-            </h1>
-            <p className="text-lg text-gray-300">
-              Dziękujemy za wypełnienie formularza płatności
-            </p>
           </div>
 
           <div className="bg-[#18181b] rounded-2xl shadow-xl p-8 border border-[#262626]">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="bg-[#262626] rounded-full p-3 hidden xs:inline-block sm:inline-block md:inline-block lg:inline-block xl:inline-block">
-                <CreditCard className="h-8 w-8 text-amber-400" />
-              </div>
-              <div className="w-full">
-                <h2 className="text-2xl md:text-3xl font-bold text-white text-center xs:text-left sm:text-left md:text-left lg:text-left xl:text-left">
-                  Potwierdzenie płatności
-                </h2>
-                <p className="text-amber-400 text-sm text-center xs:text-left sm:text-left md:text-left lg:text-left xl:text-left">
-                  Wysłano: {existingPayment.createdAt.toLocaleDateString()}
+          {/* Uwaga / kontakt na dole */}
+          <div className="mt-8 pt-6 border-t border-[#262626] bg-[#1a1a1a] p-4 rounded-xl">
+            <div className="flex items-start space-x-3">
+              <AlertTriangle className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-amber-400 text-lg">Zauważyłeś błąd w swoich danych?</h3>
+                <p className="text-gray-300 mt-2">
+                  Jeśli jakiekolwiek dane zostały wprowadzone błędnie, skontaktuj się z nami jak najszybciej:
                 </p>
+                <ul className="mt-3 space-y-2">
+                  <li className="flex items-center">
+                    <span className="bg-amber-900/30 rounded-full p-1 mr-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                      </svg>
+                    </span>
+                    <span className="text-gray-300">Telefon: <a href="tel:+48690150650" className="text-amber-400 hover:underline">+48 690 150 650</a></span>
+                  </li>
+                  <li className="flex items-center">
+                    <span className="bg-amber-900/30 rounded-full p-1 mr-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </span>
+                    <span className="text-gray-300">Email: <a href="mailto:wtyczka@samorzad.p.lodz.pl" className="text-amber-400 hover:underline">wtyczka@samorzad.p.lodz.pl</a></span>
+                  </li>
+                </ul>
               </div>
             </div>
-
+          </div>
             <div className="grid md:grid-cols-2 gap-8 mt-6">
               <div className="bg-[#0F0F0F] rounded-xl p-6 border border-[#262626]">
                 <div className="flex items-center mb-4">
@@ -376,7 +413,7 @@ export default function PaymentPage() {
                   </h3>
                 </div>
                 <div className="space-y-2 text-gray-300">
-                  <p>
+                  <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                     <span className="text-gray-500">Status studenta:</span>{" "}
                     <span className="font-medium">
                       {existingPayment.studentStatus === "politechnika" 
@@ -386,7 +423,7 @@ export default function PaymentPage() {
                           : "Nie student"}
                     </span>
                   </p>
-                  <p>
+                  <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                     <span className="text-gray-500">Transport:</span>{" "}
                     <span className="font-medium">
                       {existingPayment.needsTransport ? "Tak" : "Nie"}
@@ -403,15 +440,15 @@ export default function PaymentPage() {
                   </h3>
                 </div>
                 <div className="space-y-2 text-gray-300">
-                  <p>
+                  <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                     <span className="text-gray-500">Osoba:</span>{" "}
                     <span className="font-medium">{existingPayment.emergencyContactNameSurname}</span>
                   </p>
-                  <p>
+                  <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                     <span className="text-gray-500">Telefon:</span>{" "}
                     <span className="font-medium">{existingPayment.emergencyContactPhone}</span>
                   </p>
-                  <p>
+                  <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                     <span className="text-gray-500">Relacja:</span>{" "}
                     <span className="font-medium">{existingPayment.emergencyContactRelation}</span>
                   </p>
@@ -430,13 +467,13 @@ export default function PaymentPage() {
                 </div>
                 <div className="space-y-3 text-gray-300">
                   {existingPayment.medicalConditions && (
-                    <p>
+                    <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                       <span className="text-gray-500 block mb-1">Stan zdrowia:</span>{" "}
                       <span className="font-medium">{existingPayment.medicalConditions}</span>
                     </p>
                   )}
                   {existingPayment.medications && (
-                    <p>
+                    <p style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                       <span className="text-gray-500 block mb-1">Przyjmowane leki:</span>{" "}
                       <span className="font-medium">{existingPayment.medications}</span>
                     </p>
@@ -454,10 +491,10 @@ export default function PaymentPage() {
               </div>
 
               <div className="bg-[#232323] rounded-md p-4">
-                <p className="text-sm text-gray-300 mb-1">
+                <p className="text-sm text-gray-300 mb-1" style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                   Nazwa pliku: <span className="text-amber-400">{existingPayment.paymentConfirmationFile.fileName}</span>
                 </p>
-                <p className="text-sm text-gray-300 mb-3">
+                <p className="text-sm text-gray-300 mb-3" style={{wordBreak:'break-word',overflowWrap:'anywhere'}}>
                   Rozmiar: <span className="text-amber-400">{formatFileSize(existingPayment.paymentConfirmationFile.fileSize)}</span>
                 </p>
 
@@ -466,7 +503,7 @@ export default function PaymentPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-2 flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row items-center justify-center text-sm bg-[#E7A801] hover:bg-amber-700 text-black px-5 py-2.5 rounded-xl font-medium transition-colors mx-auto xs:mx-0 sm:mx-0 md:mx-0 lg:mx-0 xl:mx-0"
-                  style={{ textAlign: 'center', maxWidth: 'fit-content' }}
+                  style={{ textAlign: 'center', maxWidth: 'fit-content', wordBreak:'break-word',overflowWrap:'anywhere' }}
                 >
                   <Eye className="h-4 w-4 mb-1 sm:mb-0 md:mb-0 lg:mb-0 xl:mb-0 sm:mr-2 md:mr-2 lg:mr-2 xl:mr-2" />
                   <span>Podgląd potwierdzenia</span>
@@ -572,10 +609,10 @@ export default function PaymentPage() {
                   </div>
                   <div className="text-center md:text-left">
                     <h2 className="text-2xl font-bold text-white">
-                      Autoryzacja administratora
+                      Autoryzacja hasłem
                     </h2>
                     <p className="text-gray-400">
-                      Podaj hasło aby odblokować formularz
+                      Podaj tajny kod aby odblokować formularz
                     </p>
                   </div>
                 </div>
@@ -625,6 +662,19 @@ export default function PaymentPage() {
                 <Lock className="h-5 w-5 mr-2" />
                 <span>Weryfikuj hasło</span>
               </button>
+              
+              <div className="mt-6 text-center pt-6 border-t border-[#262626]">
+                <p className="text-gray-400 text-sm mb-2">
+                  Nie znasz tajnego hasła? Śledź na bieżąco aktualności!
+                </p>
+                <Link
+                  href="/news"
+                  className="text-amber-400 hover:text-amber-300 text-sm inline-flex items-center transition-colors"
+                >
+                  <ArrowRight className="h-4 w-4 mr-1" />
+                  <span>Przejdź do aktualności</span>
+                </Link>
+              </div>
             </div>
           </div>
         )}
@@ -870,6 +920,7 @@ export default function PaymentPage() {
                       type="text"
                       {...register("emergencyContactNameSurname")}
                       className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      maxLength={255}
                     />
                     {errors.emergencyContactNameSurname && (
                       <p className="mt-1 text-red-500 text-sm">
@@ -887,6 +938,7 @@ export default function PaymentPage() {
                         type="tel"
                         {...register("emergencyContactPhone", { setValueAs: v => String(v) })}
                         className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        maxLength={20}
                       />
                       {errors.emergencyContactPhone && (
                         <p className="mt-1 text-red-500 text-sm">
@@ -904,6 +956,7 @@ export default function PaymentPage() {
                         {...register("emergencyContactRelation")}
                         className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                         placeholder="np. matka, ojciec, rodzeństwo"
+                        maxLength={50}
                       />
                       {errors.emergencyContactRelation && (
                         <p className="mt-1 text-red-500 text-sm">
@@ -932,7 +985,16 @@ export default function PaymentPage() {
                       rows={3}
                       className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Podaj informacje o swoim stanie zdrowia, które mogą być istotne..."
+                      maxLength={512}
                     ></textarea>
+                    {errors.medicalConditions && (
+                      <p className="mt-1 text-red-500 text-sm">
+                        {errors.medicalConditions.message}
+                      </p>
+                    )}
+                    <p className="mt-1 text-gray-500 text-xs text-right">
+                      <span id="medicalConditionsCharCount">0</span>/512 znaków
+                    </p>
                   </div>
 
                   <div>
@@ -944,7 +1006,16 @@ export default function PaymentPage() {
                       rows={2}
                       className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Podaj leki, które regularnie przyjmujesz..."
+                      maxLength={512}
                     ></textarea>
+                    {errors.medications && (
+                      <p className="mt-1 text-red-500 text-sm">
+                        {errors.medications.message}
+                      </p>
+                    )}
+                    <p className="mt-1 text-gray-500 text-xs text-right">
+                      <span id="medicationsCharCount">0</span>/512 znaków
+                    </p>
                   </div>
                 </div>
               </div>
