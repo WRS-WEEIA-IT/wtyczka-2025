@@ -21,52 +21,111 @@ import { handleSupabaseError } from "@/lib/supabase";
 const EVENT_DATE = new Date("2025-10-23"); // data wydarzenia
 
 const registrationSchema = z.object({
-  name: z.string().min(2, "Imię musi mieć co najmniej 2 znaki"),
-  surname: z.string().min(2, "Nazwisko musi mieć co najmniej 2 znaki"),
-  dob: z
-    .string().min(1, "Data urodzenia jest wymagana")
+  // Imię - tylko litery alfabetu + spacje, max 50 znaków
+  name: z.string()
+    .min(2, "Imię musi mieć co najmniej 2 znaki")
+    .max(50, "Imię nie może przekraczać 50 znaków")
+    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]+$/, "Imię może zawierać tylko litery i spacje"),
+  
+  // Nazwisko - tylko litery alfabetu + spacje, max 50 znaków
+  surname: z.string()
+    .min(2, "Nazwisko musi mieć co najmniej 2 znaki")
+    .max(50, "Nazwisko nie może przekraczać 50 znaków")
+    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]+$/, "Nazwisko może zawierać tylko litery i spacje"),
+  
+  // Data urodzenia - osoba musi być 18+ w dniu wyjazdu i mieć mniej niż 70 lat
+  dob: z.string()
+    .min(1, "Data urodzenia jest wymagana")
     .refine((value) => {
       const birthDate = new Date(value);
       if (isNaN(birthDate.getTime())) return false;
+      
+      // Sprawdzenie czy osoba ma ukończone 18 lat w dniu wydarzenia
       let age = EVENT_DATE.getFullYear() - birthDate.getFullYear();
       const m = EVENT_DATE.getMonth() - birthDate.getMonth();
       if (m < 0 || (m === 0 && EVENT_DATE.getDate() < birthDate.getDate())) {
         age--;
       }
       return age >= 18;
-    }, { message: "Musisz mieć ukończone 18 lat w dniu wydarzenia" }),
-  phoneNumber: z
-    .string().regex(/^\d{9}$/, "Numer telefonu musi zawierać 9 cyfr"),
-  pesel: z
-    .string().regex(/^\d{11}$/, "PESEL musi składać się z 11 cyfr"),
+    }, { message: "Musisz mieć ukończone 18 lat w dniu wydarzenia (23.10.2025)" })
+    .refine((value) => {
+      const birthDate = new Date(value);
+      if (isNaN(birthDate.getTime())) return false;
+      
+      // Sprawdzenie czy osoba ma mniej niż 70 lat
+      let age = EVENT_DATE.getFullYear() - birthDate.getFullYear();
+      const m = EVENT_DATE.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && EVENT_DATE.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age < 70;
+    }, { message: "Podaj poprawne dane" }),
+  
+  // Numer telefonu - tylko cyfry, znak + i spacje, min 9 cyfr
+  phoneNumber: z.string()
+    .regex(/^[+\s\d]+$/, "Numer telefonu może zawierać tylko cyfry, znak '+' i spacje")
+    .refine((value) => {
+      // Sprawdzenie czy po usunięciu spacji i '+' mamy co najmniej 9 cyfr
+      const digitsOnly = value.replace(/[^0-9]/g, "");
+      return digitsOnly.length >= 9;
+    }, { message: "Numer telefonu musi zawierać co najmniej 9 cyfr" }),
+  
+  // PESEL - dokładnie 11 cyfr i zgodny z datą urodzenia
+  pesel: z.string()
+    .regex(/^\d{11}$/, "PESEL musi składać się z 11 cyfr"),
+  
+  // Płeć - wymagana
   gender: z.enum(["male", "female", "other"], "Wybierz płeć"),
 
+  // Wydział - wymagany
   faculty: z.enum(["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9"], "Wybierz wydział"),
-  studentNumber: z.string().min(1, "Numer indeksu jest wymagany"),
-  studyField: z.string().min(1, "Kierunek studiów jest wymagany"),
-  studyLevel: z.enum(["bachelor", "master", "phd"],"Wybierz jedną z opcji"),
-  studyYear: z.enum(["1", "2", "3", "4"],"Wybierz jedną z opcji"),
+  
+  // Numer indeksu - max 30 znaków, mogą być cyfry i litery
+  studentNumber: z.string()
+    .min(1, "Numer indeksu jest wymagany")
+    .max(30, "Numer indeksu nie może przekraczać 30 znaków"),
+  
+  // Kierunek studiów - litery i spacje, max 60 znaków
+  studyField: z.string()
+    .min(1, "Kierunek studiów jest wymagany")
+    .max(60, "Kierunek studiów nie może przekraczać 60 znaków")
+    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]+$/, "Kierunek studiów może zawierać tylko litery i spacje"),
+  
+  // Poziom studiów - wymagany
+  studyLevel: z.enum(["bachelor", "master", "phd"], "Wybierz jedną z opcji"),
+  
+  // Rok studiów - wymagany
+  studyYear: z.enum(["1", "2", "3", "4"], "Wybierz jedną z opcji"),
 
-  dietName: z.enum(["standard", "vegetarian"],"Wybierz jedną z opcji"),
-  tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"],"Wybierz jedną z opcji"),
+  // Dieta - wymagana
+  dietName: z.enum(["standard", "vegetarian"], "Wybierz jedną z opcji"),
+  
+  // Rozmiar koszulki - wymagany
+  tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"], "Wybierz jedną z opcji"),
+  
+  // Skąd wiesz o wtyczce - wymagane
   aboutWtyczka: z.enum([
     "social-media",
     "akcja-integracja",
     "friend",
     "stands",
     "other",
-  ],"Wybierz jedną z opcji"),
+  ], "Wybierz jedną z opcji"),
   aboutWtyczkaInfo: z.string().optional(),
 
+  // Dane do faktury - opcjonalne
   invoice: z.boolean(),
   invoiceName: z.string().optional(),
   invoiceSurname: z.string().optional(),
   invoiceId: z.string().optional(),
   invoiceAddress: z.string().optional(),
 
+  // Akceptacja regulaminu - wymagana
   regAccept: z.boolean().refine((val) => val === true, {
     message: "Musisz zaakceptować regulamin",
   }),
+  
+  // Zgoda na przetwarzanie danych - wymagana
   rodoAccept: z.boolean().refine((val) => val === true, {
     message: "Musisz wyrazić zgodę na przetwarzanie danych",
   }),
@@ -152,12 +211,55 @@ export default function RegistrationPage() {
     );
   }
 
+  // Funkcja do walidacji PESEL z datą urodzenia
+  const validatePeselWithDob = (pesel: string, dob: Date): boolean => {
+    if (!pesel || pesel.length !== 11) return false;
+    
+    // Pobieramy dane z daty urodzenia
+    const year = dob.getFullYear();
+    const month = dob.getMonth() + 1; // Miesiące w JS są 0-based
+    const day = dob.getDate();
+    
+    // Pobieramy dane z PESEL
+    const peselYearDigits = parseInt(pesel.substring(0, 2), 10); // Pierwsze 2 cyfry - rok (ostatnie 2 cyfry roku)
+    const peselMonthDigits = parseInt(pesel.substring(2, 4), 10); // Kolejne 2 cyfry - miesiąc z modyfikacją wieku
+    const peselDayDigits = parseInt(pesel.substring(4, 6), 10); // Kolejne 2 cyfry - dzień
+    
+    // Określamy rzeczywisty rok i miesiąc w PESEL
+    let peselYear, peselMonth;
+    
+    // Dla osób urodzonych po 2000 roku, miesiąc ma dodane 20
+    if (year >= 2000) {
+      // Sprawdzamy czy miesiąc w PESEL ma dodane 20
+      peselYear = 2000 + peselYearDigits;
+      peselMonth = peselMonthDigits - 20; // Odejmujemy 20, aby uzyskać właściwy miesiąc
+    } else {
+      // Dla osób urodzonych w XX wieku (1900-1999)
+      peselYear = 1900 + peselYearDigits;
+      peselMonth = peselMonthDigits;
+    }
+    
+    // Sprawdzamy zgodność roku, miesiąca i dnia
+    const yearMatch = year === peselYear;
+    const monthMatch = month === peselMonth;
+    const dayMatch = day === peselDayDigits;
+    
+    // Wszystkie elementy muszą się zgadzać
+    return yearMatch && monthMatch && dayMatch;
+  };
+
   const onSubmit = async (data: RegistrationFormData) => {
     if (!user) return;
 
+    // Walidacja PESEL z datą urodzenia przed wysłaniem
+    const dobDate = new Date(data.dob);
+    if (!validatePeselWithDob(data.pesel, dobDate)) {
+      toast.error("PESEL nie zgadza się z datą urodzenia");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const dobDate = new Date(data.dob);
       const formData = {
         ...data,
         dob: dobDate,
@@ -219,6 +321,13 @@ export default function RegistrationPage() {
                 <p className="text-base text-gray-400">
                   Data urodzenia: {existingRegistration.dob.toLocaleDateString("pl-PL")}
                 </p>
+                <p className="text-base text-gray-400">
+                  PESEL: {existingRegistration.pesel}
+                </p>
+                <p className="text-base text-gray-400">
+                  Płeć: {existingRegistration.gender === "male" ? "Mężczyzna" : 
+                         existingRegistration.gender === "female" ? "Kobieta" : "Inna"}
+                </p>
               </div>
 
               <div>
@@ -234,7 +343,72 @@ export default function RegistrationPage() {
                 <p className="text-base text-gray-400">
                   Kierunek: {existingRegistration.studyField}
                 </p>
+                <p className="text-base text-gray-400">
+                  Poziom studiów: {
+                    existingRegistration.studyLevel === "bachelor" ? "I (Licencjat / Inżynier)" :
+                    existingRegistration.studyLevel === "master" ? "II (Magisterskie)" : 
+                    "III (Doktorskie)"
+                  }
+                </p>
+                <p className="text-base text-gray-400">
+                  Rok studiów: {existingRegistration.studyYear}
+                </p>
               </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div>
+                <h3 className="font-semibold text-gray-200 mb-2 text-lg">
+                  Preferencje
+                </h3>
+                <p className="text-base text-gray-400">
+                  Dieta: {existingRegistration.dietName === "standard" ? "Standardowa" : "Wegetariańska"}
+                </p>
+                <p className="text-base text-gray-400">
+                  Rozmiar koszulki: {existingRegistration.tshirtSize}
+                </p>
+                <p className="text-base text-gray-400">
+                  Skąd wiesz o Wtyczce: {
+                    existingRegistration.aboutWtyczka === "social-media" ? "Social Media" :
+                    existingRegistration.aboutWtyczka === "akcja-integracja" ? "Akcja Integracja" :
+                    existingRegistration.aboutWtyczka === "friend" ? "Od znajomych" :
+                    existingRegistration.aboutWtyczka === "stands" ? "Standy" : "Inne"
+                  }
+                </p>
+                {existingRegistration.aboutWtyczkaInfo && (
+                  <p className="text-base text-gray-400">
+                    Dodatkowe info: {existingRegistration.aboutWtyczkaInfo}
+                  </p>
+                )}
+              </div>
+
+              {existingRegistration.invoice && (
+                <div>
+                  <h3 className="font-semibold text-gray-200 mb-2 text-lg">
+                    Dane do faktury
+                  </h3>
+                  {existingRegistration.invoiceName && (
+                    <p className="text-base text-gray-400">
+                      Imię: {existingRegistration.invoiceName}
+                    </p>
+                  )}
+                  {existingRegistration.invoiceSurname && (
+                    <p className="text-base text-gray-400">
+                      Nazwisko: {existingRegistration.invoiceSurname}
+                    </p>
+                  )}
+                  {existingRegistration.invoiceId && (
+                    <p className="text-base text-gray-400">
+                      NIP/PESEL: {existingRegistration.invoiceId}
+                    </p>
+                  )}
+                  {existingRegistration.invoiceAddress && (
+                    <p className="text-base text-gray-400">
+                      Adres: {existingRegistration.invoiceAddress}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="mt-8 pt-6 border-t border-[#262626]">
@@ -260,6 +434,37 @@ export default function RegistrationPage() {
                 >
                   Sprawdź status
                 </Link>
+              </div>
+            </div>
+            
+            <div className="mt-8 pt-6 border-t border-[#262626] bg-[#1a1a1a] p-4 rounded-xl">
+              <div className="flex items-start space-x-3">
+                <AlertTriangle className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-amber-400 text-lg">Zauważyłeś błąd w swoich danych?</h3>
+                  <p className="text-gray-300 mt-2">
+                    Jeśli jakiekolwiek dane zostały wprowadzone błędnie, skontaktuj się z nami jak najszybciej:
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    <li className="flex items-center">
+                      <span className="bg-amber-900/30 rounded-full p-1 mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                      </span>
+                      <span className="text-gray-300">Telefon: <a href="tel:+48690150650" className="text-amber-400 hover:underline">+48 690 150 650</a></span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="bg-amber-900/30 rounded-full p-1 mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                      </span>
+                      <span className="text-gray-300">Email: <a href="mailto:wtyczka@samorzad.p.lodz.pl" className="text-amber-400 hover:underline">wtyczka@samorzad.p.lodz.pl</a></span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -317,6 +522,7 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
+                  maxLength={50}
                   {...register("name")}
                   className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
@@ -330,6 +536,7 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
+                  maxLength={50}
                   {...register("surname")}
                   className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
@@ -343,8 +550,20 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="date"
+                  min="1955-01-01"
+                  max="2008-10-23"
                   {...register("dob")}
                   className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  onChange={(e) => {
+                    // Validate the date format - only allow valid dates with 4-digit years
+                    const dateValue = e.target.value;
+                    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+                    
+                    if (dateValue && !datePattern.test(dateValue)) {
+                      // Reset to empty if invalid format (more than 4 digits in year)
+                      e.target.value = '';
+                    }
+                  }}
                 />
                 {errors.dob && (
                   <p className="text-red-500 text-sm mt-1">{errors.dob.message}</p>
@@ -435,6 +654,7 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
+                  maxLength={30}
                   {...register("studentNumber")}
                   className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
@@ -448,6 +668,7 @@ export default function RegistrationPage() {
                 </label>
                 <input
                   type="text"
+                  maxLength={60}
                   {...register("studyField")}
                   className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
