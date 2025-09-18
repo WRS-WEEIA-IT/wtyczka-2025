@@ -30,12 +30,11 @@ export async function GET(request: Request) {
     // Determine if access should be granted based only on date
     // Admin cookie is not considered here - we'll handle password protection separately
     const isDatePassed = nowTimestamp >= paymentTimestamp;
+    const hasAccess = isDatePassed || adminCookie;
     
     // For debugging
     console.log(`Current date: ${now.toISOString()}`);
     console.log(`Payment date: ${paymentDate.toISOString()}`);
-    console.log(`Is date passed: ${isDatePassed}`);
-    
     console.log(`Is date passed: ${isDatePassed}`);
     console.log(`Has admin cookie: ${adminCookie}`);
     console.log(`Access granted: ${hasAccess}`);

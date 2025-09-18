@@ -1,0 +1,260 @@
+# Cursor Rules for Wtyczka 2025
+
+## Project Overview
+This is a Next.js 15 application for a student integration event with a Western theme. The app handles user registration, payment processing, and content management with date-based access controls.
+
+## Tech Stack
+- Next.js 15 with App Router
+- React 19 + TypeScript
+- Supabase (PostgreSQL + Auth + Storage)
+- Tailwind CSS 4
+- React Hook Form + Zod validation
+- Radix UI components
+- Framer Motion animations
+
+## Code Style & Patterns
+
+### File Organization
+- Use App Router structure (`src/app/`)
+- Components in `src/components/` with clear naming
+- Business logic in `src/usecases/`
+- Utilities in `src/lib/`
+- Types in `src/types/`
+- Contexts in `src/contexts/`
+
+### Component Guidelines
+- Always use TypeScript with proper interfaces
+- Use "use client" directive for client components
+- Implement proper error boundaries and loading states
+- Follow the Western theme design system
+- Use Tailwind classes with custom Western styling
+- Include proper accessibility attributes
+
+### State Management
+- Use React Context for global state (Auth, Language)
+- Local state with useState for component-specific data
+- Custom hooks for complex logic
+- Proper error handling with try-catch blocks
+
+### Form Handling
+- Use React Hook Form with Zod validation
+- Implement comprehensive validation schemas
+- Show real-time validation feedback
+- Handle form submission states properly
+- Use custom validation for complex fields (PESEL, age verification)
+
+### API Routes
+- Place in `src/app/api/` following Next.js conventions
+- Implement proper error handling and status codes
+- Use environment variables for configuration
+- Include rate limiting for sensitive endpoints
+- Return consistent JSON responses
+
+### Database Operations
+- Use Supabase client from `src/lib/supabase.ts`
+- Implement proper error handling
+- Use TypeScript interfaces for data models
+- Handle authentication in database queries
+- Implement proper data validation
+
+## Western Theme Guidelines
+
+### Styling
+- Use Western-themed components and animations
+- Implement wooden sign buttons with hover effects
+- Add sound effects for user interactions
+- Use chain-linked dropdown menus
+- Apply Western color palette: Gold (#E7A801), dark grays, browns
+
+### Animations
+- Use Framer Motion for complex animations
+- Implement custom CSS animations for Western effects
+- Add loading states with Western theming
+- Use staggered animations for lists
+
+### Sound Effects
+- Add gunshot sounds for navigation clicks
+- Implement audio context initialization
+- Preload audio resources
+- Handle audio errors gracefully
+
+## Security & Access Control
+
+### Authentication
+- Use Supabase Auth for user management
+- Implement proper session handling
+- Add Google OAuth support
+- Handle authentication errors gracefully
+
+### Access Control
+- Implement date-based access controls
+- Use environment variables for access dates
+- Add admin password protection for sensitive forms
+- Implement rate limiting for API endpoints
+
+### Data Validation
+- Use Zod schemas for all form validation
+- Implement server-side validation
+- Add file upload validation
+- Handle PESEL validation with birth date verification
+
+## Error Handling
+
+### Client Side
+- Use toast notifications for user feedback
+- Implement proper error boundaries
+- Show loading states during async operations
+- Handle network errors gracefully
+
+### Server Side
+- Return appropriate HTTP status codes
+- Log errors for debugging
+- Provide meaningful error messages
+- Implement fallback responses
+
+## Performance
+
+### Optimization
+- Use Next.js Image component for images
+- Implement proper loading states
+- Use Suspense for code splitting
+- Optimize bundle size
+
+### Caching
+- Use Supabase caching strategies
+- Implement proper cache invalidation
+- Use Next.js caching for static content
+
+## Testing
+
+### Component Testing
+- Test user interactions
+- Verify form validation
+- Test error states
+- Check accessibility
+
+### API Testing
+- Test endpoint responses
+- Verify authentication
+- Test error handling
+- Check rate limiting
+
+## File Naming Conventions
+
+### Components
+- Use PascalCase for component files
+- Use descriptive names (e.g., `TeamMemberCard.tsx`)
+- Group related components in folders
+
+### Utilities
+- Use camelCase for utility functions
+- Use descriptive names (e.g., `formatFileSize`)
+- Group related utilities in files
+
+### Types
+- Use PascalCase for interfaces
+- Use descriptive names (e.g., `RegistrationRecord`)
+- Export types from dedicated files
+
+## Code Quality
+
+### TypeScript
+- Use strict TypeScript configuration
+- Define proper interfaces for all data
+- Avoid `any` types
+- Use proper type guards
+
+### ESLint
+- Follow the configured ESLint rules
+- Fix all linting errors
+- Use proper import/export statements
+- Follow React best practices
+
+### Code Comments
+- Add JSDoc comments for complex functions
+- Explain business logic
+- Document API endpoints
+- Add TODO comments for future improvements
+
+## Environment Variables
+
+### Required Variables
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `PAYMENT_OPEN_DATE`
+- `CONTACT_DATE`
+- `PAYMENT_FORM_PASSWORD`
+- `NEXT_PUBLIC_REGULATIONS_LINK`
+
+### Usage
+- Always check for environment variable existence
+- Provide fallback values where appropriate
+- Use proper validation for date variables
+
+## Deployment
+
+### Build Process
+- Use `npm run build` for production builds
+- Test builds locally before deployment
+- Verify environment variables are set
+- Check for TypeScript errors
+
+### Supabase
+- Ensure database migrations are applied
+- Verify RLS policies are active
+- Check storage bucket permissions
+- Test authentication flows
+
+## Common Patterns
+
+### Form Patterns
+```typescript
+const schema = z.object({
+  // validation rules
+});
+
+const { register, handleSubmit, formState: { errors } } = useForm({
+  resolver: zodResolver(schema)
+});
+```
+
+### API Route Patterns
+```typescript
+export async function GET() {
+  try {
+    // logic
+    return NextResponse.json({ data });
+  } catch (error) {
+    return NextResponse.json({ error: 'Message' }, { status: 500 });
+  }
+}
+```
+
+### Component Patterns
+```typescript
+"use client";
+
+interface ComponentProps {
+  // props
+}
+
+export default function Component({ props }: ComponentProps) {
+  // component logic
+  return (
+    // JSX
+  );
+}
+```
+
+## Best Practices
+
+1. **Always validate user input** both client and server side
+2. **Handle loading and error states** in all async operations
+3. **Use proper TypeScript types** for all data structures
+4. **Implement proper error boundaries** for better UX
+5. **Follow the Western theme** consistently across components
+6. **Test all user flows** before deployment
+7. **Use environment variables** for configuration
+8. **Implement proper security measures** for sensitive data
+9. **Follow Next.js best practices** for performance
+10. **Maintain consistent code style** throughout the project

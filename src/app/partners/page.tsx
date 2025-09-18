@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import styles from './partners.module.css';
-import './treasure-effects.css'; // Import our new treasure effects
+// All styles are now consolidated in app/css
 import { 
   getPartnersByCategories, 
   Partner as PartnerType,
@@ -190,11 +189,11 @@ export default function PartnersPage() {
   return (
     <div ref={containerRef} className={`min-h-screen flex flex-col items-center justify-start py-10 px-4 overflow-x-hidden relative`}>
       {/* Add blurred background overlay similar to navbar */}
-      <div className={styles.pageOverlay}></div>
+      <div className="pageOverlay"></div>
       
       {/* Western-themed header */}
       <div className="w-full max-w-5xl text-center mb-8">
-        <h1 className={`text-5xl md:text-6xl font-bold text-yellow-300 mb-3 ${styles.goldRushTitle}`}>
+        <h1 className="text-5xl md:text-6xl font-bold text-yellow-300 mb-3 goldRushTitle">
           Nasi Partnerzy
         </h1>
         
@@ -224,7 +223,7 @@ export default function PartnersPage() {
           {Object.values(partnersByCategory).some(arr => arr.length > 0) && !loading && (
             <motion.div 
               ref={chestRef}
-              className={`w-full aspect-square max-w-md mx-auto ${styles.treasureChest}`}
+              className="w-full aspect-square max-w-md mx-auto treasureChest"
               initial={{ scale: 0.8, opacity: 1 }}
               animate={{ 
                 scale: isChestOpen ? [1, 1.05, 0.95, 1] : 1, 
@@ -331,7 +330,7 @@ export default function PartnersPage() {
         </AnimatePresence>
 
         {/* Gold bars with partner logos that spill out */}
-        <div className={`relative w-full min-h-[500px] mt-8 ${styles.goldBarContainer}`} style={{ zIndex: 10 }}>
+        <div className="relative w-full min-h-[500px] mt-8 goldBarContainer" style={{ zIndex: 10 }}>
           {/* Gold pile base - visible once chest is open */}
           {isChestOpen && (
             <motion.div
@@ -385,7 +384,7 @@ export default function PartnersPage() {
                       {/* Partners Grid for this category */}
                       <div className="w-full flex justify-center">
                         <motion.div 
-                          className={`h-full mt-4 ${styles.gridItemsContainer}`}
+                          className="h-full mt-4 gridItemsContainer"
                           style={{
                             display: 'grid',
                             gridTemplateColumns: `repeat(${Math.min(partners.length, 3)}, minmax(220px, 280px))`,
@@ -416,7 +415,7 @@ export default function PartnersPage() {
                           return (
                             <motion.div
                               key={partner.id || `${category}-${idx}`}
-                              className={`${styles.gridItem}`}
+                              className="gridItem"
                               initial={{
                                 y: -200, // Start from chest position
                                 x: randomOffsetX,
