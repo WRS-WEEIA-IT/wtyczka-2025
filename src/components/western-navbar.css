@@ -1,0 +1,653 @@
+/* Removed import of Rye font as we now use Tagesschrift */
+
+
+
+/* Animacja wysuwania elementów dropdown w desktopowej nawigacji */
+
+/* Animacja opadania zarówno dla łańcuchów jak i przycisków dropdown */
+
+.western-dropdown-animated,
+a.western-button.western-dropdown-animated {
+  opacity: 0;
+  transform: translateY(-32px);
+  transition:
+    opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: opacity, transform;
+}
+
+/* Animacja po najechaniu na przyciski w dropdownie uczestnika */
+.western-dropdown-animated:hover {
+  transform: scale(1.08) rotate(-2deg) translateY(0);
+  z-index: 101;
+}
+
+.group:hover .western-dropdown-animated,
+.group:hover a.western-button.western-dropdown-animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Western-themed navbar styles */
+
+/* Base navbar styles */
+.western-navbar {
+  background-color: rgba(27, 27, 27, 0.485) !important; /* Slightly less transparent light grey */
+  /* border-bottom removed */
+  padding: 0.8rem 0 1.2rem 0; 
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+  max-width: 100vw;
+  min-height: fit-content;
+  margin-bottom: 1rem; /* Add margin at the bottom for spacing */
+  /* Removed blur/backdrop-filter for full transparency */
+  z-index: 50;
+}
+
+/* Container layout */
+.western-navbar > div {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  background: none !important;
+}
+
+/* Fix for container to prevent overflows */
+.western-nav-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-bottom: 5px;
+  gap: 4px;
+  margin: 0 auto;
+  width: fit-content;
+  text-align: center;
+}
+
+/* Media query for desktop navigation */
+@media screen and (min-width: 769px) {
+  .western-nav-container {
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* Desktop navigation container */
+.western-navbar .desktop-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  gap: 4px;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+}
+
+@media screen and (min-width: 769px) {
+  .western-navbar .hidden.md\:flex {
+    flex-wrap: wrap;
+    justify-content: center;
+  row-gap: 4px;
+/* Bullet icon for navbar click */
+.navbar-bullet {
+  pointer-events: none;
+  user-select: none;
+  z-index: 9999;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.5s;
+}
+    column-gap: 10px;
+    padding: 10px 0;
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* Western-style signboard buttons */
+.western-button {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  background-color: transparent;
+  color: #ffe066;
+  text-shadow: 2px 2px 6px #42210b, 0 2px 8px #00000099;
+  font-family: 'Rye', 'Segoe UI', 'Arial', sans-serif;
+  letter-spacing: 0.07em;
+  font-size: 1.13rem;
+  padding: 1.1rem 2.2rem 0.9rem 2.2rem;
+  font-weight: bold;
+  transform: rotate(-1deg);
+  transition: all 0.3s ease;
+  border: none;
+  /* border-radius: 12px; */
+  margin: 0 0.25rem;
+  /* box-shadow: 0 3px 6px rgba(0,0,0,0.4); */
+  white-space: nowrap;
+  flex-shrink: 0;
+  overflow: visible;
+  text-align: center;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+  line-height: 1.1;
+  z-index: 50;
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+/* Specjalna klasa dla pierwszych trzech przycisków nawigacji */
+.western-button--sign186 {
+  /* Wymuś wysokość i proporcje jak w .western-button */
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.13rem;
+  line-height: 1.1;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.western-button:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  transition:
+    transform 0.18s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Animacja dropdown ma wyższy priorytet */
+.western-button.western-dropdown-animated:hover {
+  transform: scale(1.08) rotate(-2deg) translateY(0) !important;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+  z-index: 101;
+}
+
+.western-button:nth-child(odd) {
+  transform: rotate(1deg);
+}
+
+.western-button:nth-child(odd):hover {
+  transform: rotate(-1deg) scale(1.05);
+}
+
+/* Responsive adjustments for western buttons */
+@media screen and (max-width: 1200px) {
+  .western-button {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.95rem;
+    margin: 0 0.2rem;
+  }
+  
+  /* Adjust navbar spacing */
+  .western-navbar > div {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  /* Reduce space between items */
+  .western-navbar .hidden.md\:flex {
+    gap: 4px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .western-button {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.9rem;
+    margin: 0 0.15rem;
+    transform: rotate(-0.5deg);
+  }
+  
+  .western-button:nth-child(odd) {
+    transform: rotate(0.5deg);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .western-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    margin: 0.1rem;
+     transform: rotate(0);
+    width: 100%; /* Full width for mobile */
+  }
+  
+  .western-button:hover {
+     transform: scale(1.03);
+  }
+  
+  .western-button:nth-child(odd) {
+     transform: rotate(0);
+  }
+  
+  .western-button:nth-child(odd):hover {
+     transform: scale(1.03);
+  }
+  
+  /* Improved mobile container */
+  .western-navbar .western-mobile-menu {
+    padding: 0.3rem;
+    max-height: 75vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for mobile menu */
+  .western-navbar > div > div {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Auto-height for navbar when needed */
+  .western-navbar {
+    height: auto;
+    min-height: 60px;
+    padding-bottom: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .western-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    margin: 0.1rem 0;
+    width: 100%;
+  }
+}
+
+/* Bullet hole animation */
+.bullet-hole {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  /* Fallback until you have the bullet hole image */
+  background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 70%);
+  pointer-events: none;
+  z-index: 100;
+  animation: bulletHoleAppear 1s forwards;
+}
+
+@keyframes bulletHoleAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+  20% {
+    transform: scale(0.9);
+  }
+  30% {
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Gunshot flash */
+.gunshot-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 99;
+  pointer-events: none;
+  animation: gunshotFlash 0.15s forwards;
+  will-change: opacity; /* Performance optimization */
+}
+
+@keyframes gunshotFlash {
+  0% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Fix for safari overflow issues */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Make sure buttons don't overflow in very small screens */
+@media screen and (max-width: 320px) {
+  .western-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    margin: 0.05rem 0;
+  }
+  
+  .western-navbar {
+    padding: 0.4rem 0 0.6rem 0;
+  }
+}
+
+/* Mobile western menu */
+.western-mobile-menu {
+  background: #3d2817;
+  border: 2px solid #8B4513;
+  border-radius: 0 0 10px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  margin: 0;
+  overflow: hidden;
+  max-width: 100vw; /* Ensure it doesn't exceed viewport width */
+}
+
+/* Ensure navbar container is responsive */
+.western-navbar > div {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Make the inner flex container adapt to available space */
+.western-navbar > div > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Fixed width for desktop nav container to prevent overflow */
+.western-navbar .hidden.md\:flex {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* Logo area */
+.western-logo-area {
+  background: url('/logo-background.png');
+  background-size: contain;
+  background-position: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+/* Western dropdown */
+.western-dropdown {
+  padding-top: 36px;
+  position: absolute;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 220px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  background-color: transparent !important;
+  border: none;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 16px;
+  row-gap: 1px;
+}
+
+/* Chain connection between wooden signs */
+.chain-container {
+  position: relative;
+  height: 25px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: -10px 0;
+  padding: 0 90px;
+  z-index: 39;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.chain-link {
+  background-image: url('/western/chain.svg');
+  background-repeat: repeat-y;
+  background-size: contain;
+  width: 20px;
+  height: 170%;
+  image-rendering: pixelated;
+}
+
+/* Main chain connection from parent menu to first dropdown item */
+.western-parent-chain {
+  position: absolute;
+  top: 92%;
+  height: 30px;
+  width: 100%;
+  z-index: 39 !important;
+  margin-top: -8px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 90px;
+  box-sizing: border-box;
+}
+
+.western-parent-chain-link {
+  background-image: url('/western/chain.svg');
+  background-repeat: repeat-y;
+  background-size: contain;
+  width: 20px;
+  height: 150%;
+  image-rendering: pixelated;
+}
+
+/* Wooden sign dropdown items */
+.western-dropdown-item {
+  background-image: url('/western/wooden-sign.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  color: #ffe066;
+  text-shadow: 2px 2px 6px #42210b, 0 2px 8px #00000099;
+  font-family: 'Rye', 'Segoe UI', 'Arial', sans-serif;
+  letter-spacing: 0.07em;
+  font-size: 1rem;
+  padding: 1.1rem 2.2rem 0.9rem 2.2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: none;
+  margin: 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  min-width: 220px;
+  width: 100%;
+  transform: rotate(2deg);
+  z-index: 40;
+  box-sizing: border-box;
+}
+
+.western-dropdown-item:nth-child(odd) {
+  transform: rotate(-2deg);
+}
+
+.western-dropdown-item:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+.western-dropdown-item:nth-child(odd):hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+@media screen and (max-width: 768px) {
+  .western-dropdown {
+    position: relative !important;
+    max-width: 100%;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none;
+    margin-top: 10px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    width: 100%;
+  }
+  
+  .western-parent-chain {
+    display: none;
+  }
+  
+  .chain-container {
+    display: none;
+  }
+  
+  .chain-link {
+    width: 20px;
+  }
+  
+  .bullet-hole {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .western-dropdown-item {
+    width: 100%;
+    transform: rotate(0deg) !important;
+    margin-bottom: 8px;
+  }
+  
+  .western-dropdown-item:hover {
+    transform: scale(1.03) !important;
+  }
+  
+  .mobile-dropdown-item {
+    margin: 8px 0;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .bullet-hole {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* For the language and user buttons */
+.western-icon-button {
+  color: #f8e8b0;
+  background: #8B4513;
+  border: 1px solid #42210b;
+  border-radius: 5px;
+  padding: 0.3rem 0.6rem;
+  transition: all 0.3s ease;
+}
+
+.western-icon-button:hover {
+  background: #42210b;
+}
+
+/* Special login button */
+.western-login-button {
+  background: #8B4513;
+  color: #f8e8b0;
+  border: 2px solid #42210b;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-family: 'Rye', 'Western', serif;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+}
+
+.western-login-button:hover {
+  background: #42210b;
+}
+
+/* Status button styling - highlighted version */
+.status-button {
+  background: #a84e00 !important;
+  border: 2px solid gold !important;
+  color: #ffed97 !important;
+  font-size: 1.05em !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.3) !important;
+  transform: rotate(0deg) !important;
+}
+
+.status-button:hover {
+  background: #c96100 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.5) !important;
+}
+
+/* Additional responsive tweaks */
+@media screen and (max-width: 1200px) {
+  .western-navbar {
+    overflow-x: clip; /* Alternative to hidden that preserves visible elements */
+  }
+}
+
+/* Fix for mobile buttons alignment */
+@media screen and (max-width: 768px) {
+  .western-navbar > div > div {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Icon buttons should be more compact on mobile */
+  .western-icon-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Ensure content stays within screen */
+  .western-dropdown-item {
+    word-break: break-word;
+  }
+}
+
+/* Ensure navbar doesn't overflow horizontally on any screen */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+  /* Poprawiona animacja po najechaniu na przyciski w dropdownie uczestnika */
+  .western-button.western-dropdown-animated:hover {
+    transform: scale(1.08) rotate(-2deg) translateY(0);
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+    z-index: 101;
+  }

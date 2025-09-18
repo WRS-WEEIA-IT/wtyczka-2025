@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Menu, X, DoorOpen } from "lucide-react";
 import AuthModal from "./AuthModal";
 import Link from "next/link";
-// Western navbar styles are now in app/styles.css
+import "./western-navbar.css";
 
 export default function Navbar() {
   const { user, authLogout } = useAuth();
