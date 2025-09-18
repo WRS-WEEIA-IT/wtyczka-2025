@@ -196,13 +196,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               />
             </div>
             {!isLogin && (
-              <ul className="text-red-500 text-xs mt-2 font-medium space-y-1">
-                <li className={passwordChecklist.length ? "text-green-600" : ""}>• min. 8 znaków</li>
-                <li className={passwordChecklist.lower ? "text-green-600" : ""}>• mała litera</li>
-                <li className={passwordChecklist.upper ? "text-green-600" : ""}>• wielka litera</li>
-                <li className={passwordChecklist.digit ? "text-green-600" : ""}>• cyfra</li>
-                <li className={passwordChecklist.special ? "text-green-600" : ""}>• znak specjalny</li>
-              </ul>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 mt-2">
+                  <div>
+                    <div className={passwordChecklist.length ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• min. 8 znaków</div>
+                    <div className={passwordChecklist.lower && passwordChecklist.upper ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• mała i wielka litera</div>
+                  </div>
+                  <div>
+                    <div className={passwordChecklist.digit ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• cyfra</div>
+                    <div className={passwordChecklist.special ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• znak specjalny</div>
+                  </div>
+                </div>
             )}
             {passwordError && (
               <div className="text-red-500 text-xs mt-2 font-medium">{passwordError}</div>
