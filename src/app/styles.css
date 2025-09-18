@@ -470,11 +470,17 @@ body {
 }
 
 .western-button:hover {
-  transform: rotate(1deg) scale(1.05);
   box-shadow: 0 4px 16px rgba(0,0,0,0.18);
   transition:
     transform 0.18s cubic-bezier(0.23, 1, 0.32, 1),
     box-shadow 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Animacja dropdown ma wyższy priorytet */
+.western-button.western-dropdown-animated:hover {
+  transform: scale(1.08) rotate(-2deg) translateY(0) !important;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+  z-index: 101;
 }
 
 .western-button:nth-child(odd) {
@@ -485,13 +491,20 @@ body {
   transform: rotate(-1deg) scale(1.05);
 }
 
-.western-dropdown-animated {
+.western-dropdown-animated,
+a.western-button.western-dropdown-animated {
   opacity: 0;
   transform: translateY(-32px);
   transition:
     opacity 0.35s cubic-bezier(0.23, 1, 0.32, 1),
     transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
   will-change: opacity, transform;
+}
+
+/* Animacja po najechaniu na przyciski w dropdownie uczestnika */
+.western-dropdown-animated:hover {
+  transform: scale(1.08) rotate(-2deg) translateY(0);
+  z-index: 101;
 }
 
 .group:hover .western-dropdown-animated,
@@ -659,8 +672,42 @@ body {
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.5) !important;
 }
 
-/* Responsive navbar styles */
+/* Bullet icon for navbar click */
+.navbar-bullet {
+  pointer-events: none;
+  user-select: none;
+  z-index: 9999;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.5s;
+}
+
+/* Desktop navigation container */
+.western-navbar .desktop-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  gap: 4px;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+}
+
 @media screen and (min-width: 769px) {
+  .western-navbar .hidden.md\:flex {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4px;
+    column-gap: 10px;
+    padding: 10px 0;
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
   .western-nav-container {
     flex-wrap: nowrap;
     justify-content: center;
@@ -682,6 +729,10 @@ body {
   
   .western-navbar .hidden.md\:flex {
     gap: 4px;
+  }
+  
+  .western-navbar {
+    overflow-x: clip; /* Alternative to hidden that preserves visible elements */
   }
 }
 
@@ -802,6 +853,15 @@ body {
   .western-navbar {
     padding: 0.4rem 0 0.6rem 0;
   }
+}
+
+/* Logo area */
+.western-logo-area {
+  background: url('/logo-background.png');
+  background-size: contain;
+  background-position: center;
+  padding: 0.5rem;
+  border-radius: 10px;
 }
 
 /* Fix for safari overflow issues */
