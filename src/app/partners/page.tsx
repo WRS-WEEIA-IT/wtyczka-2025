@@ -188,12 +188,12 @@ export default function PartnersPage() {
 
   if (!isMounted) return null;
   return (
-    <div ref={containerRef} className={`min-h-screen flex flex-col items-center justify-start py-10 px-4 overflow-x-hidden relative`}>
+    <div ref={containerRef} className={`min-h-screen flex flex-col items-center justify-start py-6 px-4 overflow-x-hidden relative`}>
       {/* Add blurred background overlay similar to navbar */}
       <div className={styles.pageOverlay}></div>
       
       {/* Western-themed header */}
-      <div className="w-full max-w-5xl text-center mb-8">
+      <div className="w-full max-w-5xl text-center mb-6">
         <h1 className={`text-5xl md:text-6xl font-bold text-yellow-300 mb-3 ${styles.goldRushTitle}`}>
           Nasi Partnerzy
         </h1>
@@ -364,7 +364,7 @@ export default function PartnersPage() {
                   return (
                     <motion.div 
                       key={category} 
-                      className="mb-12 flex flex-col items-center" /* Zmniejszony margines między kategoriami i wycentrowanie zawartości */
+                      className="mb-6 flex flex-col items-center" /* Further reduced margin between categories */
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.3 }}
@@ -374,9 +374,9 @@ export default function PartnersPage() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="mb-6 text-center" /* Zmniejszony margines pod nagłówkiem */
+                        className="mb-3 text-center" /* Further reduced margin under header */
                       >
-                        <h2 className={`text-4xl font-bold ${categoryStyle.headingColor} mb-3`}>
+                        <h2 className={`text-4xl font-bold ${categoryStyle.headingColor} mb-2`}>
                           {CATEGORY_DISPLAY_NAMES[category]}
                         </h2>
                         <div className="h-1 w-48 bg-amber-600 mx-auto rounded-full"></div>
@@ -385,7 +385,7 @@ export default function PartnersPage() {
                       {/* Partners Grid for this category */}
                       <div className="w-full flex justify-center">
                         <motion.div 
-                          className={`h-full mt-4 ${styles.gridItemsContainer}`}
+                          className={`h-full mt-1 ${styles.gridItemsContainer}`}
                           style={{
                             display: 'grid',
                             gridTemplateColumns: `repeat(${Math.min(partners.length, 3)}, minmax(220px, 280px))`,
@@ -393,9 +393,9 @@ export default function PartnersPage() {
                             width: '100%',
                             maxWidth: partners.length === 1 ? '320px' : partners.length === 2 ? '640px' : '960px',
                             margin: '0 auto',
-                            padding: '20px',
+                            padding: '5px',
                             position: 'relative',
-                            minHeight: '400px',
+                            minHeight: 'auto',
                             justifyContent: 'center'
                           }}
                           initial={{ opacity: 0 }}
@@ -532,7 +532,7 @@ export default function PartnersPage() {
       
      {/* Western-themed footer */}
       {goldenBarsVisible && (
-        <div className="mt-16 mb-8 w-full text-center">
+        <div className="mt-4 mb-8 w-full text-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

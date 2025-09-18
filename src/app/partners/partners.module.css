@@ -31,7 +31,7 @@
 .goldBarContainer {
   perspective: 1000px;
   transform-style: preserve-3d;
-  min-height: 500px;
+  min-height: auto;
 }
 
 /* Grid container for organized gold bars - this is now defined inline in page.tsx */
@@ -44,7 +44,7 @@
   margin: 0 auto;
   padding: 20px;
   position: relative;
-  min-height: 400px; /* Ensure enough space for the animation */
+  min-height: auto; /* Allow natural height based on content */
   justify-content: center; /* Center grid items horizontally */
 }
 
