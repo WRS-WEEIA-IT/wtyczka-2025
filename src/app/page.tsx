@@ -2,10 +2,7 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect, Suspense } from "react";
-import {
-  Calendar,
-  Facebook,
-} from "lucide-react";
+import { Calendar, Facebook } from "lucide-react";
 import Image from "next/image";
 import {
   FacebookPost,
@@ -35,7 +32,7 @@ export default function HomePage() {
 
     const fetchFacebookPosts = async () => {
       try {
-        const posts = await getFacebookPostsInQuantity(2);
+        const posts = await getFacebookPostsInQuantity(2, 0);
         setFacebookPosts(posts);
       } catch (error) {
         console.error("Error fetching Facebook posts:", error);
@@ -50,7 +47,7 @@ export default function HomePage() {
   }, []);
 
   return (
-  <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans">
       {/* Hero Section */}
       <section className="relative text-white overflow-hidden p-4">
         <div className="relative max-w-4xl mx-auto px-4 py-10 text-center flex flex-col justify-center items-center home-hero-section">
@@ -61,7 +58,11 @@ export default function HomePage() {
               width={1200}
               height={440}
               className="m-0 p-0 leading-none drop-shadow-2xl"
-              style={{ display: "block", marginTop: "26px", marginBottom: "-8px" }}
+              style={{
+                display: "block",
+                marginTop: "26px",
+                marginBottom: "-8px",
+              }}
             />
             <p
               className="text-2xl md:text-3xl m-0 p-0 text-[#E7A801] font-extrabold tracking-widest uppercase drop-shadow-lg western-title"
@@ -71,14 +72,16 @@ export default function HomePage() {
             </p>
           </div>
 
-
-          <div className="flex flex-col sm:flex-row mt-10 gap-6 sm:gap-3 w-full justify-center items-center mb-2" style={{overflowX: 'visible'}}>
+          <div
+            className="flex flex-col sm:flex-row mt-10 gap-6 sm:gap-3 w-full justify-center items-center mb-2"
+            style={{ overflowX: "visible" }}
+          >
             <span className="relative group flex-1 min-w-[180px] max-w-xs w-full">
               <span className="zapisz-glow" aria-hidden="true"></span>
               <Link
                 href="/registration"
                 className="homepage-btn zapisz-btn western-btn-roboto flex-1 min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-white bg-[#E7A801] hover:bg-yellow-400 transition-all duration-200 border-none shadow-none relative overflow-hidden"
-                style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+                style={{ fontFamily: "Roboto Slab, Times New Roman, serif" }}
               >
                 ZAPISZ SIĘ
               </Link>
@@ -87,7 +90,7 @@ export default function HomePage() {
             <Link
               href="/faq"
               className="homepage-btn western-btn-roboto flex-1 min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex items-center justify-center text-lg font-bold text-[#E7A801] bg-[#232323] hover:bg-[#18181b] transition-all duration-200 border-none shadow-none relative overflow-hidden mb-0"
-              style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+              style={{ fontFamily: "Roboto Slab, Times New Roman, serif" }}
             >
               DOWIEDZ SIĘ WIĘCEJ
             </Link>
@@ -99,12 +102,19 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
               className="homepage-btn western-btn-roboto min-w-[180px] max-w-xs w-full rounded-full py-4 px-8 flex flex-row items-center justify-center gap-3 text-lg font-bold text-[#E7A801] bg-[#232323] hover:bg-[#18181b] transition-all duration-200 border-none shadow-none relative overflow-hidden"
-              style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+              style={{ fontFamily: "Roboto Slab, Times New Roman, serif" }}
               title="Dodaj wydarzenie do kalendarza Google"
             >
               <Calendar className="h-7 w-7 text-[#E7A801]" />
-              <span className="uppercase tracking-wide" style={{ fontFamily: 'inherit' }}>
-                POZOSTAŁO <span style={{ fontFamily: 'monospace' }}>{daysUntilEvent}</span> DNI
+              <span
+                className="uppercase tracking-wide"
+                style={{ fontFamily: "inherit" }}
+              >
+                POZOSTAŁO{" "}
+                <span style={{ fontFamily: "monospace" }}>
+                  {daysUntilEvent}
+                </span>{" "}
+                DNI
               </span>
             </a>
           </div>
@@ -120,20 +130,26 @@ export default function HomePage() {
         <div className="w-full h-full px-4 sm:px-6 lg:px-8 flex flex-col flex-1 home-content-container max-w-6xl mx-auto justify-center items-center text-center">
           <div className="mb-10 pt-8 w-full flex flex-col justify-center items-center text-center">
             <h2 className="latest-news-title text-base xs:text-xl sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-extrabold text-[#E7A801] uppercase tracking-widest drop-shadow-lg western-title text-center w-full break-words">
-                {t.home.latestNews}
+              {t.home.latestNews}
             </h2>
             <div className="star-divider w-full flex justify-center items-center text-center">
               <span className="text-[#E7A801] text-2xl select-none">★ ★</span>
             </div>
             <div className="flex justify-center w-full text-center">
-              <span className="inline-block text-lg text-gray-300 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1 text-center">Wiadomości z saloonu</span>
+              <span className="inline-block text-lg text-gray-300 tracking-widest uppercase border-b-2 border-dotted border-[#E7A801] px-4 pb-1 text-center">
+                Wiadomości z saloonu
+              </span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-6 w-full justify-center max-w-7xl mx-auto">
             <Suspense fallback={<FacebookCardSkeleton />}>
               {facebookPosts.map((post) => (
-                <FacebookCard {...post} className="w-full max-w-2xl cursor-pointer justify-self-center shadow-xl hover:shadow-2xl transition-shadow" key={post.id} />
+                <FacebookCard
+                  {...post}
+                  className="w-full max-w-2xl cursor-pointer justify-self-center shadow-xl hover:shadow-2xl transition-shadow"
+                  key={post.id}
+                />
               ))}
             </Suspense>
           </div>
@@ -142,7 +158,7 @@ export default function HomePage() {
             <Link
               href="/news"
               className="inline-flex items-center space-x-2 bg-[#E7A801] text-black px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest hover:bg-amber-700 transition-colors shadow-md western-btn"
-              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
+              style={{ boxShadow: "0 4px 12px rgba(231, 168, 1, 0.4)" }}
             >
               <Facebook className="h-5 w-5" />
               <span>{t.home.viewAllNews}</span>

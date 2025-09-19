@@ -8,13 +8,13 @@ export interface FacebookPost {
     timeCreated: Date;
 }
 
-export async function getFacebookPostsInQuantity(quantity: number): Promise<FacebookPost[]> {
+export async function getFacebookPostsInQuantity(quantity: number, page: number): Promise<FacebookPost[]> {
     try {
         const { data, error } = await supabase
             .from('facebookPosts')
             .select('id, text, imageUrl, link, timeCreated')
-            .order('createdAt', { ascending: true })
-            .limit(quantity);
+            .order('timeCreated', { ascending: false })
+            .range(page * quantity, (page + 1) * quantity - 1);
 
         if (error) throw error;
         return data.map(post => ({

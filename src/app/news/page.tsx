@@ -16,17 +16,21 @@ export default function NewsPage() {
 
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const [noMorePosts, setNoMorePosts] = useState<boolean>(false);
   const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([]);
   const [loading, setLoading] = useState(false);
   const postsPerPage = 5;
+  const [page, setPage] = useState(0);
 
   const loadPosts = async (isInitial: boolean = false) => {
     setLoading(true);
     try {
-      const posts = await getFacebookPostsInQuantity(postsPerPage);
+      const posts = await getFacebookPostsInQuantity(postsPerPage, page);
+      setPage((prevPage) => prevPage + 1);
       if (isInitial) {
         setFacebookPosts(posts);
       } else {
@@ -68,7 +72,10 @@ export default function NewsPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 px-7 py-3 rounded-xl font-bold tracking-wider uppercase transition-all western-btn bg-[#1877F2] hover:bg-[#145db2] text-white shadow-lg border-2 border-[#145db2] focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2"
-              style={{ fontFamily: 'var(--font-rye), fantasy, serif', boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)' }}
+              style={{
+                fontFamily: "var(--font-rye), fantasy, serif",
+                boxShadow: "0 4px 16px rgba(24, 119, 242, 0.25)",
+              }}
             >
               <ExternalLink className="h-5 w-5" />
               <span>Obserwuj nas na Facebooku</span>
@@ -120,7 +127,10 @@ export default function NewsPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center space-x-2 px-8 py-3 rounded-xl font-bold tracking-wider uppercase transition-all western-btn bg-[#1877F2] hover:bg-[#145db2] text-white shadow-lg border-2 border-[#145db2] focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2"
-            style={{ fontFamily: 'var(--font-rye), fantasy, serif', boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)' }}
+            style={{
+              fontFamily: "var(--font-rye), fantasy, serif",
+              boxShadow: "0 4px 16px rgba(24, 119, 242, 0.25)",
+            }}
           >
             <ExternalLink className="h-5 w-5" />
             <span>Odwiedź naszego Facebooka</span>
@@ -130,4 +140,3 @@ export default function NewsPage() {
     </div>
   );
 }
-
