@@ -52,14 +52,7 @@ export async function POST(request: Request) {
     
     // First, check if the payment date has been reached
     // This is to determine if we should allow access at all
-    const paymentDateStr = process.env.PAYMENT_OPEN_DATE;
-    let dateReached = true;
-    
-    if (paymentDateStr) {
-      const now = new Date();
-      const paymentDate = new Date(paymentDateStr);
-      dateReached = now >= paymentDate;
-    }
+    // Payment date check removed as it's not being used
 
     // Check the password
     if (password === expected) {

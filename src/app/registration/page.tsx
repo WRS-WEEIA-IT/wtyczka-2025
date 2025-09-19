@@ -151,8 +151,6 @@ export default function RegistrationPage() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
-    setValue,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
   });
@@ -838,7 +836,7 @@ export default function RegistrationPage() {
                     <div className="custom-checkbox-check">✓</div>
                   </span>
                   <span className="ml-3 text-gray-300 text-xs">
-                    Wyrażam zgodę na przetwarzanie moich danych osobowych przez Politechnikę Łódzką w celu zorganizowania i przeprowadzenia wyjazdu integracyjno-szkoleniowego "Wtyczka 2025". Także zgadzam się na otrzymywanie wiadomości tekstowych dotyczących spraw organizacyjnych związanych z Wyjazdem na adres e-mail i numer telefonu podany w formularzu. Klauzula RODO dostępna jest <a
+                    Wyrażam zgodę na przetwarzanie moich danych osobowych przez Politechnikę Łódzką w celu zorganizowania i przeprowadzenia wyjazdu integracyjno-szkoleniowego &quot;Wtyczka 2025&quot;. Także zgadzam się na otrzymywanie wiadomości tekstowych dotyczących spraw organizacyjnych związanych z Wyjazdem na adres e-mail i numer telefonu podany w formularzu. Klauzula RODO dostępna jest <a
                       href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/rodo.pdf"
                       target="_blank"
                       rel="noopener noreferrer"

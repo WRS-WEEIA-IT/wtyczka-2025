@@ -23,7 +23,7 @@ export const supabase = createClient(
 import { translations } from './translations';
 
 // Cache for dates to avoid frequent database calls
-let dateCache: { [key: string]: string } = {};
+const dateCache: { [key: string]: string } = {};
 let cacheExpiry: number = 0;
 const CACHE_DURATION = 10 * 1000; // 10 seconds (reduced from 5 minutes for faster testing)
 

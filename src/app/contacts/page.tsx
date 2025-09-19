@@ -1,20 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Lock, ArrowRight } from "lucide-react";
-// Ta funkcja sprawdza dostępność strony kontaktowej poprzez zapytanie API
-// Rzeczywista kontrola dostępu odbywa się na serwerze
-async function isContactOpen() {
-  try {
-    const res = await fetch('/api/check-access/contacts');
-    const data = await res.json();
-    return res.ok && data.access === true;
-  } catch (error) {
-    console.error("Error checking contact access:", error);
-    return false;
-  }
-}
-import { getTeamMembers, TeamMember } from '@/usecases/team-members';
+// Nieużywane importy usunięte
+import { TeamMember } from '@/usecases/team-members';
 import TeamMemberCard from '@/components/TeamMemberCard';
 // All styles are now consolidated in app/css
 

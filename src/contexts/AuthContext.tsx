@@ -41,28 +41,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, []);
 
   async function authLogin(email: string, password: string) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
       toast.success("Zalogowano pomyślnie!");
-    } catch (error: any) {
+    } catch (error: Error | unknown) {
       console.error("Login error:", error);
       
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
       // Handle specific error types for login
-      if (error?.message?.includes('Email not confirmed') || 
-          error?.message?.includes('signup_disabled') ||
-          error?.message?.includes('email_not_confirmed')) {
+      if (errorMessage.includes('Email not confirmed') || 
+          errorMessage.includes('signup_disabled') ||
+          errorMessage.includes('email_not_confirmed')) {
         toast.error("Najpierw potwierdź adres email!");
-      } else if (error?.message?.includes('Invalid login credentials')) {
+      } else if (errorMessage.includes('Invalid login credentials')) {
         toast.error("Błędny adres email bądź hasło");
-      } else if (error?.message?.includes('Too many requests')) {
+      } else if (errorMessage.includes('Too many requests')) {
         toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
       } else {
         toast.error("Błąd logowania");
@@ -169,18 +171,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("No user data returned");
       }
       
-    } catch (error: any) {
+    } catch (error: Error | unknown) {
       console.error("Registration error:", error);
       
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
       // Handle specific error types for registration
-      if (error?.message?.includes('User already registered')) {
+      if (errorMessage.includes('User already registered')) {
         // Already handled above, don't show additional error
         return;
-      } else if (error?.message?.includes('Email rate limit exceeded')) {
+      } else if (errorMessage.includes('Email rate limit exceeded')) {
         toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
-      } else if (error?.message?.includes('Too many requests')) {
+      } else if (errorMessage.includes('Too many requests')) {
         toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
-      } else if (!error?.message?.includes('No user data returned')) {
+      } else if (!errorMessage.includes('No user data returned')) {
         toast.error("Błąd rejestracji");
       }
       throw error;
@@ -195,11 +199,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error;
       toast.success("Zalogowano pomyślnie!");
-    } catch (error: any) {
+    } catch (error: Error | unknown) {
       console.error("Google login error:", error);
       
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
       // Handle specific error types for Google login
-      if (error?.message?.includes('Too many requests')) {
+      if (errorMessage.includes('Too many requests')) {
         toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
       } else {
         toast.error("Błąd logowania przez Google");
@@ -229,13 +235,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error;
       toast.success("Link do resetowania hasła został wysłany na podany adres email!");
-    } catch (error: any) {
+    } catch (error: Error | unknown) {
       console.error("Password reset error:", error);
       
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
       // Handle specific error types for password reset
-      if (error?.message?.includes('Email not confirmed')) {
+      if (errorMessage.includes('Email not confirmed')) {
         toast.error("Adres email nie został potwierdzony!");
-      } else if (error?.message?.includes('Too many requests')) {
+      } else if (errorMessage.includes('Too many requests')) {
         toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
       } else {
         toast.error("Błąd resetowania hasła");
@@ -252,13 +260,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) throw error;
       toast.success("Hasło zostało pomyślnie zmienione!");
-    } catch (error: any) {
+    } catch (error: Error | unknown) {
       console.error("Password update error:", error);
       
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
       // Handle specific error types for password update
-      if (error?.message?.includes('Too many requests')) {
+      if (errorMessage.includes('Too many requests')) {
         toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
-      } else if (error?.message?.includes('Password should be')) {
+      } else if (errorMessage.includes('Password should be')) {
         toast.error("Hasło nie spełnia wymagań bezpieczeństwa");
       } else {
         toast.error("Błąd aktualizacji hasła");

@@ -191,7 +191,7 @@ export default function EssentialsPage() {
       [currentChangedCategory]: allChecked,
     }));
     if (allChecked) toggleSection(currentChangedCategory);
-  }, [checked, currentChangedCategory]);
+  }, [checked, currentChangedCategory, essentials, toggleSection]);
 
   if (!isMounted) return null;
   return (

@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getDateFromDatabase } from '../../../../lib/supabase';
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   try {
-    // Get admin cookie from request headers
-    const cookieHeader = request.headers.get('cookie') || '';
-    const adminCookie = cookieHeader.includes('admin-auth=');
+    // Poprzednia logika sprawdzania cookie admina usunięta, ponieważ nie była używana
     
     // Check payment date
     const paymentDateStr = await getDateFromDatabase('PAYMENT_OPEN_DATE');

@@ -111,13 +111,11 @@ export default function PaymentPage() {
   const [uploadedFile, setUploadedFile] = useState<FileUploadResult | null>(null);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
-  const [daysUntilEvent, setDaysUntilEvent] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Payment open date logic
   const [isPaymentOpen, setIsPaymentOpen] = useState(false); // Start with closed
   const [isPageLoading, setIsPageLoading] = useState(true); // Add loading state
-  const [paymentOpenDate, setPaymentOpenDate] = useState<string | null>(null);
 
   // Function to check payment access that can be called multiple times
   const checkPaymentAccess = () => {
@@ -136,10 +134,7 @@ export default function PaymentPage() {
         const accessAllowed = data.access === true;
         setIsPaymentOpen(accessAllowed);
         
-        // Jeśli API zwróci informację o dacie, ustawmy ją do wyświetlania
-        if (data.date) {
-          setPaymentOpenDate(data.date);
-        }
+        // Informacja o dacie nie jest już wykorzystywana
         setIsPageLoading(false); // Mark loading as complete
       })
       .catch((error) => {
@@ -155,14 +150,7 @@ export default function PaymentPage() {
     checkPaymentAccess();
   }, []);
 
-  // Calculate days until event
-  useEffect(() => {
-    const eventDate = new Date("2025-10-23");
-    const today = new Date();
-    const timeDiff = eventDate.getTime() - today.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    setDaysUntilEvent(daysDiff > 0 ? daysDiff : 0);
-  }, []);
+  // Obliczanie dni do wydarzenia zostało usunięte, ponieważ nie jest już potrzebne
 
   // Check user's registration and payment status
   useEffect(() => {
@@ -188,11 +176,10 @@ export default function PaymentPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, touchedFields },
+    formState: { errors, isValid },
     watch,
     setError,
-    trigger,
-    getValues
+    trigger
   } = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema),
     defaultValues: { needsTransport: false, studentStatus: "" },
@@ -215,7 +202,7 @@ export default function PaymentPage() {
     updateCharCount('medicationsCharCount', medications);
   }, [watch]);
 
-  const [showErrorTooltip, setShowErrorTooltip] = useState(false);
+  // Status state removed
 
   const adminPassword = watch("adminPassword");
 
@@ -240,7 +227,7 @@ export default function PaymentPage() {
         const msg = data?.error || "Błąd weryfikacji hasła";
         setError("adminPassword", { type: "manual", message: msg });
       }
-    } catch (e) {
+    } catch (_) {
       setError("adminPassword", { type: "manual", message: "Błąd połączenia z serwerem" });
     }
   };
@@ -301,6 +288,7 @@ export default function PaymentPage() {
 
     setIsSubmitting(true);
     try {
+      // Usuwamy adminPassword z danych, które wysyłamy
       const { adminPassword: _, ...paymentData } = data;
 
       const mappedPaymentRecord = {
