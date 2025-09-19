@@ -167,12 +167,6 @@ export default function EssentialsPage() {
       items: essentialsBus,
     },
     {
-      id: "medicine",
-      title: "Lekarstwa i inne środki",
-      icon: <Pill className="h-5 w-5" />,
-      items: essentialsMedicine,
-    },
-    {
       id: "optional",
       title: "Opcjonalne",
       icon: <Star className="h-5 w-5" />,
