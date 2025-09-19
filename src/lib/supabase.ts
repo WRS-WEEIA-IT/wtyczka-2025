@@ -21,6 +21,45 @@ export const supabase = createClient(
 );
 
 import { translations } from './translations';
+
+// Cache for dates to avoid frequent database calls
+let dateCache: { [key: string]: string } = {};
+let cacheExpiry: number = 0;
+const CACHE_DURATION = 10 * 1000; // 10 seconds (reduced from 5 minutes for faster testing)
+
+export async function getDateFromDatabase(dateName: 'CONTACT_DATE' | 'PAYMENT_OPEN_DATE'): Promise<string | null> {
+  // Check cache first
+  const now = Date.now();
+  if (cacheExpiry > now && dateCache[dateName]) {
+    return dateCache[dateName];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('dates')
+      .select('date')
+      .eq('name', dateName)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching ${dateName} from database:`, error);
+      return null;
+    }
+
+    if (data) {
+      // Update cache
+      dateCache[dateName] = data.date;
+      cacheExpiry = now + CACHE_DURATION;
+      return data.date;
+    }
+
+    return null;
+  } catch (error) {
+    console.error(`Error fetching ${dateName} from database:`, error);
+    return null;
+  }
+}
+
 export function handleSupabaseError(error: unknown, lang: 'pl' | 'en'): string {
   const defaultLang = 'pl';
   const useLang = translations[lang as keyof typeof translations] ? lang : defaultLang;

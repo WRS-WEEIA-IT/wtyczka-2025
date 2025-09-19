@@ -37,6 +37,11 @@ export interface Translations {
     registerWithGoogle: string;
     alreadyHaveAccount: string;
     dontHaveAccount: string;
+    forgotPassword: string;
+    resetPassword: string;
+    resetPasswordSuccess: string;
+    resetPasswordInstructions: string;
+    backToLogin: string;
     loginSuccess: string;
     registerSuccess: string;
     emailConfirmation: string;

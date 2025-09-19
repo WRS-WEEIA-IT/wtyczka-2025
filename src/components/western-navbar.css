@@ -175,6 +175,7 @@ a.western-button.western-dropdown-animated {
 }
 
 .western-button:hover {
+  transform: rotate(1deg) scale(1.05);
   box-shadow: 0 4px 16px rgba(0,0,0,0.18);
   transition:
     transform 0.18s cubic-bezier(0.23, 1, 0.32, 1),

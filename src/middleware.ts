@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getDateFromDatabase } from './lib/supabase'
 
 // This middleware will protect data API routes while allowing access to pages
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Get the pathname of the request
   const path = request.nextUrl.pathname
 
@@ -11,7 +12,7 @@ export function middleware(request: NextRequest) {
   
   // Protect team members API data
   if (path.includes('/api/team-members') || path.includes('/api/data/team')) {
-    const contactOpenDate = process.env.CONTACT_DATE
+    const contactOpenDate = await getDateFromDatabase('CONTACT_DATE')
     if (contactOpenDate) {
       const now = new Date()
       const openDate = new Date(contactOpenDate)
@@ -25,7 +26,7 @@ export function middleware(request: NextRequest) {
 
   // Protect payment data and form submissions
   if (path.includes('/api/payments') || path.includes('/api/data/payment')) {
-    const paymentOpenDate = process.env.PAYMENT_OPEN_DATE
+    const paymentOpenDate = await getDateFromDatabase('PAYMENT_OPEN_DATE')
     if (paymentOpenDate) {
       const now = new Date()
       const openDate = new Date(paymentOpenDate)

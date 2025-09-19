@@ -151,6 +151,8 @@ export default function RegistrationPage() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
   });
@@ -556,16 +558,7 @@ export default function RegistrationPage() {
                   max="2008-10-23"
                   {...register("dob")}
                   className="w-full px-3 py-2 border border-[#262626] bg-[#232323] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  onChange={(e) => {
-                    // Validate the date format - only allow valid dates with 4-digit years
-                    const dateValue = e.target.value;
-                    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-                    
-                    if (dateValue && !datePattern.test(dateValue)) {
-                      // Reset to empty if invalid format (more than 4 digits in year)
-                      e.target.value = '';
-                    }
-                  }}
+                  required
                 />
                 {errors.dob && (
                   <p className="text-red-500 text-sm mt-1">{errors.dob.message}</p>
@@ -764,15 +757,14 @@ export default function RegistrationPage() {
               <div className="md:col-span-2">
                 <div className="flex items-start">
                   <label className="flex items-center cursor-pointer select-none">
-                    <span className="relative inline-block">
+                    <span className="custom-checkbox-container">
                       <input
                         type="checkbox"
                         {...register("invoice")}
-                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                        className="custom-checkbox-input"
                       />
-                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="5 10 9 14 15 7" />
-                      </svg>
+                      <div className="custom-checkbox-glow"></div>
+                      <div className="custom-checkbox-check">✓</div>
                     </span>
                     <span className="ml-3 text-gray-300">
                       {t.forms.invoice}
@@ -810,25 +802,24 @@ export default function RegistrationPage() {
             <div className="space-y-4">
               <div className="flex items-start">
                 <label className="flex items-center cursor-pointer select-none">
-                  <span className="relative inline-block">
+                  <span className="custom-checkbox-container">
                     <input
                       type="checkbox"
                       {...register("regAccept")}
-                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      className="custom-checkbox-input"
                     />
-                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="5 10 9 14 15 7" />
-                    </svg>
+                    <div className="custom-checkbox-glow"></div>
+                    <div className="custom-checkbox-check">✓</div>
                   </span>
                   <span className="ml-3 text-gray-300">
-                    <a
+                    Akceptuję <a
                       href={process.env.NEXT_PUBLIC_REGULATIONS_LINK}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-amber-400 hover:text-amber-500 underline"
                     >
-                      {t.forms.acceptRegulations} <span className="text-red-500">*</span>
-                    </a>
+                      regulamin
+                    </a> <span className="text-red-500">*</span>
                   </span>
                 </label>
               </div>
@@ -837,18 +828,22 @@ export default function RegistrationPage() {
               )}
               <div className="flex items-start">
                 <label className="flex items-center cursor-pointer select-none">
-                  <span className="relative inline-block">
+                  <span className="custom-checkbox-container">
                     <input
                       type="checkbox"
                       {...register("rodoAccept")}
-                      className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                      className="custom-checkbox-input"
                     />
-                    <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="5 10 9 14 15 7" />
-                    </svg>
+                    <div className="custom-checkbox-glow"></div>
+                    <div className="custom-checkbox-check">✓</div>
                   </span>
-                  <span className="ml-3 text-gray-300">
-                    {t.forms.dataProcessingConsent} <span className="text-red-500">*</span>
+                  <span className="ml-3 text-gray-300 text-xs">
+                    Wyrażam zgodę na przetwarzanie moich danych osobowych przez Politechnikę Łódzką w celu zorganizowania i przeprowadzenia wyjazdu integracyjno-szkoleniowego "Wtyczka 2025". Także zgadzam się na otrzymywanie wiadomości tekstowych dotyczących spraw organizacyjnych związanych z Wyjazdem na adres e-mail i numer telefonu podany w formularzu. Klauzula RODO dostępna jest <a
+                      href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/rodo.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-amber-400 hover:text-amber-500 underline"
+                    >tutaj</a>. <span className="text-red-500">*</span>
                   </span>
                 </label>
               </div>

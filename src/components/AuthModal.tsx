@@ -12,10 +12,12 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const { authLogin, authRegister, authLoginWithGoogle } = useAuth();
+  const { authLogin, authRegister, authLoginWithGoogle, authResetPassword } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -61,8 +63,28 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     e.preventDefault();
     setLoading(true);
 
+    // Handle password reset form submission
+    if (isForgotPassword) {
+      const emailValidation = validateEmail(formData.email);
+      setEmailError(emailValidation);
+      
+      if (emailValidation) {
+        setLoading(false);
+        return;
+      }
 
-    // Custom email validation
+      try {
+        await authResetPassword(formData.email);
+        setResetEmailSent(true);
+      } catch (error) {
+        console.error("Password reset error:", error);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Handle login/register form submission
     const emailValidation = validateEmail(formData.email);
     setEmailError(emailValidation);
     // Custom password validation (only for register)
@@ -130,10 +152,26 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       password: "",
       confirmPassword: "",
     });
+    setEmailError(null);
+    setPasswordError(null);
+    setConfirmPasswordError(null);
   };
 
   const switchMode = () => {
     setIsLogin(!isLogin);
+    setIsForgotPassword(false);
+    setResetEmailSent(false);
+    resetForm();
+  };
+
+  const switchToForgotPassword = () => {
+    setIsForgotPassword(true);
+    resetForm();
+  };
+
+  const backToLogin = () => {
+    setIsForgotPassword(false);
+    setResetEmailSent(false);
     resetForm();
   };
 
@@ -146,132 +184,228 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         >
           <X size={28} />
         </button>
-        <h2 className="text-3xl font-bold text-amber-400 text-center mb-8 drop-shadow-lg">
-          {isLogin ? t.auth.login : t.auth.register}
-        </h2>
-        <div className="mb-6 text-center">
-          <span className="block text-sm text-gray-300 bg-[#18181b]/80 rounded-lg px-4 py-2 mb-2">
-            Jeśli chcesz usunąć wszelkie swoje dane z systemu, skontaktuj się mailowo:
-            <a href="mailto:wtyczka@samorzad.p.lodz.pl" className="text-amber-400 hover:underline ml-1">wtyczka@samorzad.p.lodz.pl</a>
-          </span>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t.auth.email}
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
-              <input
-                type="text"
-                className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
-                value={formData.email}
-                onChange={(e) => {
-                  setFormData({ ...formData, email: e.target.value });
-                  if (emailError) setEmailError(null);
-                }}
-                placeholder={t.auth.email}
-              />
-            </div>
-            {emailError && (
-              <div className="text-red-500 text-xs mt-2 font-medium">{emailError}</div>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {t.auth.password}
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
-              <input
-                type="password"
-                className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
-                value={formData.password}
-                onChange={(e) => {
-                  setFormData({ ...formData, password: e.target.value });
-                  if (!isLogin) validatePassword(e.target.value);
-                  if (passwordError) setPasswordError(null);
-                }}
-                placeholder={t.auth.password}
-              />
-            </div>
-            {!isLogin && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 mt-2">
-                  <div>
-                    <div className={passwordChecklist.length ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• min. 8 znaków</div>
-                    <div className={passwordChecklist.lower && passwordChecklist.upper ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• mała i wielka litera</div>
-                  </div>
-                  <div>
-                    <div className={passwordChecklist.digit ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• cyfra</div>
-                    <div className={passwordChecklist.special ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• znak specjalny</div>
-                  </div>
-                </div>
-            )}
-            {passwordError && (
-              <div className="text-red-500 text-xs mt-2 font-medium">{passwordError}</div>
-            )}
-          </div>
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t.auth.confirmPassword}
-              </label>
-              <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
-                <input
-                  type="password"
-                  className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
-                  value={formData.confirmPassword}
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      confirmPassword: e.target.value,
-                    });
-                    if (confirmPasswordError) setConfirmPasswordError(null);
-                  }}
-                  placeholder={t.auth.confirmPassword}
-                />
+
+        {/* Password Reset Success Screen */}
+        {isForgotPassword && resetEmailSent && (
+          <>
+            <div className="mb-6 text-center">
+              <div className="w-16 h-16 mx-auto mb-6 bg-amber-400/20 rounded-full flex items-center justify-center">
+                <Mail className="h-8 w-8 text-amber-400" />
               </div>
-              {confirmPasswordError && (
-                <div className="text-red-500 text-xs mt-2 font-medium">{confirmPasswordError}</div>
-              )}
+              <h2 className="text-3xl font-bold text-amber-400 text-center mb-4 drop-shadow-lg">
+                {t.auth.resetPasswordSuccess}
+              </h2>
+              <p className="text-gray-300 mb-8">
+                {t.auth.emailConfirmationText}
+              </p>
+              <div className="bg-[#18181b] border border-[#262626] rounded-lg p-3 mb-4">
+                <p className="text-amber-500 font-medium break-all">{formData.email}</p>
+              </div>
+              <p className="text-sm text-gray-400 mb-8">
+                {t.auth.checkSpamFolder}
+              </p>
             </div>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
-          >
-            {loading
-              ? "Ładowanie..."
-              : isLogin
-              ? t.auth.login
-              : t.auth.register}
-          </button>
-        </form>
-        <div className="mt-8">
-          <div className="flex items-center gap-4">
-            <div className="flex-1 border-t border-[#262626]" />
-            <span className="text-gray-400 bg-[#232323]/80 px-3 rounded-full text-sm">lub</span>
-            <div className="flex-1 border-t border-[#262626]" />
-          </div>
-          <button
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className="w-full mt-6 flex items-center justify-center gap-3 bg-[#232323]/90 text-amber-400 py-3 px-4 rounded-2xl hover:bg-[#18181b] focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-all text-lg border-2 border-amber-400"
-          >
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='24' height='24'><g><path fill='#4285F4' d='M24 9.5c3.54 0 6.7 1.22 9.19 3.22l6.85-6.85C35.64 2.69 30.13 0 24 0 14.64 0 6.4 5.74 2.44 14.09l7.98 6.21C12.13 13.09 17.62 9.5 24 9.5z'/><path fill='#34A853' d='M46.1 24.55c0-1.64-.15-3.22-.43-4.75H24v9.02h12.44c-.54 2.9-2.18 5.36-4.65 7.02l7.2 5.59C43.6 37.13 46.1 31.34 46.1 24.55z'/><path fill='#FBBC05' d='M10.42 28.3c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.21C.8 16.36 0 20.04 0 24c0 3.96.8 7.64 2.44 11.11l7.98-6.21z'/><path fill='#EA4335' d='M24 48c6.13 0 11.64-2.03 15.84-5.53l-7.2-5.59c-2.01 1.35-4.59 2.16-8.64 2.16-6.38 0-11.87-3.59-14.58-8.8l-7.98 6.21C6.4 42.26 14.64 48 24 48z'/><path fill='none' d='M0 0h48v48H0z'/></g></svg>
-            {isLogin ? t.auth.loginWithGoogle : t.auth.registerWithGoogle}
-          </button>
-        </div>
-        <div className="mt-8 text-center">
-          <button
-            onClick={switchMode}
-            className="text-amber-400 hover:text-amber-500 text-base font-semibold underline underline-offset-2 transition-colors"
-          >
-            {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount} {isLogin ? t.auth.register : t.auth.login}
-          </button>
-        </div>
+            <button
+              onClick={backToLogin}
+              className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
+            >
+              {t.auth.backToLogin}
+            </button>
+          </>
+        )}
+
+        {/* Password Reset Request Form */}
+        {isForgotPassword && !resetEmailSent && (
+          <>
+            <h2 className="text-3xl font-bold text-amber-400 text-center mb-8 drop-shadow-lg">
+              {t.auth.resetPassword}
+            </h2>
+            <p className="text-gray-300 mb-8 text-center">
+              {t.auth.resetPasswordInstructions}
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  {t.auth.email}
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                  <input
+                    type="text"
+                    className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                    value={formData.email}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value });
+                      if (emailError) setEmailError(null);
+                    }}
+                    placeholder={t.auth.email}
+                  />
+                </div>
+                {emailError && (
+                  <div className="text-red-500 text-xs mt-2 font-medium">{emailError}</div>
+                )}
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
+              >
+                {loading ? "Ładowanie..." : t.auth.resetPassword}
+              </button>
+            </form>
+            <div className="mt-8 text-center">
+              <button
+                onClick={backToLogin}
+                className="text-amber-400 hover:text-amber-500 text-base font-semibold underline underline-offset-2 transition-colors"
+              >
+                {t.auth.backToLogin}
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* Login/Register Form */}
+        {!isForgotPassword && (
+          <>
+            <h2 className="text-3xl font-bold text-amber-400 text-center mb-8 drop-shadow-lg">
+              {isLogin ? t.auth.login : t.auth.register}
+            </h2>
+            <div className="mb-6 text-center">
+              <span className="block text-sm text-gray-300 bg-[#18181b]/80 rounded-lg px-4 py-2 mb-2">
+                Jeśli chcesz usunąć wszelkie swoje dane z systemu, skontaktuj się mailowo:
+                <a href="mailto:wtyczka@samorzad.p.lodz.pl" className="text-amber-400 hover:underline ml-1">wtyczka@samorzad.p.lodz.pl</a>
+              </span>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  {t.auth.email}
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                  <input
+                    type="text"
+                    className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                    value={formData.email}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value });
+                      if (emailError) setEmailError(null);
+                    }}
+                    placeholder={t.auth.email}
+                  />
+                </div>
+                {emailError && (
+                  <div className="text-red-500 text-xs mt-2 font-medium">{emailError}</div>
+                )}
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-300">
+                    {t.auth.password}
+                  </label>
+                  {isLogin && (
+                    <button
+                      type="button"
+                      onClick={switchToForgotPassword}
+                      className="text-amber-400 hover:text-amber-500 text-xs font-medium transition-colors"
+                    >
+                      {t.auth.forgotPassword}
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                  <input
+                    type="password"
+                    className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                    value={formData.password}
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      if (!isLogin) validatePassword(e.target.value);
+                      if (passwordError) setPasswordError(null);
+                    }}
+                    placeholder={t.auth.password}
+                  />
+                </div>
+                {!isLogin && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 mt-2">
+                    <div>
+                      <div className={passwordChecklist.length ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• min. 8 znaków</div>
+                      <div className={passwordChecklist.lower && passwordChecklist.upper ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• mała i wielka litera</div>
+                    </div>
+                    <div>
+                      <div className={passwordChecklist.digit ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• cyfra</div>
+                      <div className={passwordChecklist.special ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• znak specjalny</div>
+                    </div>
+                  </div>
+                )}
+                {passwordError && (
+                  <div className="text-red-500 text-xs mt-2 font-medium">{passwordError}</div>
+                )}
+              </div>
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {t.auth.confirmPassword}
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                    <input
+                      type="password"
+                      className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                      value={formData.confirmPassword}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        });
+                        if (confirmPasswordError) setConfirmPasswordError(null);
+                      }}
+                      placeholder={t.auth.confirmPassword}
+                    />
+                  </div>
+                  {confirmPasswordError && (
+                    <div className="text-red-500 text-xs mt-2 font-medium">{confirmPasswordError}</div>
+                  )}
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
+              >
+                {loading
+                  ? "Ładowanie..."
+                  : isLogin
+                  ? t.auth.login
+                  : t.auth.register}
+              </button>
+            </form>
+            <div className="mt-8">
+              <div className="flex items-center gap-4">
+                <div className="flex-1 border-t border-[#262626]" />
+                <span className="text-gray-400 bg-[#232323]/80 px-3 rounded-full text-sm">lub</span>
+                <div className="flex-1 border-t border-[#262626]" />
+              </div>
+              <button
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-full mt-6 flex items-center justify-center gap-3 bg-[#232323]/90 text-amber-400 py-3 px-4 rounded-2xl hover:bg-[#18181b] focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-all text-lg border-2 border-amber-400"
+              >
+                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='24' height='24'><g><path fill='#4285F4' d='M24 9.5c3.54 0 6.7 1.22 9.19 3.22l6.85-6.85C35.64 2.69 30.13 0 24 0 14.64 0 6.4 5.74 2.44 14.09l7.98 6.21C12.13 13.09 17.62 9.5 24 9.5z'/><path fill='#34A853' d='M46.1 24.55c0-1.64-.15-3.22-.43-4.75H24v9.02h12.44c-.54 2.9-2.18 5.36-4.65 7.02l7.2 5.59C43.6 37.13 46.1 31.34 46.1 24.55z'/><path fill='#FBBC05' d='M10.42 28.3c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.21C.8 16.36 0 20.04 0 24c0 3.96.8 7.64 2.44 11.11l7.98-6.21z'/><path fill='#EA4335' d='M24 48c6.13 0 11.64-2.03 15.84-5.53l-7.2-5.59c-2.01 1.35-4.59 2.16-8.64 2.16-6.38 0-11.87-3.59-14.58-8.8l-7.98 6.21C6.4 42.26 14.64 48 24 48z'/><path fill='none' d='M0 0h48v48H0z'/></g></svg>
+                {isLogin ? t.auth.loginWithGoogle : t.auth.registerWithGoogle}
+              </button>
+            </div>
+            <div className="mt-8 text-center">
+              <button
+                onClick={switchMode}
+                className="text-amber-400 hover:text-amber-500 text-base font-semibold underline underline-offset-2 transition-colors"
+              >
+                {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount} {isLogin ? t.auth.register : t.auth.login}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

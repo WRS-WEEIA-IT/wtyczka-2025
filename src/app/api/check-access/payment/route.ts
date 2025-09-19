@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { getDateFromDatabase } from '../../../../lib/supabase';
 
 export async function GET(request: Request) {
   try {
-    // Get the date from server environment variables
-    const paymentDateStr = process.env.PAYMENT_OPEN_DATE || '';
+    // Get the date from database instead of environment variables
+    const paymentDateStr = await getDateFromDatabase('PAYMENT_OPEN_DATE');
     
     // Check for admin cookie
     const cookieHeader = request.headers.get('cookie') || '';

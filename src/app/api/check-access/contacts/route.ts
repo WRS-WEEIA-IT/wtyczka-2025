@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { getDateFromDatabase } from '../../../../lib/supabase';
 
 export async function GET() {
   try {
-    // Get the date from server environment variables
-    const contactDateStr = process.env.CONTACT_DATE;
+    // Get the date from database
+    const contactDateStr = await getDateFromDatabase('CONTACT_DATE');
     
     if (!contactDateStr) {
       // If no date is set, allow access by default

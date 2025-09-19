@@ -40,10 +40,16 @@ export default function ContactsPage() {
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
   
-  useEffect(() => {
-    setIsMounted(true);
+  // Function to check access with cache busting to avoid caching problems
+  const checkContactAccess = () => {
+    setIsLoading(true); // Show loading state
+    console.log('Checking contacts access...');
+    
+    // Add timestamp parameter to avoid browser caching
+    const timestamp = new Date().getTime();
+    
     // Sprawdzenie dostępu wyłącznie przez API - serwer decyduje o dostępie
-    fetch('/api/check-access/contacts')
+    fetch(`/api/check-access/contacts?t=${timestamp}`)
       .then(res => res.json())
       .then(data => {
         setIsContactVisible(data.access === true);
@@ -51,7 +57,7 @@ export default function ContactsPage() {
         // Only fetch team members if access is granted
         if (data.access === true) {
           // Get team members through API
-          return fetch('/api/team-members')
+          return fetch(`/api/team-members?t=${timestamp}`)
             .then(res => {
               if (!res.ok) throw new Error('Failed to fetch team members');
               return res.json();
@@ -74,6 +80,12 @@ export default function ContactsPage() {
         setIsContactVisible(false);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    setIsMounted(true);
+    // Call the function when component mounts
+    checkContactAccess();
   }, []);
 
   useEffect(() => {
@@ -152,6 +164,13 @@ export default function ContactsPage() {
               Śledź nasze <a href="/news" className="text-amber-400 underline hover:text-amber-300">aktualności</a> oraz social media,<br></br>aby być na bieżąco.
             </span>
           </div>
+          
+          <button 
+            onClick={checkContactAccess}
+            className="mt-6 px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow transition-colors"
+          >
+            Sprawdź dostępność
+          </button>
         </div>
       </div>
     );
@@ -206,6 +225,14 @@ export default function ContactsPage() {
             <CarouselNext className="carouselArrow" />
           </div>
         </Carousel>
+      </div>
+      <div className="text-center mt-8">
+        <button 
+          onClick={checkContactAccess}
+          className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow transition-colors"
+        >
+          Odśwież dane
+        </button>
       </div>
     </div>
   );

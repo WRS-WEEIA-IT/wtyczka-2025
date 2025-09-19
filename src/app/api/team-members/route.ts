@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getTeamMembers } from '@/usecases/team-members';
+import { getDateFromDatabase } from '@/lib/supabase';
 
 export async function GET() {
   try {
     // Check if access is allowed based on date
-    const contactDateStr = process.env.CONTACT_DATE;
+    const contactDateStr = await getDateFromDatabase('CONTACT_DATE');
     
     if (contactDateStr) {
       const now = new Date();

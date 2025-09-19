@@ -12,6 +12,8 @@ import {
   Loader2,
   ChevronDown,
   ChevronRight,
+  Pill,
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { EssentialItem, getEssentials } from "@/usecases/essentials";
@@ -36,6 +38,12 @@ export default function EssentialsPage() {
   >([]);
   const [essentialsBus, setEssentialsBus] = useState<EssentialItem[]>([]);
   const [essentialsOptional, setEssentialsOptional] = useState<EssentialItem[]>(
+    []
+  );
+  const [essentialsMedicine, setEssentialsMedicine] = useState<EssentialItem[]>(
+    []
+  );
+  const [essentialsCrucial, setEssentialsCrucial] = useState<EssentialItem[]>(
     []
   );
 
@@ -82,6 +90,12 @@ export default function EssentialsPage() {
         setEssentialsOptional(
           essentialsDb.filter((item) => item.category === "optional")
         );
+        setEssentialsMedicine(
+          essentialsDb.filter((item) => item.category === "medicine")
+        );
+        setEssentialsCrucial(
+          essentialsDb.filter((item) => item.category === "crucial")
+        );
 
         const initialChecked: { [id: number]: boolean } = {};
         essentialsDb.forEach((item) => {
@@ -96,6 +110,8 @@ export default function EssentialsPage() {
           "electronics",
           "bus",
           "optional",
+          "medicine",
+          "crucial",
         ].forEach((category) => {
           initialCheckedSection[category] = false;
         });
@@ -112,6 +128,12 @@ export default function EssentialsPage() {
   }, []);
 
   const essentialsData = [
+    {
+      id: "crucial",
+      title: "Najważniejsze",
+      icon: <AlertTriangle className="h-5 w-5" />,
+      items: essentialsCrucial,
+    },
     {
       id: "documents",
       title: "Dokumenty",
@@ -141,6 +163,12 @@ export default function EssentialsPage() {
       title: "W autokarze",
       icon: <Bus className="h-5 w-5" />,
       items: essentialsBus,
+    },
+    {
+      id: "medicine",
+      title: "Lekarstwa i inne środki",
+      icon: <Pill className="h-5 w-5" />,
+      items: essentialsMedicine,
     },
     {
       id: "optional",
@@ -270,20 +298,24 @@ export default function EssentialsPage() {
                             key={item.id}
                             className="flex items-center border border-[#3a3a3a] rounded-lg p-4 bg-[#18181b] cursor-pointer transition-colors hover:border-amber-400"
                           >
-                            <input
-                              type="checkbox"
-                              checked={checked[item.id]}
-                              onChange={() => {
-                                setChecked((prev) => ({
-                                  ...prev,
-                                  [item.id]: !prev[item.id],
-                                }));
-                                setCurrentChangedCategory(item.category);
-                              }}
-                              className="form-checkbox h-5 w-5 text-amber-500 rounded focus:ring-amber-400 border-amber-400 mr-4 transition-all duration-150"
-                            />
+                            <span className="custom-checkbox-container">
+                              <input
+                                type="checkbox"
+                                checked={checked[item.id]}
+                                onChange={() => {
+                                  setChecked((prev) => ({
+                                    ...prev,
+                                    [item.id]: !prev[item.id],
+                                  }));
+                                  setCurrentChangedCategory(item.category);
+                                }}
+                                className="custom-checkbox-input"
+                              />
+                              <div className="custom-checkbox-glow"></div>
+                              <div className="custom-checkbox-check">✓</div>
+                            </span>
                             <span
-                              className={`text-base ${
+                              className={`text-base flex-1 my-auto ${
                                 checked[item.id]
                                   ? "line-through text-amber-300"
                                   : "text-white"

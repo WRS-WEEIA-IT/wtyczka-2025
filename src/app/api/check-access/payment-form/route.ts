@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getDateFromDatabase } from '../../../../lib/supabase';
 
 export async function GET(request: Request) {
   try {
@@ -7,7 +8,7 @@ export async function GET(request: Request) {
     const adminCookie = cookieHeader.includes('admin-auth=');
     
     // Check payment date
-    const paymentDateStr = process.env.PAYMENT_OPEN_DATE;
+    const paymentDateStr = await getDateFromDatabase('PAYMENT_OPEN_DATE');
     
     if (!paymentDateStr) {
       // If no date is set, deny access by default

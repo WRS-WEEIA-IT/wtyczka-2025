@@ -119,9 +119,16 @@ export default function PaymentPage() {
   const [isPageLoading, setIsPageLoading] = useState(true); // Add loading state
   const [paymentOpenDate, setPaymentOpenDate] = useState<string | null>(null);
 
-  useEffect(() => {
+  // Function to check payment access that can be called multiple times
+  const checkPaymentAccess = () => {
+    setIsPageLoading(true); // Show loading state
+    console.log('Checking payment form access...');
+    
+    // Add timestamp parameter to avoid browser caching
+    const timestamp = new Date().getTime();
+    
     // Sprawdzanie dostępności formularza płatności wyłącznie przez API
-    fetch('/api/check-access/payment-form')
+    fetch(`/api/check-access/payment-form?t=${timestamp}`)
       .then(res => res.json())
       .then(data => {
         console.log('Payment access API response:', data);
@@ -141,6 +148,11 @@ export default function PaymentPage() {
         setIsPaymentOpen(false);
         setIsPageLoading(false); // Mark loading as complete even on error
       });
+  };
+  
+  useEffect(() => {
+    // Call the function when component mounts
+    checkPaymentAccess();
   }, []);
 
   // Calculate days until event
@@ -649,8 +661,14 @@ export default function PaymentPage() {
                 <p className="text-gray-400 mb-2">
                   Możliwość autoryzacji i wysyłania formularza płatności zostanie wkrótce otwarta.
                 </p>
-                <br></br>
                 <p className="text-gray-400 text-sm">Sprawdź aktualności na stronie, aby być na bieżąco!</p>
+                
+                <button 
+                  onClick={checkPaymentAccess}
+                  className="mt-6 px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow transition-colors"
+                >
+                  Sprawdź dostępność
+                </button>
               </div>
               <Link
                 href="/news"
@@ -949,15 +967,14 @@ export default function PaymentPage() {
                   </label>
                   <div className="flex items-center space-x-2 h-10">
           <label className="flex items-center cursor-pointer gap-2 select-none">
-            <span className="relative inline-flex items-center">
+            <span className="custom-checkbox-container">
               <input
                 type="checkbox"
                 {...register("needsTransport", { setValueAs: v => !v })}
-                className="peer h-5 w-5 aspect-square text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                className="custom-checkbox-input"
               />
-              <svg className="pointer-events-none absolute left-0 top-0 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="5 10 9 14 15 7" />
-              </svg>
+              <div className="custom-checkbox-glow"></div>
+              <div className="custom-checkbox-check">✓</div>
             </span>
             <span className="text-white text-sm">Tak, dojeżdżam samodzielnie</span>
           </label>
@@ -1094,15 +1111,14 @@ export default function PaymentPage() {
               <div className="space-y-4">
                 <div className="flex items-start">
                   <label className="flex items-center cursor-pointer select-none">
-                    <span className="relative inline-block">
+                    <span className="custom-checkbox-container">
                       <input
                         type="checkbox"
                         {...register("transferConfirmation")}
-                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                        className="custom-checkbox-input"
                       />
-                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="5 10 9 14 15 7" />
-                      </svg>
+                      <div className="custom-checkbox-glow"></div>
+                      <div className="custom-checkbox-check">✓</div>
                     </span>
                     <span className="ml-3 text-gray-300">
                       Potwierdzam, że wykonałem/am przelew na wskazane konto bankowe
@@ -1118,15 +1134,14 @@ export default function PaymentPage() {
 
                 <div className="flex items-start">
                   <label className="flex items-center cursor-pointer select-none">
-                    <span className="relative inline-block">
+                    <span className="custom-checkbox-container">
                       <input
                         type="checkbox"
                         {...register("ageConfirmation")}
-                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                        className="custom-checkbox-input"
                       />
-                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="5 10 9 14 15 7" />
-                      </svg>
+                      <div className="custom-checkbox-glow"></div>
+                      <div className="custom-checkbox-check">✓</div>
                     </span>
                     <span className="ml-3 text-gray-300">
                       Oświadczam, że mam ukończone 18 lat w dniu wyjazdu. <span className="text-red-500">*</span>
@@ -1141,15 +1156,14 @@ export default function PaymentPage() {
 
                 <div className="flex items-start">
                   <label className="flex items-center cursor-pointer select-none">
-                    <span className="relative inline-block">
+                    <span className="custom-checkbox-container">
                       <input
                         type="checkbox"
                         {...register("cancellationPolicy")}
-                        className="peer h-5 w-5 aspect-square mt-0.5 text-amber-600 focus:ring-amber-500 border border-gray-400 rounded bg-[#232323] cursor-pointer appearance-none checked:bg-amber-500 checked:border-amber-500"
+                        className="custom-checkbox-input"
                       />
-                      <svg className="pointer-events-none absolute left-0 top-0.5 h-5 w-5 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="5 10 9 14 15 7" />
-                      </svg>
+                      <div className="custom-checkbox-glow"></div>
+                      <div className="custom-checkbox-check">✓</div>
                     </span>
                     <span className="ml-3 text-gray-300">
                       Rozumiem i akceptuję politykę anulowania, zgodnie z którą zwrot
