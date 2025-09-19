@@ -34,7 +34,7 @@ export async function getPartners(): Promise<Partner[]> {
     const { data, error } = await supabase
       .from('partners')
       .select('*')
-      .order('name');
+      .order('id');
 
     if (error) {
       console.error('Error fetching from partners table:', error);
@@ -43,7 +43,7 @@ export async function getPartners(): Promise<Partner[]> {
       const alternativeResult = await supabase
         .from('parnters') // Try alternative spelling based on constraint name
         .select('*')
-        .order('name');
+        .order('id');
         
       if (alternativeResult.error) {
         console.error('Error fetching from parnters table:', alternativeResult.error);
@@ -81,7 +81,7 @@ export async function getPartnersByCategory(category: PartnerCategory): Promise<
       .from('partners')
       .select('*')
       .eq('category', category)
-      .order('name');
+      .order('id');
 
     if (error) {
       console.error('Error fetching partners by category:', error);
@@ -125,12 +125,6 @@ export async function getPartnersByCategories(): Promise<Record<PartnerCategory,
       }
       result['partner']!.push(partner);
     }
-  });
-  
-  // Sort partners within each category by name
-  Object.keys(result).forEach(category => {
-    const typedCategory = category as PartnerCategory;
-    result[typedCategory] = result[typedCategory]?.sort((a, b) => a.name.localeCompare(b.name));
   });
   
   return result as Record<PartnerCategory, Partner[]>;
