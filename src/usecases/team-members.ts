@@ -27,8 +27,8 @@ export const teamMembers: TeamMember[] = [
   },
   {
     id: '3',
-    name: 'Daria Zuranska',
-    role: 'Kadra',
+    name: 'Daria Żurańska',
+    role: 'Organizatorka',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/daria.jpg',
     email: 'd.zuranska@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/daria.zuranska.1',
@@ -36,7 +36,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '4',
     name: 'Dawid Pawlak',
-    role: 'Kadra',
+    role: 'Organizator',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/dawid.jpg',
     email: 'd.pawlak@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/dawid.pawlak.50951',
@@ -44,7 +44,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '5',
     name: 'Adrian Antczak',
-    role: 'Kadra',
+    role: 'Organizator',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/adrian.jpg',
     email: 'a.antczak@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/profile.php?id=100009414133154',
@@ -52,7 +52,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '6',
     name: 'Jakub "Wiśnia" Wiślicki',
-    role: 'Kadra',
+    role: 'Organizator',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/wisnia.jpg',
     email: 'j.wislicki@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/profile.php?id=100012937775211',
@@ -60,7 +60,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '7',
     name: 'Marta Kawecka',
-    role: 'Kadra',
+    role: 'Organizatorka',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/marta.jpg',
     email: 'm.kawecka@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/marta.kawecka.566',
@@ -68,7 +68,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '8',
     name: 'Oliwier Kalecki',
-    role: 'Kadra',
+    role: 'Organizator',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/oliwier.jpg',
     email: 'o.kalecki@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/Oliwier.Kalecki.17',
@@ -76,7 +76,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '9',
     name: 'Patrycja Porada',
-    role: 'Kadra',
+    role: 'Organizatorka',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/patrycja.jpg',
     email: 'p.porada@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/profile.php?id=100013394468940',
@@ -84,7 +84,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '10',
     name: 'Theo de Schaeck',
-    role: 'Kadra',
+    role: 'Organizator',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/theo.jpg',
     email: 't.deschaeck@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/profile.php?id=61568438813117',
