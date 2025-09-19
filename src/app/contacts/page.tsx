@@ -16,10 +16,7 @@ async function isContactOpen() {
 }
 import { getTeamMembers, TeamMember } from '@/usecases/team-members';
 import TeamMemberCard from '@/components/TeamMemberCard';
-import styles from './contacts.module.css';
-import './team-animations.css';
-import './carousel-dots.css';
-import './contacts-background.css';
+// All styles are now consolidated in app/css
 
 import {
   Carousel,
@@ -104,7 +101,7 @@ export default function ContactsPage() {
   // Show loading state
   if (isLoading) {
     return (
-      <div className={styles.contactsContainer}>
+      <div className="contactsContainer">
         <div className="pageOverlay"></div>
         <div
           style={{
@@ -121,7 +118,7 @@ export default function ContactsPage() {
   // Show access denied message
   if (!isContactVisible) {
     return (
-      <div className={styles.contactsContainer}>
+      <div className="contactsContainer">
         <div className="pageOverlay"></div>
         <div
           style={{
@@ -160,14 +157,14 @@ export default function ContactsPage() {
     );
   }
   return (
-    <div className={styles.contactsContainer}>
+    <div className="contactsContainer">
       <div className="pageOverlay"></div>
-      <h1 className={`${styles.pageTitle} fadeIn`}>Kadra Wyjazdu</h1>
-      <p className={`${styles.pageDescription} fadeIn`} style={{ animationDelay: '0.2s' }}>
+      <h1 className="pageTitle fadeIn">Kadra Wyjazdu</h1>
+      <p className="pageDescription fadeIn" style={{ animationDelay: '0.2s' }}>
         Poznaj osoby organizujące obóz adaptacyjny Wtyczka 2025. W razie pytań możesz się z nami skontaktować bezpośrednio poprzez email lub Facebook.
       </p>
 
-      <div className={styles.carouselContainer}>
+      <div className="carouselContainer">
         {/* Carousel for all devices showing 3 cards at once on desktop */}
         <Carousel 
           className="w-full mx-auto"
@@ -205,8 +202,8 @@ export default function ContactsPage() {
           </div>
           
           <div className="flex justify-center mt-8 gap-24">
-            <CarouselPrevious className={`${styles.carouselArrow}`} />
-            <CarouselNext className={`${styles.carouselArrow}`} />
+            <CarouselPrevious className="carouselArrow" />
+            <CarouselNext className="carouselArrow" />
           </div>
         </Carousel>
       </div>
