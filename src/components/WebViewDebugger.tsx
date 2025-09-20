@@ -12,10 +12,14 @@ export default function WebViewDebugger() {
   const [showDebugger, setShowDebugger] = useState(false);
 
   useEffect(() => {
-    // Show in both development and production
+    // Show in development mode
     setDetectedInfo(detectWebView());
-    setShowDebugger(true);
+    // Only show in development
+    if (process.env.NODE_ENV === 'development') {
+      setShowDebugger(true);
+    }
   }, []);
+  
 
   if (!showDebugger || !detectedInfo) return null;
 
