@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from '@/contexts/AuthContext';
 import { detectWebView } from '@/lib/webviewDetection';
 import { useState, useEffect } from 'react';
 
@@ -9,7 +8,6 @@ import { useState, useEffect } from 'react';
  * Only shows in development mode
  */
 export default function WebViewDebugger() {
-  const { webViewInfo } = useAuth();
   const [detectedInfo, setDetectedInfo] = useState<ReturnType<typeof detectWebView> | null>(null);
   const [showDebugger, setShowDebugger] = useState(false);
 

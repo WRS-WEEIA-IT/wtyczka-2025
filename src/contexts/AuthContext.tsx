@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [webViewInfo, setWebViewInfo] = useState<ReturnType<typeof detectWebView>>(() => detectWebView());
+  const [webViewInfo] = useState<ReturnType<typeof detectWebView>>(() => detectWebView());
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {

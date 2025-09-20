@@ -102,8 +102,6 @@ export function generateBrowserUserAgent(originalUserAgent: string, platform: st
  * Creates a URL that will force opening in external browser
  */
 export function createExternalBrowserUrl(originalUrl: string, platform: string): string {
-  const encodedUrl = encodeURIComponent(originalUrl);
-  
   const schemes = {
     ios: `googlechrome://${originalUrl.replace(/^https?:\/\//, '')}`,
     android: `intent://${originalUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;end`,

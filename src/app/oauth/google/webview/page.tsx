@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { detectWebView, openInExternalBrowser, showExternalBrowserPrompt } from '@/lib/webviewDetection';
 
-export default function WebViewOAuthPage() {
+function WebViewOAuthContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const redirectTo = searchParams.get('redirect_to') || '/';
-  const userAgent = searchParams.get('user_agent') || '';
 
   useEffect(() => {
     const handleWebViewOAuth = async () => {
@@ -121,5 +120,24 @@ export default function WebViewOAuthPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function WebViewOAuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-[#232323] via-[#18181b] to-[#232323] flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-6 bg-amber-400/20 rounded-full flex items-center justify-center animate-spin">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-amber-400 mb-4">Ładowanie...</h2>
+        </div>
+      </div>
+    }>
+      <WebViewOAuthContent />
+    </Suspense>
   );
 }

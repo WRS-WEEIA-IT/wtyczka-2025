@@ -12,7 +12,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const { authLogin, authRegister, authLoginWithGoogle, authLoginWithGoogleWebView, authResetPassword, isWebView, webViewInfo } = useAuth();
+  const { authLogin, authRegister, authLoginWithGoogleWebView, authResetPassword, isWebView, webViewInfo } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
