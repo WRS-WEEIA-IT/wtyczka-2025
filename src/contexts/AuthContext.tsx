@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
+import { detectWebView } from "@/lib/webviewDetection";
 
 interface AuthContextType {
   user: User | null;
@@ -17,9 +18,12 @@ interface AuthContextType {
   authLogin: (email: string, password: string) => Promise<void>;
   authRegister: (email: string, password: string) => Promise<void>;
   authLoginWithGoogle: () => Promise<void>;
+  authLoginWithGoogleWebView: () => Promise<void>;
   authLogout: () => Promise<void>;
   authResetPassword: (email: string) => Promise<void>;
   authUpdatePassword: (password: string) => Promise<void>;
+  isWebView: boolean;
+  webViewInfo: ReturnType<typeof detectWebView>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [webViewInfo] = useState<ReturnType<typeof detectWebView>>(() => detectWebView());
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -214,6 +219,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function authLoginWithGoogleWebView() {
+    const webView = detectWebView();
+    
+    if (!webView.isWebView) {
+      // Not in WebView, use normal flow
+      return authLoginWithGoogle();
+    }
+
+    // In WebView - redirect to WebView page that handles the prompt
+    try {
+      const currentUrl = window.location.href;
+      const webViewUrl = `/oauth/google/webview?redirect_to=${encodeURIComponent(currentUrl)}`;
+      window.location.href = webViewUrl;
+      
+    } catch (error: Error | unknown) {
+      console.error("Google WebView login error:", error);
+      
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Handle specific error types for Google login
+      if (errorMessage.includes('Too many requests')) {
+        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+      } else {
+        toast.error("Błąd logowania przez Google");
+      }
+      throw error;
+    }
+  }
+
   async function authLogout() {
     try {
       const { error } = await supabase.auth.signOut();
@@ -283,9 +317,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authLogin,
     authRegister,
     authLoginWithGoogle,
+    authLoginWithGoogleWebView,
     authLogout,
     authResetPassword,
     authUpdatePassword,
+    isWebView: webViewInfo.isWebView,
+    webViewInfo,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

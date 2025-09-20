@@ -346,7 +346,7 @@ export default function Navbar() {
 
           {/* Mobile Navigation */}
           {isMenuOpen && isMobile && (
-            <div className="md:hidden py-2 border-t border-[#8B4513] western-mobile-menu w-full">
+            <div className="md:hidden py-2 western-mobile-menu w-full">
               <div className="flex flex-col px-2 pb-2 overflow-y-auto overflow-x-hidden max-h-screen" style={{rowGap: '3px'}}>
                 <Link
                   href="/"
