@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
+import WebViewDebugger from "@/components/WebViewDebugger";
 
 // Tagesschrift for headings and titles - using local font
 const tagesschrift = localFont({
@@ -61,6 +62,7 @@ export default function RootLayout({
                 className: "animate-toast-bottom"
               }}
             />
+            <WebViewDebugger />
           </AuthProvider>
         </LanguageProvider>
       </body>
