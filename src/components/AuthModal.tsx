@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { X, Mail, Lock } from "lucide-react";
+import { X, Mail, Lock, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -383,7 +384,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </button>
             </form>
             {/* Google Login Section - with WebView handling */}
-            {!isWebView ? (
+            {isWebView ? (
               // Normal Google login for regular browsers
               <div className="mt-8">
                 <div className="flex items-center gap-4">
@@ -396,7 +397,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   disabled={loading}
                   className="w-full mt-6 flex items-center justify-center gap-3 bg-[#232323]/90 text-amber-400 py-3 px-4 rounded-2xl hover:bg-[#18181b] focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-all text-lg border-2 border-amber-400"
                 >
-                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='24' height='24'><g><path fill='#4285F4' d='M24 9.5c3.54 0 6.7 1.22 9.19 3.22l6.85-6.85C35.64 2.69 30.13 0 24 0 14.64 0 6.4 5.74 2.44 14.09l7.98 6.21C12.13 13.09 17.62 9.5 24 9.5z'/><path fill='#34A853' d='M46.1 24.55c0-1.64-.15-3.22-.43-4.75H24v9.02h12.44c-.54 2.9-2.18 5.36-4.65 7.02l7.2 5.59C43.6 37.13 46.1 31.34 46.1 24.55z'/><path fill='#FBBC05' d='M10.42 28.3c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.21C.8 16.36 0 20.04 0 24c0 3.96.8 7.64 2.44 11.11l7.98-6.21z'/><path fill='#EA4335' d='M24 48c6.13 0 11.64-2.03 15.84-5.53l-7.2-5.59c-2.01 1.35-4.59 2.16-8.64 2.16-6.38 0-11.87-3.59-14.58-8.8l-7.98 6.21C6.4 42.26 14.64 48 24 48z'/><path fill='none' d='M0 0h48v48H0z'/></g></svg>
+                  <Image
+                    src="/google-logo.svg"
+                    alt="Google"
+                    width={24}
+                    height={24}
+                    className="inline-block"
+                  />
                   {isLogin ? t.auth.loginWithGoogle : t.auth.registerWithGoogle}
                 </button>
               </div>
@@ -412,9 +419,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 {/* WebView Warning Message */}
                 <div className="mt-4 p-4 bg-amber-400/10 border border-amber-400/30 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400 mt-0.5 flex-shrink-0">
-                      <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                    </svg>
+                  <TriangleAlert className="h-6 w-6 text-amber-400 mt-0.5 flex-shrink-0" />
                     <div className="text-sm text-amber-200">
                       <p className="font-medium mb-1">Wykryto przeglądarkę w aplikacji</p>
                       <p className="text-amber-300/80">
@@ -433,7 +438,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   disabled={loading}
                   className="w-full mt-6 flex items-center justify-center gap-3 bg-[#232323]/90 text-amber-400 py-3 px-4 rounded-2xl hover:bg-[#18181b] focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-all text-lg border-2 border-amber-400"
                 >
-                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='24' height='24'><g><path fill='#4285F4' d='M24 9.5c3.54 0 6.7 1.22 9.19 3.22l6.85-6.85C35.64 2.69 30.13 0 24 0 14.64 0 6.4 5.74 2.44 14.09l7.98 6.21C12.13 13.09 17.62 9.5 24 9.5z'/><path fill='#34A853' d='M46.1 24.55c0-1.64-.15-3.22-.43-4.75H24v9.02h12.44c-.54 2.9-2.18 5.36-4.65 7.02l7.2 5.59C43.6 37.13 46.1 31.34 46.1 24.55z'/><path fill='#FBBC05' d='M10.42 28.3c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.21C.8 16.36 0 20.04 0 24c0 3.96.8 7.64 2.44 11.11l7.98-6.21z'/><path fill='#EA4335' d='M24 48c6.13 0 11.64-2.03 15.84-5.53l-7.2-5.59c-2.01 1.35-4.59 2.16-8.64 2.16-6.38 0-11.87-3.59-14.58-8.8l-7.98 6.21C6.4 42.26 14.64 48 24 48z'/><path fill='none' d='M0 0h48v48H0z'/></g></svg>
+                  <Image
+                    src="/google-logo.svg"
+                    alt="Google"
+                    width={24}
+                    height={24}
+                    className="inline-block"
+                  />
                   {isLogin ? t.auth.loginWithGoogle : t.auth.registerWithGoogle}
                 </button>
               </div>
