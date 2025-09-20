@@ -10,7 +10,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
-import { detectWebView, showExternalBrowserPrompt } from "@/lib/webviewDetection";
+import { detectWebView } from "@/lib/webviewDetection";
 
 interface AuthContextType {
   user: User | null;
@@ -227,23 +227,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return authLoginWithGoogle();
     }
 
-    // In WebView - show prompt to open external browser
+    // In WebView - redirect to WebView page that handles the prompt
     try {
       const currentUrl = window.location.href;
-      const oauthUrl = `/api/oauth/google?redirect_to=${encodeURIComponent(currentUrl)}`;
-      
-      // Show prompt to open external browser
-      showExternalBrowserPrompt(
-        () => {
-          // User confirmed - try direct OAuth as fallback
-          window.location.href = oauthUrl;
-        },
-        () => {
-          // User cancelled - try direct OAuth as fallback
-          window.location.href = oauthUrl;
-        },
-        webView.platform
-      );
+      const webViewUrl = `/oauth/google/webview?redirect_to=${encodeURIComponent(currentUrl)}`;
+      window.location.href = webViewUrl;
       
     } catch (error: Error | unknown) {
       console.error("Google WebView login error:", error);
