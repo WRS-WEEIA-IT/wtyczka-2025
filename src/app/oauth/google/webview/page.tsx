@@ -26,9 +26,8 @@ function WebViewOAuthContent() {
         // We're in a WebView - show prompt to user
         showExternalBrowserPrompt(
           () => {
-            // User confirmed - redirect to OAuth
-            const currentUrl = window.location.origin + '/api/oauth/google?redirect_to=' + encodeURIComponent(redirectTo);
-            window.location.href = currentUrl;
+            // User confirmed - just close modal and redirect back
+            router.push(redirectTo);
           },
           () => {
             // User cancelled - redirect back
@@ -88,24 +87,8 @@ function WebViewOAuthContent() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#232323] via-[#18181b] to-[#232323] flex items-center justify-center p-4">
-      <div className="text-center max-w-md">
-        <div className="w-16 h-16 mx-auto mb-6 bg-green-400/20 rounded-full flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-          </svg>
-        </div>
-        <h2 className="text-2xl font-bold text-green-400 mb-4">Gotowe!</h2>
-        <p className="text-gray-300 mb-6">
-          Instrukcje zostały wyświetlone. Użyj przycisku &quot;Otwórz w zewnętrznej przeglądarce&quot; w przeglądarce aplikacji.
-        </p>
-        <div className="text-sm text-gray-400">
-          Następnie kliknij &quot;Zaloguj się przez Google&quot; w przeglądarce zewnętrznej.
-        </div>
-      </div>
-    </div>
-  );
+  // This should never be reached since we redirect immediately after showing the prompt
+  return null;
 }
 
 export default function WebViewOAuthPage() {
