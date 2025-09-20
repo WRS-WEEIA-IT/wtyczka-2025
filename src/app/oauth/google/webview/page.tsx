@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { detectWebView, openInExternalBrowser, showExternalBrowserPrompt } from '@/lib/webviewDetection';
+import { detectWebView, showExternalBrowserPrompt } from '@/lib/webviewDetection';
 
 function WebViewOAuthContent() {
   const searchParams = useSearchParams();
@@ -23,34 +23,19 @@ function WebViewOAuthContent() {
           return;
         }
 
-        // We're in a WebView - implement workarounds
-        const currentUrl = window.location.origin + '/api/oauth/google?redirect_to=' + encodeURIComponent(redirectTo);
-        
-        // Try to open in external browser
-        const success = openInExternalBrowser(currentUrl, webViewInfo.platform);
-        
-        if (success) {
-          // Show success message and redirect back
-          setTimeout(() => {
+        // We're in a WebView - show prompt to user
+        showExternalBrowserPrompt(
+          () => {
+            // User confirmed - redirect to OAuth
+            const currentUrl = window.location.origin + '/api/oauth/google?redirect_to=' + encodeURIComponent(redirectTo);
+            window.location.href = currentUrl;
+          },
+          () => {
+            // User cancelled - redirect back
             router.push(redirectTo);
-          }, 2000);
-        } else {
-          // Show prompt to user
-          showExternalBrowserPrompt(
-            () => {
-              // User confirmed - try again
-              openInExternalBrowser(currentUrl, webViewInfo.platform);
-              setTimeout(() => {
-                router.push(redirectTo);
-              }, 2000);
-            },
-            () => {
-              // User cancelled - redirect back
-              router.push(redirectTo);
-            },
-            webViewInfo.platform
-          );
-        }
+          },
+          webViewInfo.platform
+        );
         
       } catch (err) {
         console.error('WebView OAuth error:', err);
@@ -72,8 +57,8 @@ function WebViewOAuthContent() {
               <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-amber-400 mb-4">Przekierowywanie...</h2>
-          <p className="text-gray-300">Próbujemy otworzyć logowanie w przeglądarce zewnętrznej</p>
+          <h2 className="text-2xl font-bold text-amber-400 mb-4">Ładowanie...</h2>
+          <p className="text-gray-300">Przygotowujemy logowanie przez Google</p>
         </div>
       </div>
     );
@@ -111,12 +96,12 @@ function WebViewOAuthContent() {
             <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-green-400 mb-4">Otwieranie w przeglądarce</h2>
+        <h2 className="text-2xl font-bold text-green-400 mb-4">Gotowe!</h2>
         <p className="text-gray-300 mb-6">
-          Przekierowujemy Cię do przeglądarki zewnętrznej, aby dokończyć logowanie przez Google.
+          Instrukcje zostały wyświetlone. Użyj przycisku &quot;Otwórz w zewnętrznej przeglądarce&quot; w przeglądarce aplikacji.
         </p>
         <div className="text-sm text-gray-400">
-          Jeśli nie nastąpi przekierowanie, skopiuj link i otwórz go w przeglądarce zewnętrznej.
+          Następnie kliknij &quot;Zaloguj się przez Google&quot; w przeglądarce zewnętrznej.
         </div>
       </div>
     </div>
