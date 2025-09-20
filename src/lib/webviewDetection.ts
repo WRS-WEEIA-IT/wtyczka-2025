@@ -65,7 +65,8 @@ export function detectWebView(): WebViewInfo {
   }
   // Generic WebView detection (iOS WKWebView, Android WebView)
   else if (
-    (platform === 'ios' && userAgent.includes('safari') && !userAgent.includes('crios') && !userAgent.includes('fxios')) ||
+    // Only detect as WebView if it's explicitly a WebView, not regular Safari
+    (platform === 'ios' && (userAgent.includes('webview') || userAgent.includes('wkwebview'))) ||
     (platform === 'android' && userAgent.includes('wv') && !userAgent.includes('chrome')) ||
     userAgent.includes('webview')
   ) {
@@ -191,14 +192,34 @@ export function showExternalBrowserPrompt(
       </div>
       <h3 class="text-2xl font-bold text-amber-400 mb-4">Otwórz w przeglądarce</h3>
       <p class="text-gray-300 mb-6">${instructions}</p>
-      <div class="flex gap-3">
-        <button class="flex-1 py-3 px-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors" data-action="cancel">
-          Anuluj
-        </button>
-        <button class="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-xl transition-colors" data-action="confirm">
-          Otwórz w przeglądarce
-        </button>
-      </div>
+      
+      ${isMobile ? `
+        <div class="bg-amber-400/10 border border-amber-400/30 rounded-lg p-4 mb-6 text-left">
+          <p class="text-sm text-amber-200 mb-3 font-medium">Instrukcje:</p>
+          <ol class="text-xs text-amber-300/80 space-y-2">
+            <li class="flex items-start gap-2">
+              <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+              <span>Skopiuj link z paska adresu</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+              <span>Otwórz Safari lub Chrome</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+              <span>Wklej link w pasku adresu</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+              <span>Naciśnij Enter i zaloguj się</span>
+            </li>
+          </ol>
+        </div>
+      ` : ''}
+      
+      <button class="w-full py-3 px-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors" data-action="cancel">
+        Rozumiem
+      </button>
     </div>
   `;
   

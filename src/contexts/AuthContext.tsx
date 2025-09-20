@@ -10,7 +10,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
-import { detectWebView, openInExternalBrowser, showExternalBrowserPrompt } from "@/lib/webviewDetection";
+import { detectWebView, showExternalBrowserPrompt } from "@/lib/webviewDetection";
 
 interface AuthContextType {
   user: User | null;
@@ -227,27 +227,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return authLoginWithGoogle();
     }
 
-    // In WebView - redirect to our API route that handles WebView workarounds
+    // In WebView - show prompt to open external browser
     try {
       const currentUrl = window.location.href;
       const oauthUrl = `/api/oauth/google?redirect_to=${encodeURIComponent(currentUrl)}`;
       
-      // Workaround 2: Force open external browser
-      if (webView.canOpenExternal) {
-        const success = openInExternalBrowser(oauthUrl, webView.platform);
-        
-        if (success) {
-          toast.success("Otwieranie w przeglądarce zewnętrznej...");
-          return;
-        }
-      }
-      
-      // Workaround 3: Show prompt to open external browser
+      // Show prompt to open external browser
       showExternalBrowserPrompt(
         () => {
-          // User confirmed - try to open external browser
-          openInExternalBrowser(oauthUrl, webView.platform);
-          toast.success("Otwieranie w przeglądarce zewnętrznej...");
+          // User confirmed - try direct OAuth as fallback
+          window.location.href = oauthUrl;
         },
         () => {
           // User cancelled - try direct OAuth as fallback

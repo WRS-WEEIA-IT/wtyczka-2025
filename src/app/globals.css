@@ -55,6 +55,33 @@ p, span, li, label, a, button, input, textarea, th, td, div, section, article {
   }
 }
 
+/* Loading spinner animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 .animate-toast-bottom {
   animation: toast-bottom-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
