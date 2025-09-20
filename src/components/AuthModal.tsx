@@ -178,7 +178,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-lg p-4">
-      <div className="relative w-full max-w-lg rounded-3xl border border-amber-400/40 bg-gradient-to-br from-[#232323]/90 via-[#18181b]/90 to-[#232323]/80 shadow-2xl shadow-amber-900/30 backdrop-blur-xl px-8 py-10">
+      <div className="relative w-full max-w-lg max-h-[90vh] rounded-3xl border border-amber-400/40 bg-gradient-to-br from-[#232323]/90 via-[#18181b]/90 to-[#232323]/80 shadow-2xl shadow-amber-900/30 backdrop-blur-xl px-8 py-10 overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-amber-400 transition-colors"

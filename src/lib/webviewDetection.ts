@@ -174,7 +174,7 @@ export function showExternalBrowserPrompt(
   
   const isMobile = platform === 'ios' || platform === 'android';
   const instructions = isMobile 
-    ? 'Aby zalogować się przez Google, otwórz tę stronę w przeglądarce zewnętrznej (Chrome, Safari).'
+    ? 'Aby zalogować się przez Google, użyj przycisku "Otwórz w zewnętrznej przeglądarce" w przeglądarce aplikacji.'
     : 'Aby zalogować się przez Google, otwórz tę stronę w przeglądarce zewnętrznej.';
   
   modal.innerHTML = `
@@ -190,7 +190,7 @@ export function showExternalBrowserPrompt(
           <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
         </svg>
       </div>
-      <h3 class="text-2xl font-bold text-amber-400 mb-4">Otwórz w przeglądarce</h3>
+      <h3 class="text-2xl font-bold text-amber-400 mb-4">Logowanie przez Google</h3>
       <p class="text-gray-300 mb-6">${instructions}</p>
       
       ${isMobile ? `
@@ -199,19 +199,19 @@ export function showExternalBrowserPrompt(
           <ol class="text-xs text-amber-300/80 space-y-2">
             <li class="flex items-start gap-2">
               <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
-              <span>Skopiuj link z paska adresu</span>
+              <span>Znajdź przycisk "Otwórz w zewnętrznej przeglądarce" w przeglądarce aplikacji</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
-              <span>Otwórz Safari lub Chrome</span>
+              <span>Naciśnij ten przycisk</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
-              <span>Wklej link w pasku adresu</span>
+              <span>Strona otworzy się w Safari lub Chrome</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="bg-amber-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
-              <span>Naciśnij Enter i zaloguj się</span>
+              <span>Kliknij "Zaloguj się przez Google"</span>
             </li>
           </ol>
         </div>
