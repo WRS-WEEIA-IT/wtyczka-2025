@@ -28,7 +28,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: '3',
     name: 'Daria Żurańska',
-    role: 'Organizatorka',
+    role: 'Wicekoordynatorka',
     photoUrl: 'https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/kadra/daria.jpg',
     email: 'd.zuranska@samorzad.p.lodz.pl',
     facebookUrl: 'https://www.facebook.com/daria.zuranska.1',
