@@ -1,3 +1,14 @@
+/* FacebookCard image stick to bottom only for homepage */
+.facebook-card-bottom-image {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+}
+.facebook-card-bottom-image .object-cover {
+  margin-top: auto;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
 /* Custom Date Picker Styling */
 
 /* Hide the default calendar picker icon */

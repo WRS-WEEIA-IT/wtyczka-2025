@@ -147,7 +147,7 @@ export default function HomePage() {
               {facebookPosts.map((post) => (
                 <FacebookCard
                   {...post}
-                  className="w-full max-w-2xl cursor-pointer justify-self-center shadow-xl hover:shadow-2xl transition-shadow"
+                  className="w-full max-w-2xl cursor-pointer justify-self-center shadow-xl hover:shadow-2xl transition-shadow facebook-card-bottom-image"
                   key={post.id}
                 />
               ))}

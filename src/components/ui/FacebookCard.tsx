@@ -45,14 +45,15 @@ export function FacebookCard({
     setShowImage(false);
   };
 
+  const isBottomImage = className?.includes("facebook-card-bottom-image");
   return (
     <Link
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block rounded-lg border shadow-xl w-full cursor-pointer ${className ?? ""}`}
+      className={`block rounded-lg border shadow-xl w-full cursor-pointer ${className ?? ""} ${isBottomImage ? "flex flex-col h-full" : ""}`}
     >
-      <div className="flex flex-col items-start p-4">
+      <div className="flex flex-col items-start p-4 flex-grow">
         <div className="flex w-full">
           <Avatar className="w-10 h-10 rounded-full mr-3">
             <AvatarImage src="/wtyczka_avatar.jpg" alt="Wtyczka" />
@@ -91,7 +92,7 @@ export function FacebookCard({
             width={800}
             height={450}
             className="object-cover w-full h-full rounded-b-lg"
-            style={{ objectFit: "cover" }}
+            style={isBottomImage ? { objectFit: "cover", marginTop: "auto" } : { objectFit: "cover" }}
             onError={handleImageError}
           />
         </div>

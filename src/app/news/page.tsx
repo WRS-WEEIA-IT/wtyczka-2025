@@ -91,11 +91,18 @@ export default function NewsPage() {
               <FacebookCard key={index} {...post} />
             ))}
             {!noMorePosts && (
-              <Card className="items-center justify-center inline-flex card-hover mb-12 shadow-xl">
+              <Card className="items-center justify-center inline-flex card-hover mb-12 shadow-none border-none">
                 <div
-                  className={`p-6 w-full text-center cursor-pointer ${
-                    loading ? " text-muted-foreground" : "text-foreground"
-                  }`}
+                  className={`p-6 w-full text-center cursor-pointer rounded-xl font-bold uppercase tracking-wider transition-all duration-200 shadow-md card-blur-btn ${loading ? "opacity-70" : ""}`}
+                  style={{
+                    fontFamily: "Roboto Slab, Times New Roman, serif",
+                    color: "#fff",
+                    background: "rgba(30, 30, 30, 0.55)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "2px solid #fff",
+                    boxShadow: "0 4px 12px rgba(255,255,255,0.12)"
+                  }}
                   onClick={handleShowMore}
                 >
                   {loading ? "Ładuję..." : "Pokaż więcej"}

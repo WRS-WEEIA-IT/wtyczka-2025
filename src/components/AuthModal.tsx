@@ -330,15 +330,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   />
                 </div>
                 {!isLogin && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 mt-2">
-                    <div>
-                      <div className={passwordChecklist.length ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• min. 8 znaków</div>
-                      <div className={passwordChecklist.lower && passwordChecklist.upper ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• mała i wielka litera</div>
-                    </div>
-                    <div>
-                      <div className={passwordChecklist.digit ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• cyfra</div>
-                      <div className={passwordChecklist.special ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• znak specjalny</div>
-                    </div>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-2">
+                    <div className={passwordChecklist.length ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• min. 8 znaków</div>
+                    <div className={passwordChecklist.digit ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• cyfra</div>
+                    <div className={passwordChecklist.lower && passwordChecklist.upper ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• mała i wielka litera</div>
+                    <div className={passwordChecklist.special ? "text-green-600 text-xs font-medium" : "text-red-500 text-xs font-medium"}>• znak specjalny</div>
                   </div>
                 )}
                 {passwordError && (
