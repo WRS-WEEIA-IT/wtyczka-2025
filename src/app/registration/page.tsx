@@ -726,7 +726,7 @@ export default function RegistrationPage() {
                 >
                   <option value="">Wybierz diete</option>
                   <option value="standard">Standardowa</option>
-                  <option value="vegetarian">Wegetariańska (+10zł)</option>
+                  <option value="vegetarian">Wegetariańska (+20zł)</option>
                 </select>
                 {errors.dietName && (
                   <p className="text-red-500 text-sm mt-1">{errors.dietName.message}</p>
