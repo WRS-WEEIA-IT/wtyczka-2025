@@ -335,7 +335,7 @@ export default function PaymentPage() {
     accountHolder: "Samorząd Studencki EEIA",
     bankName: "Bank Przykładowy",
     transferTitle: userRegistration ? `Wtyczka2025 - ${userRegistration.name} ${userRegistration.surname}` : `Wtyczka 2025 - ${user?.email}`,
-    amount: "499zł",
+    amount: "500zł",
   };
 
   // Redirect to login if not authenticated
