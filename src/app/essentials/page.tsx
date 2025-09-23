@@ -12,11 +12,16 @@ import {
   Loader2,
   ChevronDown,
   ChevronRight,
-  Pill,
   AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
-import { EssentialItem, getEssentials } from "@/usecases/essentials";
+import {
+  EssentialItem,
+  getEssentials,
+  updateEssentialChecked,
+  getUserEssentialsChecked,
+} from "@/usecases/essentials";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function EssentialsPage() {
   // Hydration fix
@@ -24,7 +29,10 @@ export default function EssentialsPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  const [openSections, setOpenSections] = useState<string[]>([]);
+
+  const { user } = useAuth();
+
+  const [openSections, setOpenSections] = useState<string[]>([]); // Open crucial section by default for testing
   const [essentials, setEssentials] = useState<EssentialItem[]>([]);
   const [essentialsDocuments, setEssentialsDocuments] = useState<
     EssentialItem[]
@@ -40,9 +48,6 @@ export default function EssentialsPage() {
   >([]);
   const [essentialsBus, setEssentialsBus] = useState<EssentialItem[]>([]);
   const [essentialsOptional, setEssentialsOptional] = useState<EssentialItem[]>(
-    []
-  );
-  const [essentialsMedicine, setEssentialsMedicine] = useState<EssentialItem[]>(
     []
   );
   const [essentialsCrucial, setEssentialsCrucial] = useState<EssentialItem[]>(
@@ -92,16 +97,16 @@ export default function EssentialsPage() {
         setEssentialsOptional(
           essentialsDb.filter((item) => item.category === "optional")
         );
-        setEssentialsMedicine(
-          essentialsDb.filter((item) => item.category === "medicine")
-        );
         setEssentialsCrucial(
           essentialsDb.filter((item) => item.category === "crucial")
         );
 
+        // Load user's existing checked items
+        const userCheckedItems = await getUserEssentialsChecked(user);
+
         const initialChecked: { [id: number]: boolean } = {};
         essentialsDb.forEach((item) => {
-          initialChecked[item.id] = false;
+          initialChecked[item.id] = userCheckedItems[item.id] || false;
         });
 
         const initialCheckedSection: { [id: string]: boolean } = {};
@@ -112,10 +117,15 @@ export default function EssentialsPage() {
           "electronics",
           "bus",
           "optional",
-          "medicine",
           "crucial",
         ].forEach((category) => {
-          initialCheckedSection[category] = false;
+          const categoryItems = essentialsDb.filter(
+            (item) => item.category === category
+          );
+          const allChecked = categoryItems.every(
+            (item) => userCheckedItems[item.id] === true
+          );
+          initialCheckedSection[category] = allChecked;
         });
 
         setChecked(initialChecked);
@@ -127,7 +137,7 @@ export default function EssentialsPage() {
       }
     };
     loadEssentials();
-  }, []);
+  }, [user]);
 
   const essentialsData = [
     {
@@ -297,11 +307,18 @@ export default function EssentialsPage() {
                             <span className="custom-checkbox-container">
                               <input
                                 type="checkbox"
-                                checked={checked[item.id]}
-                                onChange={() => {
+                                checked={checked[item.id] || false}
+                                onChange={async () => {
+                                  await updateEssentialChecked(
+                                    user,
+                                    item.id,
+                                    !checked[item.id]
+                                  );
+
+                                  // Update UI state immediately
                                   setChecked((prev) => ({
                                     ...prev,
-                                    [item.id]: !prev[item.id],
+                                    [item.id]: !checked[item.id],
                                   }));
                                   setCurrentChangedCategory(item.category);
                                 }}
