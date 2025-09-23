@@ -96,6 +96,13 @@ export default function HomePage() {
             </Link>
           </div>
 
+          <p
+            className="text-md md:text-lg m-0 p-0 text-[#E7A801] font-extrabold tracking-widest uppercase drop-shadow-lg western-title"
+            style={{ marginBottom: "-15px" }}
+          >
+            Dodaj wydarzenie do kalendarza Google
+          </p>
+
           <div className="w-full flex justify-center mt-5 mb-2">
             <a
               href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wtyczka+2025+-+Wyjazd+Integracyjny&dates=20251023T120000Z/20251023T130000Z&details=Wyjazd+Integracyjny+Wydziału+EEIA+PŁ"
