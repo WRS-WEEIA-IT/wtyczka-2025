@@ -79,6 +79,7 @@ export default function Navbar() {
     // Play gunshot sound
     const audio = new Audio('/western/gunshot.mp3');
     audio.currentTime = 0;
+    audio.volume = 0.15;
     audio.play().catch(() => {});
     // Create bullet icon
     const bulletIcon = document.createElement('img');
