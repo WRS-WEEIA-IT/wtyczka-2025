@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Lock } from 'lucide-react'
+import { Eye, EyeOff, Lock } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
@@ -27,6 +27,15 @@ export default function ResetPassword() {
     digit: false,
     special: false,
   })
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const togglePasswordVisibility = () =>
+    setIsPasswordVisible((prevState) => !prevState)
+
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false)
+  const toggleConfirmPasswordVisibility = () =>
+    setIsConfirmPasswordVisible((prevState) => !prevState)
 
   // Sprawdzenie, czy użytkownik jest w sesji resetowania hasła
   useEffect(() => {
@@ -137,7 +146,7 @@ export default function ResetPassword() {
               <Lock className="absolute top-1/2 left-3 h-6 w-6 -translate-y-1/2 transform text-gray-300" />
               <input
                 id="password"
-                type="password"
+                type={isPasswordVisible ? 'text' : 'password'}
                 className="w-full rounded-xl border border-[#262626] bg-[#232323]/80 py-3 pr-4 pl-12 text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-400/60 focus:outline-none"
                 value={password}
                 onChange={(e) => {
@@ -147,6 +156,20 @@ export default function ResetPassword() {
                 }}
                 placeholder="Nowe hasło"
               />
+              <button
+                className="absolute inset-y-0 end-0 z-20 flex cursor-pointer items-center rounded-e-md px-2.5 text-gray-400 transition-colors hover:text-gray-300 focus:outline-none focus-visible:text-gray-300"
+                type="button"
+                onClick={togglePasswordVisibility}
+                aria-label={isPasswordVisible ? 'Ukryj hasło' : 'Pokaż hasło'}
+                aria-pressed={isPasswordVisible}
+                aria-controls="password"
+              >
+                {isPasswordVisible ? (
+                  <EyeOff size={20} aria-hidden="true" />
+                ) : (
+                  <Eye size={20} aria-hidden="true" />
+                )}
+              </button>
             </div>
             <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-1 md:grid-cols-2">
               <div>
@@ -207,7 +230,7 @@ export default function ResetPassword() {
               <Lock className="absolute top-1/2 left-3 h-6 w-6 -translate-y-1/2 transform text-gray-300" />
               <input
                 id="confirmPassword"
-                type="password"
+                type={isConfirmPasswordVisible ? 'text' : 'password'}
                 className="w-full rounded-xl border border-[#262626] bg-[#232323]/80 py-3 pr-4 pl-12 text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-400/60 focus:outline-none"
                 value={confirmPassword}
                 onChange={(e) => {
@@ -216,6 +239,22 @@ export default function ResetPassword() {
                 }}
                 placeholder="Potwierdź nowe hasło"
               />
+              <button
+                className="absolute inset-y-0 end-0 z-20 flex cursor-pointer items-center rounded-e-md px-2.5 text-gray-400 transition-colors hover:text-gray-300 focus:outline-none focus-visible:text-gray-300"
+                type="button"
+                onClick={toggleConfirmPasswordVisibility}
+                aria-label={
+                  isConfirmPasswordVisible ? 'Ukryj hasło' : 'Pokaż hasło'
+                }
+                aria-pressed={isConfirmPasswordVisible}
+                aria-controls="password"
+              >
+                {isConfirmPasswordVisible ? (
+                  <EyeOff size={20} aria-hidden="true" />
+                ) : (
+                  <Eye size={20} aria-hidden="true" />
+                )}
+              </button>
             </div>
             {confirmPasswordError && (
               <div className="mt-2 text-xs font-medium text-red-500">
