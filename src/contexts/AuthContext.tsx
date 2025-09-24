@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   createContext,
@@ -6,114 +6,122 @@ import {
   useEffect,
   useState,
   ReactNode,
-} from "react";
-import { supabase } from "@/lib/supabase";
-import type { User } from "@supabase/supabase-js";
-import toast from "react-hot-toast";
-import { detectWebView } from "@/lib/webviewDetection";
+} from 'react'
+import { supabase } from '@/lib/supabase'
+import type { User } from '@supabase/supabase-js'
+import toast from 'react-hot-toast'
+import { detectWebView } from '@/lib/webviewDetection'
 
 interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  authLogin: (email: string, password: string) => Promise<void>;
-  authRegister: (email: string, password: string) => Promise<void>;
-  authLoginWithGoogle: () => Promise<void>;
-  authLoginWithGoogleWebView: () => Promise<void>;
-  authLogout: () => Promise<void>;
-  authResetPassword: (email: string) => Promise<void>;
-  authUpdatePassword: (password: string) => Promise<void>;
-  isWebView: boolean;
-  webViewInfo: ReturnType<typeof detectWebView>;
+  user: User | null
+  loading: boolean
+  authLogin: (email: string, password: string) => Promise<void>
+  authRegister: (email: string, password: string) => Promise<void>
+  authLoginWithGoogle: () => Promise<void>
+  authLoginWithGoogleWebView: () => Promise<void>
+  authLogout: () => Promise<void>
+  authResetPassword: (email: string) => Promise<void>
+  authUpdatePassword: (password: string) => Promise<void>
+  isWebView: boolean
+  webViewInfo: ReturnType<typeof detectWebView>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [webViewInfo] = useState<ReturnType<typeof detectWebView>>(() => detectWebView());
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [webViewInfo] = useState<ReturnType<typeof detectWebView>>(() =>
+    detectWebView(),
+  )
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
+      setUser(data.session?.user ?? null)
+      setLoading(false)
+    })
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
+        setUser(session?.user ?? null)
+      },
+    )
     return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, []);
+      listener?.subscription.unsubscribe()
+    }
+  }, [])
 
   async function authLogin(email: string, password: string) {
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      });
+      })
 
-      if (error) throw error;
-      toast.success("Zalogowano pomyślnie!");
+      if (error) throw error
+      toast.success('Zalogowano pomyślnie!')
     } catch (error: Error | unknown) {
-      console.error("Login error:", error);
-      
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      console.error('Login error:', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+
       // Handle specific error types for login
-      if (errorMessage.includes('Email not confirmed') || 
-          errorMessage.includes('signup_disabled') ||
-          errorMessage.includes('email_not_confirmed')) {
-        toast.error("Najpierw potwierdź adres email!");
+      if (
+        errorMessage.includes('Email not confirmed') ||
+        errorMessage.includes('signup_disabled') ||
+        errorMessage.includes('email_not_confirmed')
+      ) {
+        toast.error('Najpierw potwierdź adres email!')
       } else if (errorMessage.includes('Invalid login credentials')) {
-        toast.error("Błędny adres email bądź hasło");
+        toast.error('Błędny adres email bądź hasło')
       } else if (errorMessage.includes('Too many requests')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else {
-        toast.error("Błąd logowania");
+        toast.error('Błąd logowania')
       }
-      throw error;
+      throw error
     }
   }
 
   async function authRegister(email: string, password: string) {
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password })
 
       if (error) {
         // Sprawdź czy błąd jest związany z istniejącym kontem
-        if (error.message?.includes('User already registered') ||
-            error.message?.includes('signup_disabled')) {
-          toast.error("Konto o takim adresie email już istnieje");
-          throw error;
+        if (
+          error.message?.includes('User already registered') ||
+          error.message?.includes('signup_disabled')
+        ) {
+          toast.error('Konto o takim adresie email już istnieje')
+          throw error
         }
-        throw error;
+        throw error
       }
-      
+
       // Check if this is a new user registration or existing user
       if (data.user) {
         // If user has email_confirmed_at, they already exist and are confirmed
         if (data.user.email_confirmed_at) {
-          toast.error("Konto o takim adresie email już istnieje");
-          throw new Error("User already registered");
+          toast.error('Konto o takim adresie email już istnieje')
+          throw new Error('User already registered')
         }
-        
+
         // If user doesn't have email_confirmed_at, check if they were just created
         if (!data.user.email_confirmed_at && data.user.created_at) {
-          const createdAt = new Date(data.user.created_at);
-          const now = new Date();
-          const timeDiff = now.getTime() - createdAt.getTime();
-          
+          const createdAt = new Date(data.user.created_at)
+          const now = new Date()
+          const timeDiff = now.getTime() - createdAt.getTime()
+
           // If user was created within last 30 seconds, it's likely a new registration
           // If older than that, it's probably an existing unconfirmed account
           if (timeDiff < 30000) {
-            toast.success("Udało się zarejestrować!");
-            
+            toast.success('Udało się zarejestrować!')
+
             // Show popup with email confirmation details
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4';
+            const modal = document.createElement('div')
+            modal.className =
+              'fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4'
             modal.innerHTML = `
               <div class="relative w-full max-w-md rounded-xl border border-amber-400/40 bg-gradient-to-br from-[#232323]/95 via-[#18181b]/95 to-[#232323]/90 shadow-2xl shadow-amber-900/30 backdrop-blur-xl px-6 py-8 text-center">
                 <button class="absolute top-4 right-4 text-gray-400 hover:text-amber-400 transition-colors">
@@ -138,126 +146,131 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   Rozumiem
                 </button>
               </div>
-            `;
-            document.body.appendChild(modal);
-            
+            `
+            document.body.appendChild(modal)
+
             // Add event listeners for closing the modal
-            const closeButton = modal.querySelector('button');
-            const confirmButton = modal.querySelector('button:last-child');
-            
+            const closeButton = modal.querySelector('button')
+            const confirmButton = modal.querySelector('button:last-child')
+
             const closeModal = () => {
-              document.body.removeChild(modal);
-            };
-            
-            closeButton?.addEventListener('click', closeModal);
-            confirmButton?.addEventListener('click', closeModal);
-            
+              document.body.removeChild(modal)
+            }
+
+            closeButton?.addEventListener('click', closeModal)
+            confirmButton?.addEventListener('click', closeModal)
+
             // Also close modal when clicking outside or pressing escape
             modal.addEventListener('click', (event) => {
               if (event.target === modal) {
-                closeModal();
+                closeModal()
               }
-            });
-            
-            document.addEventListener('keydown', (event) => {
-              if (event.key === 'Escape') {
-                closeModal();
-              }
-            }, { once: true });
+            })
+
+            document.addEventListener(
+              'keydown',
+              (event) => {
+                if (event.key === 'Escape') {
+                  closeModal()
+                }
+              },
+              { once: true },
+            )
           } else {
             // User already exists but is not confirmed (old unconfirmed account)
-            toast.error("Konto o takim adresie email już istnieje");
-            throw new Error("User already registered");
+            toast.error('Konto o takim adresie email już istnieje')
+            throw new Error('User already registered')
           }
         }
       } else {
         // No user data returned - this shouldn't happen in normal signup
-        toast.error("Błąd rejestracji");
-        throw new Error("No user data returned");
+        toast.error('Błąd rejestracji')
+        throw new Error('No user data returned')
       }
-      
     } catch (error: Error | unknown) {
-      console.error("Registration error:", error);
-      
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      console.error('Registration error:', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+
       // Handle specific error types for registration
       if (errorMessage.includes('User already registered')) {
         // Already handled above, don't show additional error
-        return;
+        return
       } else if (errorMessage.includes('Email rate limit exceeded')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else if (errorMessage.includes('Too many requests')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else if (!errorMessage.includes('No user data returned')) {
-        toast.error("Błąd rejestracji");
+        toast.error('Błąd rejestracji')
       }
-      throw error;
+      throw error
     }
   }
 
   async function authLoginWithGoogle() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-      });
+        provider: 'google',
+      })
 
-      if (error) throw error;
-      toast.success("Zalogowano pomyślnie!");
+      if (error) throw error
+      toast.success('Zalogowano pomyślnie!')
     } catch (error: Error | unknown) {
-      console.error("Google login error:", error);
-      
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      console.error('Google login error:', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+
       // Handle specific error types for Google login
       if (errorMessage.includes('Too many requests')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else {
-        toast.error("Błąd logowania przez Google");
+        toast.error('Błąd logowania przez Google')
       }
-      throw error;
+      throw error
     }
   }
 
   async function authLoginWithGoogleWebView() {
-    const webView = detectWebView();
-    
+    const webView = detectWebView()
+
     if (!webView.isWebView) {
       // Not in WebView, use normal flow
-      return authLoginWithGoogle();
+      return authLoginWithGoogle()
     }
 
     // In WebView - redirect to WebView page that handles the prompt
     try {
-      const currentUrl = window.location.href;
-      const webViewUrl = `/oauth/google/webview?redirect_to=${encodeURIComponent(currentUrl)}`;
-      window.location.href = webViewUrl;
-      
+      const currentUrl = window.location.href
+      const webViewUrl = `/oauth/google/webview?redirect_to=${encodeURIComponent(currentUrl)}`
+      window.location.href = webViewUrl
     } catch (error: Error | unknown) {
-      console.error("Google WebView login error:", error);
-      
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      console.error('Google WebView login error:', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+
       // Handle specific error types for Google login
       if (errorMessage.includes('Too many requests')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else {
-        toast.error("Błąd logowania przez Google");
+        toast.error('Błąd logowania przez Google')
       }
-      throw error;
+      throw error
     }
   }
 
   async function authLogout() {
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut()
 
-      if (error) throw error;
-      toast.success("Wylogowano pomyślnie!");
+      if (error) throw error
+      toast.success('Wylogowano pomyślnie!')
     } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("Błąd wylogowania");
-      throw error;
+      console.error('Logout error:', error)
+      toast.error('Błąd wylogowania')
+      throw error
     }
   }
 
@@ -265,49 +278,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
-      });
+      })
 
-      if (error) throw error;
-      toast.success("Link do resetowania hasła został wysłany na podany adres email!");
+      if (error) throw error
+      toast.success(
+        'Link do resetowania hasła został wysłany na podany adres email!',
+      )
     } catch (error: Error | unknown) {
-      console.error("Password reset error:", error);
-      
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      console.error('Password reset error:', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+
       // Handle specific error types for password reset
       if (errorMessage.includes('Email not confirmed')) {
-        toast.error("Adres email nie został potwierdzony!");
+        toast.error('Adres email nie został potwierdzony!')
       } else if (errorMessage.includes('Too many requests')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else {
-        toast.error("Błąd resetowania hasła");
+        toast.error('Błąd resetowania hasła')
       }
-      throw error;
+      throw error
     }
   }
 
   async function authUpdatePassword(password: string) {
     try {
       const { error } = await supabase.auth.updateUser({
-        password: password
-      });
+        password: password,
+      })
 
-      if (error) throw error;
-      toast.success("Hasło zostało pomyślnie zmienione!");
+      if (error) throw error
+      toast.success('Hasło zostało pomyślnie zmienione!')
     } catch (error: Error | unknown) {
-      console.error("Password update error:", error);
-      
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      console.error('Password update error:', error)
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+
       // Handle specific error types for password update
       if (errorMessage.includes('Too many requests')) {
-        toast.error("Zbyt wiele prób, odczekaj chwile i spróbuj ponownie");
+        toast.error('Zbyt wiele prób, odczekaj chwile i spróbuj ponownie')
       } else if (errorMessage.includes('Password should be')) {
-        toast.error("Hasło nie spełnia wymagań bezpieczeństwa");
+        toast.error('Hasło nie spełnia wymagań bezpieczeństwa')
       } else {
-        toast.error("Błąd aktualizacji hasła");
+        toast.error('Błąd aktualizacji hasła')
       }
-      throw error;
+      throw error
     }
   }
 
@@ -323,15 +340,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authUpdatePassword,
     isWebView: webViewInfo.isWebView,
     webViewInfo,
-  };
+  }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider')
   }
-  return context;
+  return context
 }

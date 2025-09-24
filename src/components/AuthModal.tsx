@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { X, Mail, Lock, TriangleAlert, EyeOff, Eye } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { X, Mail, Lock, TriangleAlert, EyeOff, Eye } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
@@ -20,39 +20,39 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     authResetPassword,
     isWebView,
     webViewInfo,
-  } = useAuth();
-  const { t } = useLanguage();
-  const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [resetEmailSent, setResetEmailSent] = useState(false);
+  } = useAuth()
+  const { t } = useLanguage()
+  const router = useRouter()
+  const [isLogin, setIsLogin] = useState(true)
+  const [isForgotPassword, setIsForgotPassword] = useState(false)
+  const [resetEmailSent, setResetEmailSent] = useState(false)
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+    email: '',
+    password: '',
+    confirmPassword: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
   const [confirmPasswordError, setConfirmPasswordError] = useState<
     string | null
-  >(null);
+  >(null)
   const [passwordChecklist, setPasswordChecklist] = useState({
     length: false,
     lower: false,
     upper: false,
     digit: false,
     special: false,
-  });
+  })
 
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const togglePasswordVisibility = () =>
-    setIsPasswordVisible((prevState) => !prevState);
+    setIsPasswordVisible((prevState) => !prevState)
 
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
-    useState(false);
+    useState(false)
   const toggleConfirmPasswordVisibility = () =>
-    setIsConfirmPasswordVisible((prevState) => !prevState);
+    setIsConfirmPasswordVisible((prevState) => !prevState)
 
   const validatePassword = (password: string) => {
     const checklist = {
@@ -61,65 +61,65 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       upper: /[A-Z]/.test(password),
       digit: /[0-9]/.test(password),
       special: /[^A-Za-z0-9]/.test(password),
-    };
-    setPasswordChecklist(checklist);
-    if (!password) return "Pole hasło jest wymagane.";
-    const allValid = Object.values(checklist).every(Boolean);
-    if (!allValid) return "Hasło nie spełnia wszystkich wymagań.";
-    return null;
-  };
+    }
+    setPasswordChecklist(checklist)
+    if (!password) return 'Pole hasło jest wymagane.'
+    const allValid = Object.values(checklist).every(Boolean)
+    if (!allValid) return 'Hasło nie spełnia wszystkich wymagań.'
+    return null
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const validateEmail = (email: string) => {
-    if (!email) return "Pole email jest wymagane.";
+    if (!email) return 'Pole email jest wymagane.'
     // Simple email regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return "Sprawdź poprawność wpisywanego maila.";
-    return null;
-  };
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) return 'Sprawdź poprawność wpisywanego maila.'
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     // Handle password reset form submission
     if (isForgotPassword) {
-      const emailValidation = validateEmail(formData.email);
-      setEmailError(emailValidation);
+      const emailValidation = validateEmail(formData.email)
+      setEmailError(emailValidation)
 
       if (emailValidation) {
-        setLoading(false);
-        return;
+        setLoading(false)
+        return
       }
 
       try {
-        await authResetPassword(formData.email);
-        setResetEmailSent(true);
+        await authResetPassword(formData.email)
+        setResetEmailSent(true)
       } catch (error) {
-        console.error("Password reset error:", error);
+        console.error('Password reset error:', error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-      return;
+      return
     }
 
     // Handle login/register form submission
-    const emailValidation = validateEmail(formData.email);
-    setEmailError(emailValidation);
+    const emailValidation = validateEmail(formData.email)
+    setEmailError(emailValidation)
     // Custom password validation (only for register)
-    let passwordValidation = null;
-    let confirmPasswordValidation = null;
+    let passwordValidation = null
+    let confirmPasswordValidation = null
     if (!isLogin) {
-      passwordValidation = validatePassword(formData.password);
-      setPasswordError(passwordValidation);
+      passwordValidation = validatePassword(formData.password)
+      setPasswordError(passwordValidation)
       if (!formData.confirmPassword) {
-        confirmPasswordValidation = "Pole potwierdzenia hasła jest wymagane.";
+        confirmPasswordValidation = 'Pole potwierdzenia hasła jest wymagane.'
       } else if (formData.password !== formData.confirmPassword) {
         confirmPasswordValidation =
-          t.errors.passwordsDontMatch || "Hasła nie są takie same.";
+          t.errors.passwordsDontMatch || 'Hasła nie są takie same.'
       }
-      setConfirmPasswordError(confirmPasswordValidation);
+      setConfirmPasswordError(confirmPasswordValidation)
     } else {
       setPasswordChecklist({
         length: false,
@@ -127,82 +127,82 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         upper: false,
         digit: false,
         special: false,
-      });
-      setPasswordError(null);
-      setConfirmPasswordError(null);
+      })
+      setPasswordError(null)
+      setConfirmPasswordError(null)
     }
     if (emailValidation || passwordValidation || confirmPasswordValidation) {
-      setLoading(false);
-      return;
+      setLoading(false)
+      return
     }
 
     try {
       if (isLogin) {
-        await authLogin(formData.email, formData.password);
+        await authLogin(formData.email, formData.password)
       } else {
         if (formData.password !== formData.confirmPassword) {
-          throw new Error(t.errors.passwordsDontMatch);
+          throw new Error(t.errors.passwordsDontMatch)
         }
-        await authRegister(formData.email, formData.password);
+        await authRegister(formData.email, formData.password)
       }
-      onClose();
-      router.push("/");
+      onClose()
+      router.push('/')
     } catch (error) {
-      console.error("Auth error:", error);
+      console.error('Auth error:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       // Use WebView-aware Google login method
-      await authLoginWithGoogleWebView();
-      onClose();
-      router.push("/");
+      await authLoginWithGoogleWebView()
+      onClose()
+      router.push('/')
     } catch (error) {
-      console.error("Google auth error:", error);
+      console.error('Google auth error:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const resetForm = () => {
     setFormData({
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-    setEmailError(null);
-    setPasswordError(null);
-    setConfirmPasswordError(null);
-  };
+      email: '',
+      password: '',
+      confirmPassword: '',
+    })
+    setEmailError(null)
+    setPasswordError(null)
+    setConfirmPasswordError(null)
+  }
 
   const switchMode = () => {
-    setIsLogin(!isLogin);
-    setIsForgotPassword(false);
-    setResetEmailSent(false);
-    resetForm();
-  };
+    setIsLogin(!isLogin)
+    setIsForgotPassword(false)
+    setResetEmailSent(false)
+    resetForm()
+  }
 
   const switchToForgotPassword = () => {
-    setIsForgotPassword(true);
-    resetForm();
-  };
+    setIsForgotPassword(true)
+    resetForm()
+  }
 
   const backToLogin = () => {
-    setIsForgotPassword(false);
-    setResetEmailSent(false);
-    resetForm();
-  };
+    setIsForgotPassword(false)
+    setResetEmailSent(false)
+    resetForm()
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-lg p-4">
-      <div className="relative w-full max-w-lg max-h-[90vh] rounded-3xl border border-amber-400/40 bg-gradient-to-br from-[#232323]/90 via-[#18181b]/90 to-[#232323]/80 shadow-2xl shadow-amber-900/30 backdrop-blur-xl px-8 py-10 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-lg">
+      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-amber-400/40 bg-gradient-to-br from-[#232323]/90 via-[#18181b]/90 to-[#232323]/80 px-8 py-10 shadow-2xl shadow-amber-900/30 backdrop-blur-xl">
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 text-gray-400 hover:text-amber-400 transition-colors"
+          className="absolute top-6 right-6 text-gray-400 transition-colors hover:text-amber-400"
         >
           <X size={28} />
         </button>
@@ -211,27 +211,27 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {isForgotPassword && resetEmailSent && (
           <>
             <div className="mb-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-6 bg-amber-400/20 rounded-full flex items-center justify-center">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-400/20">
                 <Mail className="h-8 w-8 text-amber-400" />
               </div>
-              <h2 className="text-3xl font-bold text-amber-400 text-center mb-4 drop-shadow-lg">
+              <h2 className="mb-4 text-center text-3xl font-bold text-amber-400 drop-shadow-lg">
                 {t.auth.resetPasswordSuccess}
               </h2>
-              <p className="text-gray-300 mb-8">
+              <p className="mb-8 text-gray-300">
                 {t.auth.emailConfirmationText}
               </p>
-              <div className="bg-[#18181b] border border-[#262626] rounded-lg p-3 mb-4">
-                <p className="text-amber-500 font-medium break-all">
+              <div className="mb-4 rounded-lg border border-[#262626] bg-[#18181b] p-3">
+                <p className="font-medium break-all text-amber-500">
                   {formData.email}
                 </p>
               </div>
-              <p className="text-sm text-gray-400 mb-8">
+              <p className="mb-8 text-sm text-gray-400">
                 {t.auth.checkSpamFolder}
               </p>
             </div>
             <button
               onClick={backToLogin}
-              className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
+              className="w-full rounded-2xl bg-amber-400 px-4 py-3 text-lg font-semibold text-black shadow-lg transition-colors hover:bg-amber-500 focus:ring-2 focus:ring-amber-400/60 focus:outline-none disabled:opacity-50"
             >
               {t.auth.backToLogin}
             </button>
@@ -241,32 +241,32 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {/* Password Reset Request Form */}
         {isForgotPassword && !resetEmailSent && (
           <>
-            <h2 className="text-3xl font-bold text-amber-400 text-center mb-8 drop-shadow-lg">
+            <h2 className="mb-8 text-center text-3xl font-bold text-amber-400 drop-shadow-lg">
               {t.auth.resetPassword}
             </h2>
-            <p className="text-gray-300 mb-8 text-center">
+            <p className="mb-8 text-center text-gray-300">
               {t.auth.resetPasswordInstructions}
             </p>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   {t.auth.email}
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                  <Mail className="absolute top-1/2 left-3 h-6 w-6 -translate-y-1/2 transform text-gray-300" />
                   <input
                     type="text"
-                    className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                    className="w-full rounded-xl border border-[#262626] bg-[#232323]/80 py-3 pr-4 pl-12 text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-400/60 focus:outline-none"
                     value={formData.email}
                     onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value });
-                      if (emailError) setEmailError(null);
+                      setFormData({ ...formData, email: e.target.value })
+                      if (emailError) setEmailError(null)
                     }}
                     placeholder={t.auth.email}
                   />
                 </div>
                 {emailError && (
-                  <div className="text-red-500 text-xs mt-2 font-medium">
+                  <div className="mt-2 text-xs font-medium text-red-500">
                     {emailError}
                   </div>
                 )}
@@ -274,15 +274,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
+                className="w-full rounded-2xl bg-amber-400 px-4 py-3 text-lg font-semibold text-black shadow-lg transition-colors hover:bg-amber-500 focus:ring-2 focus:ring-amber-400/60 focus:outline-none disabled:opacity-50"
               >
-                {loading ? "Ładowanie..." : t.auth.resetPassword}
+                {loading ? 'Ładowanie...' : t.auth.resetPassword}
               </button>
             </form>
             <div className="mt-8 text-center">
               <button
                 onClick={backToLogin}
-                className="text-amber-400 hover:text-amber-500 text-base font-semibold underline underline-offset-2 transition-colors"
+                className="text-base font-semibold text-amber-400 underline underline-offset-2 transition-colors hover:text-amber-500"
               >
                 {t.auth.backToLogin}
               </button>
@@ -293,16 +293,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {/* Login/Register Form */}
         {!isForgotPassword && (
           <>
-            <h2 className="text-3xl font-bold text-amber-400 text-center mb-8 drop-shadow-lg">
+            <h2 className="mb-8 text-center text-3xl font-bold text-amber-400 drop-shadow-lg">
               {isLogin ? t.auth.login : t.auth.register}
             </h2>
             <div className="mb-6 text-center">
-              <span className="block text-sm text-gray-300 bg-[#18181b]/80 rounded-lg px-4 py-2 mb-2">
+              <span className="mb-2 block rounded-lg bg-[#18181b]/80 px-4 py-2 text-sm text-gray-300">
                 Jeśli chcesz usunąć wszelkie swoje dane z systemu, skontaktuj
                 się mailowo:
                 <a
                   href="mailto:wtyczka@samorzad.p.lodz.pl"
-                  className="text-amber-400 hover:underline ml-1"
+                  className="ml-1 text-amber-400 hover:underline"
                 >
                   wtyczka@samorzad.p.lodz.pl
                 </a>
@@ -310,30 +310,30 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   {t.auth.email}
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                  <Mail className="absolute top-1/2 left-3 h-6 w-6 -translate-y-1/2 transform text-gray-300" />
                   <input
                     type="text"
-                    className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                    className="w-full rounded-xl border border-[#262626] bg-[#232323]/80 py-3 pr-4 pl-12 text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-400/60 focus:outline-none"
                     value={formData.email}
                     onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value });
-                      if (emailError) setEmailError(null);
+                      setFormData({ ...formData, email: e.target.value })
+                      if (emailError) setEmailError(null)
                     }}
                     placeholder={t.auth.email}
                   />
                 </div>
                 {emailError && (
-                  <div className="text-red-500 text-xs mt-2 font-medium">
+                  <div className="mt-2 text-xs font-medium text-red-500">
                     {emailError}
                   </div>
                 )}
               </div>
               <div>
-                <div className="flex justify-between items-center mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <label className="block text-sm font-medium text-gray-300">
                     {t.auth.password}
                   </label>
@@ -341,31 +341,31 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <button
                       type="button"
                       onClick={switchToForgotPassword}
-                      className="text-amber-400 hover:text-amber-500 text-xs font-medium transition-colors"
+                      className="text-xs font-medium text-amber-400 transition-colors hover:text-amber-500"
                     >
                       {t.auth.forgotPassword}
                     </button>
                   )}
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                  <Lock className="absolute top-1/2 left-3 h-6 w-6 -translate-y-1/2 transform text-gray-300" />
                   <input
-                    type={isPasswordVisible ? "text" : "password"}
-                    className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                    type={isPasswordVisible ? 'text' : 'password'}
+                    className="w-full rounded-xl border border-[#262626] bg-[#232323]/80 py-3 pr-4 pl-12 text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-400/60 focus:outline-none"
                     value={formData.password}
                     onChange={(e) => {
-                      setFormData({ ...formData, password: e.target.value });
-                      if (!isLogin) validatePassword(e.target.value);
-                      if (passwordError) setPasswordError(null);
+                      setFormData({ ...formData, password: e.target.value })
+                      if (!isLogin) validatePassword(e.target.value)
+                      if (passwordError) setPasswordError(null)
                     }}
                     placeholder={t.auth.password}
                   />
                   <button
-                    className="absolute inset-y-0 end-0 flex items-center z-20 px-2.5 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus-visible:text-gray-300 hover:text-gray-300 transition-colors"
+                    className="absolute inset-y-0 end-0 z-20 flex cursor-pointer items-center rounded-e-md px-2.5 text-gray-400 transition-colors hover:text-gray-300 focus:outline-none focus-visible:text-gray-300"
                     type="button"
                     onClick={togglePasswordVisibility}
                     aria-label={
-                      isPasswordVisible ? "Ukryj hasło" : "Pokaż hasło"
+                      isPasswordVisible ? 'Ukryj hasło' : 'Pokaż hasło'
                     }
                     aria-pressed={isPasswordVisible}
                     aria-controls="password"
@@ -378,12 +378,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   </button>
                 </div>
                 {!isLogin && (
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-2">
+                  <div className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1">
                     <div
                       className={
                         passwordChecklist.length
-                          ? "text-green-600 text-xs font-medium"
-                          : "text-red-500 text-xs font-medium"
+                          ? 'text-xs font-medium text-green-600'
+                          : 'text-xs font-medium text-red-500'
                       }
                     >
                       • min. 8 znaków
@@ -391,8 +391,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <div
                       className={
                         passwordChecklist.digit
-                          ? "text-green-600 text-xs font-medium"
-                          : "text-red-500 text-xs font-medium"
+                          ? 'text-xs font-medium text-green-600'
+                          : 'text-xs font-medium text-red-500'
                       }
                     >
                       • cyfra
@@ -400,8 +400,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <div
                       className={
                         passwordChecklist.lower && passwordChecklist.upper
-                          ? "text-green-600 text-xs font-medium"
-                          : "text-red-500 text-xs font-medium"
+                          ? 'text-xs font-medium text-green-600'
+                          : 'text-xs font-medium text-red-500'
                       }
                     >
                       • mała i wielka litera
@@ -409,8 +409,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <div
                       className={
                         passwordChecklist.special
-                          ? "text-green-600 text-xs font-medium"
-                          : "text-red-500 text-xs font-medium"
+                          ? 'text-xs font-medium text-green-600'
+                          : 'text-xs font-medium text-red-500'
                       }
                     >
                       • znak specjalny
@@ -418,7 +418,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   </div>
                 )}
                 {passwordError && (
-                  <div className="text-red-500 text-xs mt-2 font-medium">
+                  <div className="mt-2 text-xs font-medium text-red-500">
                     {passwordError}
                   </div>
                 )}
@@ -427,32 +427,32 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-300 mb-2"
+                    className="mb-2 block text-sm font-medium text-gray-300"
                   >
                     {t.auth.confirmPassword}
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-300" />
+                    <Lock className="absolute top-1/2 left-3 h-6 w-6 -translate-y-1/2 transform text-gray-300" />
                     <input
                       id="confirmPassword"
-                      type={isConfirmPasswordVisible ? "text" : "password"}
-                      className="w-full pl-12 pr-4 py-3 border border-[#262626] bg-[#232323]/80 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400/60 placeholder-gray-400"
+                      type={isConfirmPasswordVisible ? 'text' : 'password'}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323]/80 py-3 pr-4 pl-12 text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-400/60 focus:outline-none"
                       value={formData.confirmPassword}
                       onChange={(e) => {
                         setFormData({
                           ...formData,
                           confirmPassword: e.target.value,
-                        });
-                        if (confirmPasswordError) setConfirmPasswordError(null);
+                        })
+                        if (confirmPasswordError) setConfirmPasswordError(null)
                       }}
                       placeholder={t.auth.confirmPassword}
                     />
                     <button
-                      className="absolute inset-y-0 end-0 flex items-center z-20 px-2.5 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus-visible:text-gray-300 hover:text-gray-300 transition-colors"
+                      className="absolute inset-y-0 end-0 z-20 flex cursor-pointer items-center rounded-e-md px-2.5 text-gray-400 transition-colors hover:text-gray-300 focus:outline-none focus-visible:text-gray-300"
                       type="button"
                       onClick={toggleConfirmPasswordVisibility}
                       aria-label={
-                        isConfirmPasswordVisible ? "Ukryj hasło" : "Pokaż hasło"
+                        isConfirmPasswordVisible ? 'Ukryj hasło' : 'Pokaż hasło'
                       }
                       aria-pressed={isConfirmPasswordVisible}
                       aria-controls="password"
@@ -465,7 +465,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </button>
                   </div>
                   {confirmPasswordError && (
-                    <div className="text-red-500 text-xs mt-2 font-medium">
+                    <div className="mt-2 text-xs font-medium text-red-500">
                       {confirmPasswordError}
                     </div>
                   )}
@@ -474,13 +474,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-amber-400 text-black py-3 px-4 rounded-2xl hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-colors text-lg"
+                className="w-full rounded-2xl bg-amber-400 px-4 py-3 text-lg font-semibold text-black shadow-lg transition-colors hover:bg-amber-500 focus:ring-2 focus:ring-amber-400/60 focus:outline-none disabled:opacity-50"
               >
                 {loading
-                  ? "Ładowanie..."
+                  ? 'Ładowanie...'
                   : isLogin
-                  ? t.auth.login
-                  : t.auth.register}
+                    ? t.auth.login
+                    : t.auth.register}
               </button>
             </form>
             {/* Google Login Section - with WebView handling */}
@@ -489,7 +489,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <div className="mt-8">
                 <div className="flex items-center gap-4">
                   <div className="flex-1 border-t border-[#262626]" />
-                  <span className="text-gray-400 bg-[#232323]/80 px-3 rounded-full text-sm">
+                  <span className="rounded-full bg-[#232323]/80 px-3 text-sm text-gray-400">
                     lub
                   </span>
                   <div className="flex-1 border-t border-[#262626]" />
@@ -497,7 +497,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                  className="w-full mt-6 flex items-center justify-center gap-3 bg-[#232323]/90 text-amber-400 py-3 px-4 rounded-2xl hover:bg-[#18181b] focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-all text-lg border-2 border-amber-400"
+                  className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-amber-400 bg-[#232323]/90 px-4 py-3 text-lg font-semibold text-amber-400 shadow-lg transition-all hover:bg-[#18181b] focus:ring-2 focus:ring-amber-400/60 focus:outline-none disabled:opacity-50"
                 >
                   <Image
                     src="/google-logo.svg"
@@ -514,27 +514,27 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <div className="mt-8">
                 <div className="flex items-center gap-4">
                   <div className="flex-1 border-t border-[#262626]" />
-                  <span className="text-gray-400 bg-[#232323]/80 px-3 rounded-full text-sm">
+                  <span className="rounded-full bg-[#232323]/80 px-3 text-sm text-gray-400">
                     lub
                   </span>
                   <div className="flex-1 border-t border-[#262626]" />
                 </div>
 
                 {/* WebView Warning Message */}
-                <div className="mt-4 p-4 bg-amber-400/10 border border-amber-400/30 rounded-xl">
+                <div className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4">
                   <div className="flex items-start gap-3">
-                    <TriangleAlert className="h-6 w-6 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <TriangleAlert className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-400" />
                     <div className="text-sm text-amber-200">
-                      <p className="font-medium mb-1">
+                      <p className="mb-1 font-medium">
                         Wykryto przeglądarkę w aplikacji
                       </p>
                       <p className="text-amber-300/80">
                         Logowanie przez Google może nie działać w tej
                         przeglądarce.
-                        {webViewInfo.webViewType === "facebook" ||
-                        webViewInfo.webViewType === "messenger"
-                          ? " Otwórz stronę w przeglądarce zewnętrznej (Chrome, Safari) dla najlepszego doświadczenia."
-                          : " Spróbuj otworzyć stronę w przeglądarce zewnętrznej."}
+                        {webViewInfo.webViewType === 'facebook' ||
+                        webViewInfo.webViewType === 'messenger'
+                          ? ' Otwórz stronę w przeglądarce zewnętrznej (Chrome, Safari) dla najlepszego doświadczenia.'
+                          : ' Spróbuj otworzyć stronę w przeglądarce zewnętrznej.'}
                       </p>
                     </div>
                   </div>
@@ -543,7 +543,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <button
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                  className="w-full mt-6 flex items-center justify-center gap-3 bg-[#232323]/90 text-amber-400 py-3 px-4 rounded-2xl hover:bg-[#18181b] focus:outline-none focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50 font-semibold shadow-lg transition-all text-lg border-2 border-amber-400"
+                  className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-amber-400 bg-[#232323]/90 px-4 py-3 text-lg font-semibold text-amber-400 shadow-lg transition-all hover:bg-[#18181b] focus:ring-2 focus:ring-amber-400/60 focus:outline-none disabled:opacity-50"
                 >
                   <Image
                     src="/google-logo.svg"
@@ -559,9 +559,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <div className="mt-8 text-center">
               <button
                 onClick={switchMode}
-                className="text-amber-400 hover:text-amber-500 text-base font-semibold underline underline-offset-2 transition-colors"
+                className="text-base font-semibold text-amber-400 underline underline-offset-2 transition-colors hover:text-amber-500"
               >
-                {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount}{" "}
+                {isLogin ? t.auth.dontHaveAccount : t.auth.alreadyHaveAccount}{' '}
                 {isLogin ? t.auth.register : t.auth.login}
               </button>
             </div>
@@ -569,5 +569,5 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         )}
       </div>
     </div>
-  );
+  )
 }

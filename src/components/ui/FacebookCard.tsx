@@ -1,33 +1,33 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { FacebookPost } from "@/usecases/facebookPosts";
-import { ExternalLink } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { FacebookPost } from '@/usecases/facebookPosts'
+import { ExternalLink } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import {
   formatDistanceToNow,
   format,
   isToday,
   isYesterday,
   differenceInDays,
-} from "date-fns";
-import { pl } from "date-fns/locale";
-import { useState } from "react";
+} from 'date-fns'
+import { pl } from 'date-fns/locale'
+import { useState } from 'react'
 
 export function formatPolishDate(date: Date) {
-  const now = new Date();
-  const diffInDays = differenceInDays(now, date);
+  const now = new Date()
+  const diffInDays = differenceInDays(now, date)
 
   if (isToday(date)) {
-    return formatDistanceToNow(date, { locale: pl, addSuffix: true });
+    return formatDistanceToNow(date, { locale: pl, addSuffix: true })
   } else if (isYesterday(date)) {
-    return "wczoraj";
+    return 'wczoraj'
   } else if (diffInDays < 7) {
-    return formatDistanceToNow(date, { locale: pl, addSuffix: true });
+    return formatDistanceToNow(date, { locale: pl, addSuffix: true })
   } else {
-    return format(date, "d MMMM yyyy", { locale: pl });
+    return format(date, 'd MMMM yyyy', { locale: pl })
   }
 }
 
@@ -38,46 +38,46 @@ export function FacebookCard({
   text,
   className,
 }: FacebookPost & { className?: string }) {
-  const [showImage, setShowImage] = useState(true);
-  const date = new Date(timeCreated);
+  const [showImage, setShowImage] = useState(true)
+  const date = new Date(timeCreated)
 
   const handleImageError = () => {
-    setShowImage(false);
-  };
+    setShowImage(false)
+  }
 
-  const isBottomImage = className?.includes("facebook-card-bottom-image");
+  const isBottomImage = className?.includes('facebook-card-bottom-image')
   return (
     <Link
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className={`block rounded-lg border shadow-xl w-full cursor-pointer ${className ?? ""} ${isBottomImage ? "flex flex-col h-full" : ""}`}
+      className={`block w-full cursor-pointer rounded-lg border shadow-xl ${className ?? ''} ${isBottomImage ? 'flex h-full flex-col' : ''}`}
     >
-      <div className="flex flex-col items-start p-4 flex-grow">
+      <div className="flex flex-grow flex-col items-start p-4">
         <div className="flex w-full">
-          <Avatar className="w-10 h-10 rounded-full mr-3">
+          <Avatar className="mr-3 h-10 w-10 rounded-full">
             <AvatarImage src="/wtyczka_avatar.jpg" alt="Wtyczka" />
             <AvatarFallback>Wtyczka</AvatarFallback>
           </Avatar>
-          <div className="flex justify-between w-full">
+          <div className="flex w-full justify-between">
             <div>
-              <h3 className="font-semibold text-sm">
+              <h3 className="text-sm font-semibold">
                 Wtyczka - Wyjazd Integracyjny Wydziału EEIA PŁ
               </h3>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 <time dateTime={`${date}`}>{formatPolishDate(date)}</time>
               </p>
             </div>
-            <span className="rounded-full p-2 bg-transparent">
+            <span className="rounded-full bg-transparent p-2">
               <ExternalLink />
             </span>
           </div>
         </div>
-        <div className="flex flex-col w-full">
-          {text.split("\n").map((line: string, index: number) => (
+        <div className="flex w-full flex-col">
+          {text.split('\n').map((line: string, index: number) => (
             <p
               key={index}
-              className="text-sm mt-2 break-words whitespace-pre-wrap overflow-wrap-anywhere"
+              className="overflow-wrap-anywhere mt-2 text-sm break-words whitespace-pre-wrap"
             >
               {line}
             </p>
@@ -91,8 +91,12 @@ export function FacebookCard({
             alt="Post image"
             width={800}
             height={450}
-            className="object-cover w-full h-full rounded-b-lg"
-            style={isBottomImage ? { objectFit: "cover", marginTop: "auto" } : { objectFit: "cover" }}
+            className="h-full w-full rounded-b-lg object-cover"
+            style={
+              isBottomImage
+                ? { objectFit: 'cover', marginTop: 'auto' }
+                : { objectFit: 'cover' }
+            }
             onError={handleImageError}
           />
         </div>
@@ -103,29 +107,29 @@ export function FacebookCard({
             alt="Brak obrazu"
             width={800}
             height={450}
-            className="object-cover w-full h-full rounded-b-lg opacity-60"
-            style={{ objectFit: "cover" }}
+            className="h-full w-full rounded-b-lg object-cover opacity-60"
+            style={{ objectFit: 'cover' }}
           />
         </div>
       )}
     </Link>
-  );
+  )
 }
 export function FacebookCardSkeleton() {
   return (
-    <div className="rounded-lg border shadow-sm w-full">
+    <div className="w-full rounded-lg border shadow-sm">
       <div className="flex flex-col items-start p-4">
         <div className="flex w-full">
-          <Avatar className="w-10 h-10 animate-pulse mr-3">
+          <Avatar className="mr-3 h-10 w-10 animate-pulse">
             <AvatarFallback className="animate-pulse" />
           </Avatar>
-          <div className="flex justify-between w-full">
+          <div className="flex w-full justify-between">
             <div>
-              <h3 className="font-semibold text-sm">
-                <div className="w-20 h-4 bg-gray-300 animate-pulse mb-1 rounded-sm" />
+              <h3 className="text-sm font-semibold">
+                <div className="mb-1 h-4 w-20 animate-pulse rounded-sm bg-gray-300" />
               </h3>
-              <p className="text-xs text-muted-foreground">
-                <div className="w-10 h-3 bg-gray-300 animate-pulse rounded-sm" />
+              <p className="text-muted-foreground text-xs">
+                <div className="h-3 w-10 animate-pulse rounded-sm bg-gray-300" />
               </p>
             </div>
             <Button variant="ghost" size="icon" className="rounded-full">
@@ -133,14 +137,14 @@ export function FacebookCardSkeleton() {
             </Button>
           </div>
         </div>
-        <div className="flex flex-col w-full">
-          <div className="w-40 h-3 bg-gray-300 animate-pulse mt-2 rounded-sm" />
-          <div className="w-60 h-3 bg-gray-300 animate-pulse mt-2 rounded-sm" />
-          <div className="w-50 h-3 bg-gray-300 animate-pulse mt-2 rounded-sm" />
-          <div className="w-70 h-3 bg-gray-300 animate-pulse mt-2 rounded-sm" />
+        <div className="flex w-full flex-col">
+          <div className="mt-2 h-3 w-40 animate-pulse rounded-sm bg-gray-300" />
+          <div className="mt-2 h-3 w-60 animate-pulse rounded-sm bg-gray-300" />
+          <div className="mt-2 h-3 w-50 animate-pulse rounded-sm bg-gray-300" />
+          <div className="mt-2 h-3 w-70 animate-pulse rounded-sm bg-gray-300" />
         </div>
       </div>
-      <div className="w-full h-48 bg-gray-300 animate-pulse rounded-b-lg" />
+      <div className="h-48 w-full animate-pulse rounded-b-lg bg-gray-300" />
     </div>
-  );
+  )
 }

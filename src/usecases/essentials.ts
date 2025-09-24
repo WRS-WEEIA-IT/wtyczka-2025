@@ -1,24 +1,24 @@
-import { supabase } from '@/lib/supabase';
-import { AuthUser } from "@supabase/supabase-js";
+import { supabase } from '@/lib/supabase'
+import { AuthUser } from '@supabase/supabase-js'
 
 export interface EssentialItem {
-  id: number;
-  category: string;
-  item: string;
+  id: number
+  category: string
+  item: string
 }
 
 export interface EssentialCheckedItem {
-  essentialId: number;
-  userId: string;
-  checked: boolean;
-  updatedAt: string;
+  essentialId: number
+  userId: string
+  checked: boolean
+  updatedAt: string
 }
 
 export interface CustomEssentialItem {
-  id: number;
-  name: string;
-  checked: boolean;
-  updatedAt: string;
+  id: number
+  name: string
+  checked: boolean
+  updatedAt: string
 }
 
 // Fetch all essential items from the database
@@ -27,40 +27,42 @@ export async function getEssentials(): Promise<EssentialItem[]> {
     const { data, error } = await supabase
       .from('essentials')
       .select('id, category, item')
-      .order('id', { ascending: true });
+      .order('id', { ascending: true })
 
-    if (error) throw error;
-    return data || [];
+    if (error) throw error
+    return data || []
   } catch (error) {
-    console.error('Error fetching essentials:', error);
-    throw new Error('Failed to fetch essentials data');
+    console.error('Error fetching essentials:', error)
+    throw new Error('Failed to fetch essentials data')
   }
 }
 
 // Fetch user's checked essential items
-export async function getUserEssentialsChecked(user: AuthUser | null): Promise<{ [essentialId: number]: boolean }> {
+export async function getUserEssentialsChecked(
+  user: AuthUser | null,
+): Promise<{ [essentialId: number]: boolean }> {
   if (!user) {
-    return {};
+    return {}
   }
 
   try {
     const { data, error } = await supabase
       .from('checkedEssentials')
       .select('essentialId, checked')
-      .eq('userId', user.id);
+      .eq('userId', user.id)
 
-    if (error) throw error;
+    if (error) throw error
 
     // Convert array to object for easy lookup
-    const checkedMap: { [essentialId: number]: boolean } = {};
-    data?.forEach(item => {
-      checkedMap[item.essentialId] = item.checked;
-    });
+    const checkedMap: { [essentialId: number]: boolean } = {}
+    data?.forEach((item) => {
+      checkedMap[item.essentialId] = item.checked
+    })
 
-    return checkedMap;
+    return checkedMap
   } catch (error) {
-    console.error('Error fetching user essentials checked:', error);
-    return {};
+    console.error('Error fetching user essentials checked:', error)
+    return {}
   }
 }
 
@@ -68,7 +70,7 @@ export async function getUserEssentialsChecked(user: AuthUser | null): Promise<{
 export async function updateEssentialChecked(
   user: AuthUser | null,
   essentialId: number,
-  checked: boolean
+  checked: boolean,
 ): Promise<void> {
   if (!user) return
 
@@ -81,22 +83,25 @@ export async function updateEssentialChecked(
         essentialId,
         checked,
         updatedAt: new Date().toISOString(),
-      });
+      })
 
-    if (updateError) throw updateError;
-    
-    console.log('Successfully updated essential item:', { essentialId, checked });
+    if (updateError) throw updateError
+
+    console.log('Successfully updated essential item:', {
+      essentialId,
+      checked,
+    })
   } catch (error) {
-    console.error('Error updating essential item:', error);
-    throw error;
+    console.error('Error updating essential item:', error)
+    throw error
   }
 }
 
-
-
-export async function getCustomEssentials(user: AuthUser | null): Promise<CustomEssentialItem[]> {
+export async function getCustomEssentials(
+  user: AuthUser | null,
+): Promise<CustomEssentialItem[]> {
   if (!user) {
-    return [];
+    return []
   }
 
   try {
@@ -104,19 +109,22 @@ export async function getCustomEssentials(user: AuthUser | null): Promise<Custom
       .from('customEssentials')
       .select('id, name, checked, updatedAt')
       .eq('belongsTo', user.id)
-      .order('id', { ascending: true });
+      .order('id', { ascending: true })
 
-    if (error) throw error;
-    return data || [];
+    if (error) throw error
+    return data || []
   } catch (error) {
-    console.error('Error fetching custom essentials:', error);
-    return [];
+    console.error('Error fetching custom essentials:', error)
+    return []
   }
 }
 
-export async function addCustomEssential(user: AuthUser | null, name: string): Promise<CustomEssentialItem | null> {
+export async function addCustomEssential(
+  user: AuthUser | null,
+  name: string,
+): Promise<CustomEssentialItem | null> {
   if (!user) {
-    return null;
+    return null
   }
 
   try {
@@ -129,13 +137,13 @@ export async function addCustomEssential(user: AuthUser | null, name: string): P
         updatedAt: new Date().toISOString(),
       })
       .select()
-      .single();
-      
-    if (error) throw error;
-    return data || null;
+      .single()
+
+    if (error) throw error
+    return data || null
   } catch (error) {
-    console.error('Error adding custom essential:', error);
-    return null;
+    console.error('Error adding custom essential:', error)
+    return null
   }
 }
 
@@ -143,16 +151,16 @@ export async function updateCustomEssentialChecked(
   user: AuthUser | null,
   id: number,
   name: string | null,
-  checked: boolean | null
+  checked: boolean | null,
 ): Promise<CustomEssentialItem | null> {
-  if (!user) return null;
-  if (name === null && checked === null) return null;
-  
+  if (!user) return null
+  if (name === null && checked === null) return null
+
   const updates: { [key: string]: string | boolean | Date } = {
     updatedAt: new Date().toISOString(),
-  };
-  if (name !== null) updates.name = name;
-  if (checked !== null) updates.checked = checked;
+  }
+  if (name !== null) updates.name = name
+  if (checked !== null) updates.checked = checked
 
   try {
     const { data, error } = await supabase
@@ -161,33 +169,37 @@ export async function updateCustomEssentialChecked(
       .eq('id', id)
       .eq('belongsTo', user.id)
       .select()
-      .single();
-      
-    if (error) throw error;
-    console.log('Successfully updated custom essential item:', { id, ...updates });
-    return data || null;
-  }
-  catch (error) {
-    console.error('Error updating custom essential item:', error);
-    throw error;
+      .single()
+
+    if (error) throw error
+    console.log('Successfully updated custom essential item:', {
+      id,
+      ...updates,
+    })
+    return data || null
+  } catch (error) {
+    console.error('Error updating custom essential item:', error)
+    throw error
   }
 }
 
-export async function deleteCustomEssential(user: AuthUser | null, id: number): Promise<void> {
-  if (!user) return;
+export async function deleteCustomEssential(
+  user: AuthUser | null,
+  id: number,
+): Promise<void> {
+  if (!user) return
 
   try {
     const { error } = await supabase
       .from('customEssentials')
       .delete()
       .eq('id', id)
-      .eq('belongsTo', user.id);
-      
-    if (error) throw error;
-    console.log('Successfully deleted custom essential item:', id);
+      .eq('belongsTo', user.id)
+
+    if (error) throw error
+    console.log('Successfully deleted custom essential item:', id)
   } catch (error) {
-    console.error('Error deleting custom essential item:', error);
-    throw error;
+    console.error('Error deleting custom essential item:', error)
+    throw error
   }
 }
-

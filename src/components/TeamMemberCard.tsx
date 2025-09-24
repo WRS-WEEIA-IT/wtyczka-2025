@@ -1,51 +1,61 @@
-"use client";
+'use client'
 
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
-import Image from 'next/image';
-import { Mail, Facebook } from 'lucide-react';
-import { TeamMember as TeamMemberType } from '@/usecases/team-members';
+import React, { useState } from 'react'
+import toast from 'react-hot-toast'
+import Image from 'next/image'
+import { Mail, Facebook } from 'lucide-react'
+import { TeamMember as TeamMemberType } from '@/usecases/team-members'
 // All styles are now consolidated in app/css
 
 interface TeamMemberCardProps {
-  member: TeamMemberType;
+  member: TeamMemberType
 }
 
 export default function TeamMemberCard({ member }: TeamMemberCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false)
 
   // Kopiowanie maila do schowka i toast
   const handleCopyEmail = async () => {
     try {
-      await navigator.clipboard.writeText(member.email);
-      toast.success('Skopiowano mail do schowka!');
+      await navigator.clipboard.writeText(member.email)
+      toast.success('Skopiowano mail do schowka!')
     } catch {
-      toast.error('Nie udało się skopiować maila');
+      toast.error('Nie udało się skopiować maila')
     }
-  };
-  
+  }
+
   return (
-    <div 
+    <div
       className="memberCard fadeInStaggered"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className={`avatarContainer ${isHovered ? 'avatarPulse' : ''} glowOnHover`}>
+      <div
+        className={`avatarContainer ${isHovered ? 'avatarPulse' : ''} glowOnHover`}
+      >
         <Image
           src={member.photoUrl}
           alt={member.name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: 'cover' }}
-          className={isHovered ? 'scale-105 transition-transform duration-300' : 'transition-transform duration-300'}
+          className={
+            isHovered
+              ? 'scale-105 transition-transform duration-300'
+              : 'transition-transform duration-300'
+          }
         />
       </div>
       <h2 className="memberName">
         {(() => {
-          const [first, ...rest] = member.name.split(' ');
-          return <>
-            {first}<br />{rest.join(' ')}
-          </>;
+          const [first, ...rest] = member.name.split(' ')
+          return (
+            <>
+              {first}
+              <br />
+              {rest.join(' ')}
+            </>
+          )
         })()}
       </h2>
       {member.role && <p className="memberRole">{member.role}</p>}
@@ -53,7 +63,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
       <div className="contactBottom">
         <a href={`mailto:${member.email}`} className="memberContact">
           <Mail size={16} className={isHovered ? 'animate-bounce' : ''} />
-          <span 
+          <span
             className="emailLink"
             style={{ cursor: 'pointer' }}
             title="Kliknij, aby skopiować mail"
@@ -63,21 +73,21 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
           </span>
         </a>
         <div className="socialLinks">
-          <a 
-            href={member.facebookUrl} 
+          <a
+            href={member.facebookUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="facebookLink"
           >
-            <Facebook 
-              size={20} 
-              className={isHovered ? 'animate-pulse' : ''} 
-              color={isHovered ? '#ffffff' : '#E7A801'} 
+            <Facebook
+              size={20}
+              className={isHovered ? 'animate-pulse' : ''}
+              color={isHovered ? '#ffffff' : '#E7A801'}
             />
             <span style={{ fontWeight: 500 }}>Facebook</span>
           </a>
         </div>
       </div>
     </div>
-  );
+  )
 }

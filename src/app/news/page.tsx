@@ -1,66 +1,66 @@
-"use client";
+'use client'
 
-import { Card } from "@/components/ui/card";
-import { FacebookCard } from "@/components/ui/FacebookCard";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Card } from '@/components/ui/card'
+import { FacebookCard } from '@/components/ui/FacebookCard'
+import { useLanguage } from '@/contexts/LanguageContext'
 import {
   FacebookPost,
   getFacebookPostsInQuantity,
-} from "@/usecases/facebookPosts";
-import { ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+} from '@/usecases/facebookPosts'
+import { ExternalLink } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function NewsPage() {
-  const { t } = useLanguage();
+  const { t } = useLanguage()
 
   // Hydration fix
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
-  const [noMorePosts, setNoMorePosts] = useState<boolean>(false);
-  const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([]);
-  const [loading, setLoading] = useState(false);
-  const postsPerPage = 5;
-  const [page, setPage] = useState(0);
+  const [noMorePosts, setNoMorePosts] = useState<boolean>(false)
+  const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([])
+  const [loading, setLoading] = useState(false)
+  const postsPerPage = 5
+  const [page, setPage] = useState(0)
 
   const loadPosts = async (isInitial: boolean = false) => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const posts = await getFacebookPostsInQuantity(postsPerPage, page);
-      setPage((prevPage) => prevPage + 1);
+      const posts = await getFacebookPostsInQuantity(postsPerPage, page)
+      setPage((prevPage) => prevPage + 1)
       if (isInitial) {
-        setFacebookPosts(posts);
+        setFacebookPosts(posts)
       } else {
-        setFacebookPosts((prevPosts) => [...prevPosts, ...posts]);
+        setFacebookPosts((prevPosts) => [...prevPosts, ...posts])
       }
 
       if (posts.length != postsPerPage) {
-        setNoMorePosts(true);
+        setNoMorePosts(true)
       }
     } catch (error) {
-      console.error("Error loading posts:", error);
+      console.error('Error loading posts:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    loadPosts(true);
-  }, []);
+    loadPosts(true)
+  }, [])
 
   const handleShowMore = () => {
-    loadPosts();
-  };
+    loadPosts()
+  }
 
-  if (!isMounted) return null;
+  if (!isMounted) return null
   return (
     <div className="min-h-screen">
-      <section className="border-b border-[#262626] text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-amber-400">
+      <section className="border-b border-[#262626] py-16 text-white">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <h1 className="mb-4 text-4xl font-bold text-amber-400 md:text-5xl">
             {t.home.latestNews}
           </h1>
           <p className="text-xl text-gray-200">
@@ -71,10 +71,10 @@ export default function NewsPage() {
               href="https://facebook.com/wtyczka.eeia"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 px-7 py-3 rounded-xl font-bold tracking-wider uppercase transition-all western-btn bg-[#1877F2] hover:bg-[#145db2] text-white shadow-lg border-2 border-[#145db2] focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2"
+              className="western-btn inline-flex items-center space-x-2 rounded-xl border-2 border-[#145db2] bg-[#1877F2] px-7 py-3 font-bold tracking-wider text-white uppercase shadow-lg transition-all hover:bg-[#145db2] focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2 focus:outline-none"
               style={{
-                fontFamily: "var(--font-rye), fantasy, serif",
-                boxShadow: "0 4px 16px rgba(24, 119, 242, 0.25)",
+                fontFamily: 'var(--font-rye), fantasy, serif',
+                boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)',
               }}
             >
               <ExternalLink className="h-5 w-5" />
@@ -84,34 +84,36 @@ export default function NewsPage() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="site-container flex flex-col mt-12">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="site-container mt-12 flex flex-col">
           <div className="readable-width flex flex-col gap-8">
             {facebookPosts.map((post, index) => (
               <FacebookCard key={index} {...post} />
             ))}
             {!noMorePosts && (
-              <Card className="items-center justify-center inline-flex card-hover mb-12 shadow-none border-none">
+              <Card className="card-hover mb-12 inline-flex items-center justify-center border-none shadow-none">
                 <div
-                  className={`p-6 w-full text-center cursor-pointer rounded-xl font-bold uppercase tracking-wider transition-all duration-200 shadow-md card-blur-btn ${loading ? "opacity-70" : ""}`}
+                  className={`card-blur-btn w-full cursor-pointer rounded-xl p-6 text-center font-bold tracking-wider uppercase shadow-md transition-all duration-200 ${
+                    loading ? 'opacity-70' : ''
+                  }`}
                   style={{
-                    fontFamily: "Roboto Slab, Times New Roman, serif",
-                    color: "#fff",
-                    background: "rgba(30, 30, 30, 0.55)",
-                    backdropFilter: "blur(8px)",
-                    WebkitBackdropFilter: "blur(8px)",
-                    border: "2px solid #fff",
-                    boxShadow: "0 4px 12px rgba(255,255,255,0.12)"
+                    fontFamily: 'Roboto Slab, Times New Roman, serif',
+                    color: '#fff',
+                    background: 'rgba(30, 30, 30, 0.55)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: '2px solid #fff',
+                    boxShadow: '0 4px 12px rgba(255,255,255,0.12)',
                   }}
                   onClick={handleShowMore}
                 >
-                  {loading ? "Ładuję..." : "Pokaż więcej"}
+                  {loading ? 'Ładuję...' : 'Pokaż więcej'}
                 </div>
               </Card>
             )}
             {noMorePosts && facebookPosts.length > 0 && (
-              <Card className="items-center justify-center inline-flex  mb-12 shadow-xl">
-                <div className="p-6 text-muted-foreground">
+              <Card className="mb-12 inline-flex items-center justify-center shadow-xl">
+                <div className="text-muted-foreground p-6">
                   To już wszystkie aktualności!
                 </div>
               </Card>
@@ -120,12 +122,12 @@ export default function NewsPage() {
         </div>
       </section>
 
-      <section className="py-16 bg-[#18181b] border-t border-[#262626]">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-amber-400 mb-4">
+      <section className="border-t border-[#262626] bg-[#18181b] py-16">
+        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-4 text-3xl font-bold text-amber-400">
             Nie przegap żadnych aktualności!
           </h2>
-          <p className="text-gray-200 mb-8">
+          <p className="mb-8 text-gray-200">
             Obserwuj naszą stronę na Facebooku, aby być na bieżąco z wszystkimi
             informacjami dotyczącymi Wtyczki 2025.
           </p>
@@ -133,10 +135,10 @@ export default function NewsPage() {
             href="https://www.facebook.com/wtyczka.eeia"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 px-8 py-3 rounded-xl font-bold tracking-wider uppercase transition-all western-btn bg-[#1877F2] hover:bg-[#145db2] text-white shadow-lg border-2 border-[#145db2] focus:outline-none focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2"
+            className="western-btn inline-flex items-center space-x-2 rounded-xl border-2 border-[#145db2] bg-[#1877F2] px-8 py-3 font-bold tracking-wider text-white uppercase shadow-lg transition-all hover:bg-[#145db2] focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2 focus:outline-none"
             style={{
-              fontFamily: "var(--font-rye), fantasy, serif",
-              boxShadow: "0 4px 16px rgba(24, 119, 242, 0.25)",
+              fontFamily: 'var(--font-rye), fantasy, serif',
+              boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)',
             }}
           >
             <ExternalLink className="h-5 w-5" />
@@ -145,5 +147,5 @@ export default function NewsPage() {
         </div>
       </section>
     </div>
-  );
+  )
 }

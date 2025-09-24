@@ -9,14 +9,14 @@ export async function middleware(request: NextRequest) {
 
   // We only want to protect API routes that fetch data, not the pages themselves
   // This allows the frontend to render placeholder content
-  
+
   // Protect team members API data
   if (path.includes('/api/team-members') || path.includes('/api/data/team')) {
     const contactOpenDate = await getDateFromDatabase('CONTACT_DATE')
     if (contactOpenDate) {
       const now = new Date()
       const openDate = new Date(contactOpenDate)
-      
+
       if (now < openDate) {
         // Block access to the team members data
         return NextResponse.json({ error: 'Access denied' }, { status: 403 })
@@ -30,10 +30,10 @@ export async function middleware(request: NextRequest) {
     if (paymentOpenDate) {
       const now = new Date()
       const openDate = new Date(paymentOpenDate)
-      
+
       // Check if the payment date is reached or if user has admin auth
       const adminAuthCookie = request.cookies.get('admin-auth')
-      
+
       // If the date is not reached and user doesn't have admin auth
       if (now < openDate && !adminAuthCookie) {
         // Block access to payment data
@@ -49,11 +49,11 @@ export async function middleware(request: NextRequest) {
 // Configure the middleware to run on all API routes
 export const config = {
   matcher: [
-    '/api/:path*', 
+    '/api/:path*',
     '/api/team-members/:path*',
     '/api/payments/:path*',
-    '/api/data/:path*'
-  ]
+    '/api/data/:path*',
+  ],
 }
 
 // Note: The middleware is intentionally NOT applied to the page routes themselves,
