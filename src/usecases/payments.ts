@@ -41,6 +41,7 @@ export async function createPayment(
       .insert([
         {
           ...paymentData,
+          needsTransport: !paymentData.needsTransport, // Invert the boolean value
           userId: user.id,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
