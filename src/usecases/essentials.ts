@@ -38,7 +38,7 @@ export async function getUserEssentialsChecked(user: AuthUser | null): Promise<{
 
   try {
     const { data, error } = await supabase
-      .from('essentialsChecked')
+      .from('checkedEssentials')
       .select('essentialId, checked')
       .eq('userId', user.id);
 
@@ -68,7 +68,7 @@ export async function updateEssentialChecked(
   try {
     // First, try to update existing record
     const { error: updateError } = await supabase
-      .from('essentialsChecked')
+      .from('checkedEssentials')
       .upsert({
         userId: user.id,
         essentialId,
