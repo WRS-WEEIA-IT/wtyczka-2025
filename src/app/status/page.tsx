@@ -13,17 +13,15 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-
-
 import { getPayment, PaymentRecord } from "@/usecases/payments";
 import { getRegistration, RegistrationRecord } from "@/usecases/registrations";
-
-
 
 export default function StatusPage() {
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const { user, loading } = useAuth();
   useLanguage();
   const [registration, setRegistration] = useState<RegistrationRecord | null>(
@@ -60,9 +58,9 @@ export default function StatusPage() {
     return (
       <div className="wtyczka-loading-container">
         <div className="text-center">
-          <Image 
+          <Image
             src="/logo.svg"
-            alt="Wtyczka Logo" 
+            alt="Wtyczka Logo"
             className="wtyczka-loading-logo"
             width={150}
             height={150}
@@ -105,31 +103,31 @@ export default function StatusPage() {
     return <Clock className="h-6 w-6 text-yellow-500" />;
   };
 
-
-
-
   // Nowa logika statusu
   const registrationCompleted = !!registration;
   const paymentCompleted = !!payment;
   const qualified = payment?.qualified === true;
 
-  let statusType: 'none' | 'registration' | 'payment' | 'pending' | 'qualified' = 'none';
+  let statusType:
+    | "none"
+    | "registration"
+    | "payment"
+    | "pending"
+    | "qualified" = "none";
   if (!registrationCompleted) {
-    statusType = 'none';
+    statusType = "none";
   } else if (registrationCompleted && !paymentCompleted) {
-    statusType = 'registration';
+    statusType = "registration";
   } else if (registrationCompleted && paymentCompleted && !qualified) {
-    statusType = 'pending';
+    statusType = "pending";
   } else if (registrationCompleted && paymentCompleted && qualified) {
-    statusType = 'qualified';
+    statusType = "qualified";
   }
 
   if (!isMounted) return null;
   return (
     <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
         {/* Status Overview */}
         <div className="bg-[#0F0F0F] border border-[#262626] rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-2xl font-bold text-amber-400 mb-6 text-center mt-4">
@@ -138,32 +136,51 @@ export default function StatusPage() {
 
           <div className="flex items-center justify-center mb-6">
             <div className="flex flex-col items-center justify-center w-full">
-              {statusType === 'none' && (
+              {statusType === "none" && (
                 <>
                   <XCircle className="h-16 w-16 text-red-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Brak rejestracji</div>
-                  <div className="text-gray-300 mt-2 text-center">Wypełnij formularz rejestracji, aby rozpocząć proces zgłoszenia.</div>
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">
+                    Brak rejestracji
+                  </div>
+                  <div className="text-gray-300 mt-2 text-center">
+                    Wypełnij formularz rejestracji, aby rozpocząć proces
+                    zgłoszenia.
+                  </div>
                 </>
               )}
-              {statusType === 'registration' && (
+              {statusType === "registration" && (
                 <>
                   <Clock className="h-16 w-16 text-yellow-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Czekamy na formularz płatności</div>
-                  <div className="text-gray-300 mt-2 text-center">Wypełnij formularz płatności, aby przejść dalej.</div>
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">
+                    Czekamy na formularz płatności
+                  </div>
+                  <div className="text-gray-300 mt-2 text-center">
+                    Wypełnij formularz płatności, aby przejść dalej.
+                  </div>
                 </>
               )}
-              {statusType === 'pending' && (
+              {statusType === "pending" && (
                 <>
                   <Clock className="h-16 w-16 text-yellow-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Oczekiwanie na werdykt</div>
-                  <div className="text-gray-300 mt-2 text-center">Twoje zgłoszenie i płatność zostały przyjęte. Czekaj na decyzję organizatorów – możesz być jeszcze niezaakceptowany lub znajdować się na liście rezerwowej.</div>
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">
+                    Oczekiwanie na werdykt
+                  </div>
+                  <div className="text-gray-300 mt-2 text-center">
+                    Twoje zgłoszenie i płatność zostały przyjęte. Czekaj na
+                    decyzję organizatorów – możesz być jeszcze niezaakceptowany
+                    lub znajdować się na liście rezerwowej.
+                  </div>
                 </>
               )}
-              {statusType === 'qualified' && (
+              {statusType === "qualified" && (
                 <>
                   <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">Zakwalifikowany!</div>
-                  <div className="text-green-400 mt-2 text-center">Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉</div>
+                  <div className="text-3xl font-bold text-amber-400 mt-2 text-center">
+                    Zakwalifikowany!
+                  </div>
+                  <div className="text-green-400 mt-2 text-center">
+                    Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉
+                  </div>
                 </>
               )}
             </div>
@@ -172,7 +189,7 @@ export default function StatusPage() {
           {registration && (
             <div className="text-center text-gray-300">
               <p>
-                Data złożenia aplikacji: {" "}
+                Data złożenia aplikacji:{" "}
                 <span className="font-semibold">
                   {registration.createdAt.toLocaleDateString("pl-PL")}
                 </span>
@@ -180,7 +197,6 @@ export default function StatusPage() {
             </div>
           )}
         </div>
-
 
         {/* Forms Status */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -206,16 +222,14 @@ export default function StatusPage() {
                   <p className="text-green-400 text-sm mb-2">
                     ✓ Formularz rejestracji został pomyślnie wysłany
                   </p>
-                  <div className="h-1"></div>
+                  <div className="h-4"></div>
                   {registration && (
-                    <div className="text-xs text-gray-400">
-                      <p>
-                        Imię i nazwisko: {registration.name}{" "}
-                        {registration.surname}
-                      </p>
-                      <p>Wydział: {registration.faculty}</p>
-                      <p>Kierunek: {registration.studyField}</p>
-                    </div>
+                    <Link
+                      href="/registration"
+                      className="bg-[#E7A801] hover:bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold transition-colors"
+                    >
+                      Sprawdź swoje odpowiedzi
+                    </Link>
                   )}
                 </div>
               ) : (
@@ -258,10 +272,8 @@ export default function StatusPage() {
                     ✓ Formularz płatności został pomyślnie wysłany
                   </p>
                   <div className="text-xs text-gray-400 mt-5">
-                      <p className="text-lg">
-                        Oczekuj na werdykt
-                      </p>
-                    </div>
+                    <p className="text-lg">Oczekuj na werdykt</p>
+                  </div>
                 </div>
               ) : registrationCompleted ? (
                 <div>
@@ -276,20 +288,19 @@ export default function StatusPage() {
                     Wypełnij formularz płatności
                   </Link>
                 </div>
-               ) : (
-                 <div className="flex flex-col items-center">
-                   <p className="text-red-400 text-sm mb-3">
-                     Najpierw wypełnij formularz rejestracji
-                   </p>
-                   <div className="h-2"></div>
-                   <button
-                     className="bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold cursor-not-allowed opacity-60"
-                     disabled
-                   >
-                     Wypełnij formularz płatności
-                   </button>
-                 </div>
-                
+              ) : (
+                <div className="flex flex-col items-center">
+                  <p className="text-red-400 text-sm mb-3">
+                    Najpierw wypełnij formularz rejestracji
+                  </p>
+                  <div className="h-2"></div>
+                  <button
+                    className="bg-amber-700 text-black px-4 py-2 rounded-md text-sm font-semibold cursor-not-allowed opacity-60"
+                    disabled
+                  >
+                    Wypełnij formularz płatności
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -320,4 +331,3 @@ export default function StatusPage() {
     </div>
   );
 }
-

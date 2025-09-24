@@ -375,7 +375,24 @@ export default function RegistrationPage() {
                   Dane studenta
                 </h3>
                 <p className="text-base text-gray-400">
-                  Wydział: {existingRegistration.faculty}
+                  Wydział:{" "}
+                  {existingRegistration.faculty === "w1"
+                    ? "Mechaniczny W1"
+                    : existingRegistration.faculty === "w2"
+                    ? "Elektrotechniki, Elektroniki, Informatyki i Automatyki W2"
+                    : existingRegistration.faculty === "w3"
+                    ? "Chemiczny W3"
+                    : existingRegistration.faculty === "w4"
+                    ? "Technologii Materiałowych i Wzornictwa Tekstyliów W4"
+                    : existingRegistration.faculty === "w5"
+                    ? "Biotechnologii i Nauk o Żywności W5"
+                    : existingRegistration.faculty === "w6"
+                    ? "Budownictwa, Architektury i Inżynierii Środowiska W6"
+                    : existingRegistration.faculty === "w7"
+                    ? "Fizyki Technicznej, Informatyki i Matematyki Stosowanej W7"
+                    : existingRegistration.faculty === "w8"
+                    ? "Organizacji i Zarządzania W8"
+                    : "Inżynierii Procesowej i Ochrony Środowiska W9"}
                 </p>
                 <p className="text-base text-gray-400">
                   Nr indeksu: {existingRegistration.studentNumber}
