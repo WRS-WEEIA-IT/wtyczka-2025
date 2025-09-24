@@ -13,6 +13,9 @@ import {
   ChevronDown,
   ChevronRight,
   AlertTriangle,
+  Plus,
+  X,
+  Edit3,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -20,6 +23,11 @@ import {
   getEssentials,
   updateEssentialChecked,
   getUserEssentialsChecked,
+  getCustomEssentials,
+  CustomEssentialItem,
+  addCustomEssential,
+  updateCustomEssentialChecked,
+  deleteCustomEssential,
 } from "@/usecases/essentials";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -63,6 +71,79 @@ export default function EssentialsPage() {
   const [currentChangedCategory, setCurrentChangedCategory] =
     useState<string>("");
 
+  // Custom items state
+  const [customItems, setCustomItems] = useState<CustomEssentialItem[]>([]);
+  const [newCustomItem, setNewCustomItem] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingText, setEditingText] = useState("");
+  const [customItemsChecked, setCustomItemsChecked] = useState<{
+    [id: number]: boolean;
+  }>({});
+
+  const addCustomItem = async () => {
+    if (!newCustomItem.trim()) return;
+
+    const newItem = await addCustomEssential(user, newCustomItem.trim());
+    if (!newItem) return;
+
+    const newItems = [...customItems, newItem];
+    setCustomItems(newItems);
+    setNewCustomItem("");
+  };
+
+  const editCustomItem = (index: number) => {
+    setEditingIndex(index);
+    const item = customItems.find((i) => i.id === index);
+    if (!item) return;
+    setEditingText(item.name);
+  };
+
+  const saveEditedItem = async () => {
+    if (editingIndex === null || !editingText.trim()) return;
+
+    const editedItem = await updateCustomEssentialChecked(
+      user,
+      editingIndex,
+      editingText.trim(),
+      null
+    );
+    if (!editedItem) return;
+
+    let newItems = [...customItems];
+    newItems = newItems.filter((i) => i.id !== editingIndex);
+    newItems.push(editedItem);
+    newItems.sort((a, b) => a.id - b.id); // Keep order by id
+
+    setCustomItems(newItems);
+    setEditingIndex(null);
+    setEditingText("");
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditingText("");
+  };
+
+  const removeCustomItem = async (id: number) => {
+    await deleteCustomEssential(user, id);
+    const newItems = customItems.filter((item) => item.id !== id);
+    const newChecked = { ...customItemsChecked };
+    delete newChecked[id];
+
+    setCustomItems(newItems);
+    setCustomItemsChecked(newChecked);
+  };
+
+  const toggleCustomItem = async (id: number) => {
+    const newChecked = {
+      ...customItemsChecked,
+      [id]: !customItemsChecked[id],
+    };
+
+    await updateCustomEssentialChecked(user, id, null, !customItemsChecked[id]);
+    setCustomItemsChecked(newChecked);
+  };
+
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) =>
       prev.includes(sectionId)
@@ -103,6 +184,15 @@ export default function EssentialsPage() {
 
         // Load user's existing checked items
         const userCheckedItems = await getUserEssentialsChecked(user);
+        const customEssentials = await getCustomEssentials(user);
+        const customCheckedItems: { [id: number]: boolean } = {};
+        if (customEssentials) {
+          customEssentials.forEach((item) => {
+            customCheckedItems[item.id] = item.checked;
+          });
+        }
+        setCustomItems(customEssentials);
+        setCustomItemsChecked(customCheckedItems);
 
         const initialChecked: { [id: number]: boolean } = {};
         essentialsDb.forEach((item) => {
@@ -181,6 +271,12 @@ export default function EssentialsPage() {
       title: "Opcjonalne",
       icon: <Star className="h-5 w-5" />,
       items: essentialsOptional,
+    },
+    {
+      id: "custom",
+      title: "Osobiste",
+      icon: <Edit3 className="h-5 w-5" />,
+      items: [], // Custom items will be handled separately
     },
   ];
 
@@ -275,7 +371,14 @@ export default function EssentialsPage() {
                     <button
                       onClick={() => toggleSection(section.id)}
                       className={`w-full px-6 py-4 bg-[#232323] hover:bg-[#2a2a2a] transition-colors flex items-center justify-between text-left rounded-lg ${
-                        checkedSection[section.id]
+                        section.id === "custom"
+                          ? customItems.length > 0 &&
+                            customItems.every(
+                              (item) => customItemsChecked[item.id]
+                            )
+                            ? "text-amber-300 line-through"
+                            : ""
+                          : checkedSection[section.id]
                           ? "text-amber-300 line-through"
                           : ""
                       }`}
@@ -286,6 +389,12 @@ export default function EssentialsPage() {
                         </div>
                         <h2 className="text-xl font-bold text-amber-400">
                           {section.title}
+                          {section.id === "custom" &&
+                            customItems.length > 0 && (
+                              <span className="ml-2 text-sm text-gray-400">
+                                ({customItems.length})
+                              </span>
+                            )}
                         </h2>
                       </div>
                       <div className="text-amber-400">
@@ -299,45 +408,184 @@ export default function EssentialsPage() {
 
                     {openSections.includes(section.id) && (
                       <div className="px-4 py-4 space-y-2 mt-3">
-                        {section.items.map((item) => (
-                          <label
-                            key={item.id}
-                            className="flex items-center border border-[#3a3a3a] rounded-lg p-4 bg-[#18181b] cursor-pointer transition-colors hover:border-amber-400"
-                          >
-                            <span className="custom-checkbox-container">
-                              <input
-                                type="checkbox"
-                                checked={checked[item.id] || false}
-                                onChange={async () => {
-                                  await updateEssentialChecked(
-                                    user,
-                                    item.id,
-                                    !checked[item.id]
-                                  );
+                        {section.id === "custom" ? (
+                          <>
+                            {/* Add new item input */}
+                            {user && (
+                              <div className="flex gap-2 mb-4">
+                                <input
+                                  type="text"
+                                  value={newCustomItem}
+                                  onChange={(e) =>
+                                    setNewCustomItem(e.target.value)
+                                  }
+                                  onKeyPress={(e) =>
+                                    e.key === "Enter" && addCustomItem()
+                                  }
+                                  placeholder="Dodaj swoją rzecz..."
+                                  className="flex-1 px-4 py-2 bg-[#18181b] border border-[#3a3a3a] rounded-lg text-white placeholder-gray-400 focus:border-amber-400 focus:outline-none"
+                                />
+                                <button
+                                  onClick={addCustomItem}
+                                  disabled={!newCustomItem.trim()}
+                                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                  Dodaj
+                                </button>
+                              </div>
+                            )}
 
-                                  // Update UI state immediately
-                                  setChecked((prev) => ({
-                                    ...prev,
-                                    [item.id]: !checked[item.id],
-                                  }));
-                                  setCurrentChangedCategory(item.category);
-                                }}
-                                className="custom-checkbox-input"
-                              />
-                              <div className="custom-checkbox-glow"></div>
-                              <div className="custom-checkbox-check">✓</div>
-                            </span>
-                            <span
-                              className={`text-base flex-1 my-auto ${
-                                checked[item.id]
-                                  ? "line-through text-amber-300"
-                                  : "text-white"
-                              }`}
+                            {/* Custom items list */}
+                            {customItems.map((item) => (
+                              <label
+                                key={item.id}
+                                className="flex items-center border border-[#3a3a3a] rounded-lg p-4 bg-[#18181b] cursor-pointer transition-colors hover:border-amber-400 group"
+                              >
+                                <span className="custom-checkbox-container">
+                                  <input
+                                    type="checkbox"
+                                    checked={
+                                      customItemsChecked[item.id] || false
+                                    }
+                                    onChange={() => toggleCustomItem(item.id)}
+                                    className="custom-checkbox-input"
+                                  />
+                                  <div className="custom-checkbox-glow"></div>
+                                  <div className="custom-checkbox-check">✓</div>
+                                </span>
+
+                                {editingIndex === item.id ? (
+                                  <div className="flex-1 flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={editingText}
+                                      onChange={(e) =>
+                                        setEditingText(e.target.value)
+                                      }
+                                      onKeyPress={(e) => {
+                                        if (e.key === "Enter") saveEditedItem();
+                                        if (e.key === "Escape") cancelEdit();
+                                      }}
+                                      className="flex-1 px-2 py-1 bg-[#232323] border border-[#3a3a3a] rounded text-white focus:border-amber-400 focus:outline-none"
+                                      autoFocus
+                                    />
+                                    <button
+                                      onClick={saveEditedItem}
+                                      className="p-1 text-green-400 hover:text-green-300"
+                                      title="Zapisz"
+                                    >
+                                      ✓
+                                    </button>
+                                    <button
+                                      onClick={cancelEdit}
+                                      className="p-1 text-red-400 hover:text-red-300"
+                                      title="Anuluj"
+                                    >
+                                      ✕
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <span
+                                      className={`text-base flex-1 my-auto ${
+                                        customItemsChecked[item.id]
+                                          ? "line-through text-amber-300"
+                                          : "text-white"
+                                      }`}
+                                    >
+                                      {item.name}
+                                    </span>
+                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          editCustomItem(item.id);
+                                        }}
+                                        className="p-1 text-amber-400 hover:text-amber-300"
+                                        title="Edytuj"
+                                      >
+                                        <Edit3 className="h-4 w-4" />
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          removeCustomItem(item.id);
+                                        }}
+                                        className="p-1 text-red-400 hover:text-red-300"
+                                        title="Usuń"
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </label>
+                            ))}
+
+                            {customItems.length === 0 && user && (
+                              <div className="text-center py-8 text-gray-400">
+                                <Edit3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                <p>
+                                  Nie masz jeszcze dodanych własnych rzeczy.
+                                </p>
+                                <p className="text-sm">
+                                  Użyj pola powyżej, aby dodać coś do swojej
+                                  listy.
+                                </p>
+                              </div>
+                            )}
+
+                            {!user && (
+                              <div className="text-center py-8 text-gray-400">
+                                <p>
+                                  Zaloguj się, aby dodawać własne rzeczy do
+                                  listy.
+                                </p>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          section.items.map((item) => (
+                            <label
+                              key={item.id}
+                              className="flex items-center border border-[#3a3a3a] rounded-lg p-4 bg-[#18181b] cursor-pointer transition-colors hover:border-amber-400"
                             >
-                              {item.item}
-                            </span>
-                          </label>
-                        ))}
+                              <span className="custom-checkbox-container">
+                                <input
+                                  type="checkbox"
+                                  checked={checked[item.id] || false}
+                                  onChange={async () => {
+                                    await updateEssentialChecked(
+                                      user,
+                                      item.id,
+                                      !checked[item.id]
+                                    );
+
+                                    // Update UI state immediately
+                                    setChecked((prev) => ({
+                                      ...prev,
+                                      [item.id]: !checked[item.id],
+                                    }));
+                                    setCurrentChangedCategory(item.category);
+                                  }}
+                                  className="custom-checkbox-input"
+                                />
+                                <div className="custom-checkbox-glow"></div>
+                                <div className="custom-checkbox-check">✓</div>
+                              </span>
+                              <span
+                                className={`text-base flex-1 my-auto ${
+                                  checked[item.id]
+                                    ? "line-through text-amber-300"
+                                    : "text-white"
+                                }`}
+                              >
+                                {item.item}
+                              </span>
+                            </label>
+                          ))
+                        )}
                       </div>
                     )}
                   </div>
