@@ -265,9 +265,13 @@ export default function StatusPage() {
                   <p className="mb-2 text-sm text-green-400">
                     ✓ Formularz płatności został pomyślnie wysłany
                   </p>
-                  <div className="mt-5 text-xs text-gray-400">
-                    <p className="text-lg">Oczekuj na werdykt</p>
-                  </div>
+                  <div className="h-4"></div>
+                  <Link
+                    href="/payment"
+                    className="rounded-md bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                  >
+                    Sprawdź swoje odpowiedzi
+                  </Link>
                 </div>
               ) : registrationCompleted ? (
                 <div>
