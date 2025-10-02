@@ -353,14 +353,46 @@ export default function PaymentPage() {
     }
   }
 
+  // Kalkulacja kwoty w zależności od opcji
+  const calculateAmount = () => {
+    let baseAmount = 500 // Cena początkowa
+    
+    // Jeśli dieta wegetariańska, dodaj 20zł
+    if (userRegistration?.dietName === 'vegetarian') {
+      baseAmount += 20
+    }
+    
+    // Jeśli checkbox zaznaczony (nie potrzebuje transportu), odlicz 100zł
+    const needsTransportValue = watch('needsTransport')
+    if (needsTransportValue) {
+      baseAmount -= 100
+    }
+    
+    return baseAmount
+  }
+
+  const getAmountBreakdown = () => {
+    const breakdown = []
+    breakdown.push({ label: 'Cena podstawowa', amount: '500zł', color: 'text-gray-500' })
+    
+    if (userRegistration?.dietName === 'vegetarian') {
+      breakdown.push({ label: '+ Dieta wegetariańska', amount: '+20zł', color: 'text-amber-400' })
+    }
+    
+    const needsTransportValue = watch('needsTransport')
+    if (needsTransportValue) {
+      breakdown.push({ label: '+ Transport na własną rękę', amount: '-100zł', color: 'text-green-400' })
+    }
+    
+    return breakdown
+  }
+
   const bankAccountDetails = {
     accountNumber: '12 3456 7890 1234 5678 9012 3456',
-    accountHolder: 'Samorząd Studencki EEIA',
-    bankName: 'Bank Przykładowy',
     transferTitle: userRegistration
-      ? `Wtyczka2025 - ${userRegistration.name} ${userRegistration.surname}`
+      ? `Wtyczka 2025 - ${userRegistration.name} ${userRegistration.surname}`
       : `Wtyczka 2025 - ${user?.email}`,
-    amount: '500zł',
+    amount: `${calculateAmount()}zł`,
   }
 
   // Redirect to login if not authenticated
@@ -924,205 +956,6 @@ export default function PaymentPage() {
               }}
               className="space-y-8"
             >
-              <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
-                <div className="mb-6 flex items-center space-x-2 pb-4">
-                  <CreditCard className="h-6 w-6 text-amber-400" />
-                  <h2 className="text-2xl font-bold text-white">
-                    Informacje o płatności
-                  </h2>
-                </div>
-
-                <div className="mb-6 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
-                  <h3 className="mb-3 text-lg font-medium text-amber-400">
-                    Dane do przelewu
-                  </h3>
-                  <div className="text-white">
-                    <div>
-                      <span className="block text-gray-400">Numer konta:</span>
-                      <button
-                        type="button"
-                        className="block w-full cursor-pointer rounded bg-[#232323] px-2 py-1 text-left font-mono break-words hover:bg-[#2c2c2c] focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        style={{ marginTop: '2px', marginBottom: '2px' }}
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            bankAccountDetails.accountNumber,
-                          )
-                          showLimitedToast(
-                            <span style={{ fontWeight: 600 }}>
-                              Skopiowano numer konta do schowka
-                            </span>,
-                            { icon: '📋', duration: 2000 },
-                          )
-                        }}
-                        aria-label="Kliknij, aby skopiować numer konta"
-                      >
-                        {bankAccountDetails.accountNumber}
-                      </button>
-                    </div>
-                    <div>
-                      <span className="block text-gray-400">Odbiorca:</span>
-                      <span
-                        className="block break-words"
-                        style={{ marginTop: '2px', marginBottom: '2px' }}
-                      >
-                        {bankAccountDetails.accountHolder}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="block text-gray-400">Bank:</span>
-                      <span
-                        className="block break-words"
-                        style={{ marginTop: '2px', marginBottom: '2px' }}
-                      >
-                        {bankAccountDetails.bankName}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="block text-gray-400">
-                        Tytuł przelewu:
-                      </span>
-                      <span
-                        className="block font-medium break-words text-amber-400"
-                        style={{ marginTop: '2px', marginBottom: '2px' }}
-                      >
-                        {bankAccountDetails.transferTitle}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="block text-gray-400">Kwota:</span>
-                      <span
-                        className="block text-lg font-bold break-words text-amber-400"
-                        style={{ marginTop: '2px', marginBottom: '2px' }}
-                      >
-                        {bankAccountDetails.amount}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Upload payment confirmation */}
-                <div className="mb-6">
-                  <label
-                    className="mb-2 block text-sm font-medium text-gray-300"
-                    htmlFor="transferConfirmation"
-                  >
-                    <span
-                      className="mb-2 block w-full text-xs font-medium text-gray-300 sm:text-sm md:text-base lg:text-base xl:text-base"
-                      style={{
-                        maxWidth: '100%',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      Potwierdzenie przelewu (max 5MB)
-                      <span className="text-red-500">*</span>
-                    </span>
-                  </label>
-                  {!uploadedFile ? (
-                    <>
-                      <div
-                        id="transferConfirmation"
-                        className={`cursor-pointer rounded-xl border-2 border-dashed border-[#262626] p-6 text-center transition-colors ${isDragActive ? 'border-[#b8860b] bg-[#b8860b]/60' : ''}`}
-                        onClick={() => fileInputRef.current?.click()}
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ')
-                            fileInputRef.current?.click()
-                        }}
-                        role="button"
-                        aria-label="Kliknij, aby wybrać plik do przesłania"
-                        onDragOver={(e) => {
-                          e.preventDefault()
-                          setIsDragActive(true)
-                        }}
-                        onDragLeave={(e) => {
-                          e.preventDefault()
-                          setIsDragActive(false)
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault()
-                          setIsDragActive(false)
-                          const files = e.dataTransfer.files
-                          if (files && files.length > 0) {
-                            // symulacja eventu inputa
-                            handleFileUpload({
-                              target: { files },
-                            } as React.ChangeEvent<HTMLInputElement>)
-                          }
-                        }}
-                      >
-                        <Upload
-                          className={`mx-auto mb-3 h-10 w-10 transition-colors duration-150 ${isDragActive ? 'text-amber-400' : 'text-gray-400'}`}
-                        />
-                        <p
-                          className={`mb-4 transition-colors duration-150 ${isDragActive ? 'font-semibold text-amber-400' : 'text-gray-400'}`}
-                          style={{ minHeight: '1.5em' }}
-                        >
-                          {isDragActive
-                            ? 'Upuść plik tutaj'
-                            : 'Prześlij potwierdzenie płatności (PDF, JPG, PNG)'}
-                        </p>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          onChange={handleFileUpload}
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          style={{ display: 'none' }}
-                        />
-                        <button
-                          type="button"
-                          className="mx-auto flex items-center justify-center rounded-xl bg-[#E7A801] px-6 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
-                          disabled={isFileUploading}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            fileInputRef.current?.click()
-                          }}
-                        >
-                          {isFileUploading ? (
-                            'Przesyłanie...'
-                          ) : (
-                            <>
-                              <Upload className="mr-2 h-4 w-4" /> Wybierz plik
-                            </>
-                          )}
-                        </button>
-                        {/* Usunięto osobny komunikat, teraz jest w miejscu info tekstu powyżej */}
-                      </div>
-                      {/* Error message for missing file below the box */}
-                      {errors.transferConfirmation && (
-                        <p className="mt-2 text-sm text-red-500">
-                          Potwierdzenie przelewu jest wymagane
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <div className="rounded-xl border border-[#262626] bg-[#0F0F0F] p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <FileText className="h-6 w-6 text-amber-400" />
-                          <div>
-                            <p className="text-sm font-medium text-amber-400">
-                              {uploadedFile.fileName}
-                            </p>
-                            <p className="text-xs text-gray-400">
-                              {formatFileSize(uploadedFile.fileSize)}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleFileRemove}
-                          className="rounded-full bg-[#232323] p-2 text-gray-300 transition-colors hover:bg-[#2c2c2c]"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
               {/* Student status & emergency contact */}
               <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 <div className="mb-6 flex items-center space-x-2 pb-4">
@@ -1188,7 +1021,7 @@ export default function PaymentPage() {
                           <div className="custom-checkbox-check">✓</div>
                         </span>
                         <span className="text-sm text-white">
-                          Tak, dojeżdżam samodzielnie
+                          Tak, dojeżdżam samodzielnie <span className="text-green-400 font-medium">(-100 zł)</span>
                         </span>
                       </label>
                     </div>
@@ -1411,6 +1244,198 @@ export default function PaymentPage() {
                     <p className="text-sm text-red-500">
                       {errors.cancellationPolicy.message}
                     </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Payment Information and Upload confirmation - moved to bottom */}
+              <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+                {/* Payment Information FIRST */}
+                <div className="mb-6 flex items-center space-x-2 pb-4">
+                  <CreditCard className="h-6 w-6 text-amber-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Informacje o płatności
+                  </h2>
+                </div>
+
+                <div className="mb-8 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
+                  <h3 className="mb-4 text-lg font-medium text-amber-400">
+                    Dane do przelewu
+                  </h3>
+                  <div className="space-y-4 text-white">
+                    <div>
+                      <span className="block text-gray-400 mb-2">Numer konta:</span>
+                      <button
+                        type="button"
+                        className="block w-full cursor-pointer rounded bg-[#232323] px-3 py-2 text-left font-mono break-words hover:bg-[#2c2c2c] focus:ring-2 focus:ring-amber-500 focus:outline-none transition-colors"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            bankAccountDetails.accountNumber,
+                          )
+                          showLimitedToast(
+                            <span style={{ fontWeight: 600 }}>
+                              Skopiowano numer konta do schowka
+                            </span>,
+                            { icon: '📋', duration: 2000 },
+                          )
+                        }}
+                        aria-label="Kliknij, aby skopiować numer konta"
+                      >
+                        {bankAccountDetails.accountNumber}
+                      </button>
+                    </div>
+                    
+                    <div>
+                      <span className="block text-gray-400 mb-2">
+                        Tytuł przelewu:
+                      </span>
+                      <span className="block font-medium break-words text-amber-400 mb-1">
+                        {bankAccountDetails.transferTitle}
+                      </span>
+                      <p className="text-xs text-gray-400">
+                        Koniecznie musi być słowo <strong className="underline text-amber-400">"Wtyczka"</strong> w tytule <span className="text-red-500">⚠️</span>
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <span className="block text-gray-400 mb-2">Kwota:</span>
+                      <span className="block text-xl font-bold text-amber-400 mb-2">
+                        {bankAccountDetails.amount}
+                      </span>
+                      <div className="text-xs text-gray-500 space-y-1">
+                        {getAmountBreakdown().map((item, index) => (
+                          <div key={index} className={item.color}>
+                            {item.label}: {item.amount}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload payment confirmation SECOND */}
+                <div className="mb-6 flex items-center space-x-2 pb-4">
+                  <Upload className="h-6 w-6 text-amber-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Potwierdzenie płatności
+                  </h2>
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    className="mb-2 block text-sm font-medium text-gray-300"
+                    htmlFor="transferConfirmation"
+                  >
+                    <span
+                      className="mb-2 block w-full text-xs font-medium text-gray-300 sm:text-sm md:text-base lg:text-base xl:text-base"
+                      style={{
+                        maxWidth: '100%',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      Potwierdzenie przelewu (max 5MB)
+                      <span className="text-red-500">*</span>
+                    </span>
+                  </label>
+                  {!uploadedFile ? (
+                    <>
+                      <div
+                        id="transferConfirmation"
+                        className={`cursor-pointer rounded-xl border-2 border-dashed border-[#262626] p-6 text-center transition-colors ${isDragActive ? 'border-[#b8860b] bg-[#b8860b]/60' : ''}`}
+                        onClick={() => fileInputRef.current?.click()}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ')
+                            fileInputRef.current?.click()
+                        }}
+                        role="button"
+                        aria-label="Kliknij, aby wybrać plik do przesłania"
+                        onDragOver={(e) => {
+                          e.preventDefault()
+                          setIsDragActive(true)
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault()
+                          setIsDragActive(false)
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault()
+                          setIsDragActive(false)
+                          const files = e.dataTransfer.files
+                          if (files && files.length > 0) {
+                            handleFileUpload({
+                              target: { files },
+                            } as React.ChangeEvent<HTMLInputElement>)
+                          }
+                        }}
+                      >
+                        <Upload
+                          className={`mx-auto mb-3 h-10 w-10 transition-colors duration-150 ${isDragActive ? 'text-amber-400' : 'text-gray-400'}`}
+                        />
+                        <p
+                          className={`mb-4 transition-colors duration-150 ${isDragActive ? 'font-semibold text-amber-400' : 'text-gray-400'}`}
+                          style={{ minHeight: '1.5em' }}
+                        >
+                          {isDragActive
+                            ? 'Upuść plik tutaj'
+                            : 'Prześlij potwierdzenie płatności (PDF, JPG, PNG)'}
+                        </p>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          onChange={handleFileUpload}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          style={{ display: 'none' }}
+                        />
+                        <button
+                          type="button"
+                          className="mx-auto flex items-center justify-center rounded-xl bg-[#E7A801] px-6 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                          disabled={isFileUploading}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            fileInputRef.current?.click()
+                          }}
+                        >
+                          {isFileUploading ? (
+                            'Przesyłanie...'
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" /> Wybierz plik
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      {errors.transferConfirmation && (
+                        <p className="mt-2 text-sm text-red-500">
+                          Potwierdzenie przelewu jest wymagane
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <div className="rounded-xl border border-[#262626] bg-[#0F0F0F] p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <FileText className="h-6 w-6 text-amber-400" />
+                          <div>
+                            <p className="text-sm font-medium text-amber-400">
+                              {uploadedFile.fileName}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              {formatFileSize(uploadedFile.fileSize)}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleFileRemove}
+                          className="rounded-full bg-[#232323] p-2 text-gray-300 transition-colors hover:bg-[#2c2c2c]"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
