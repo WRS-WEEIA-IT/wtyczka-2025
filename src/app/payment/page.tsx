@@ -388,10 +388,10 @@ export default function PaymentPage() {
   }
 
   const bankAccountDetails = {
-    accountNumber: '12 3456 7890 1234 5678 9012 3456',
+    accountNumber: '03 1240 3028 1111 0010 3741 8675',
     transferTitle: userRegistration
       ? `Wtyczka 2025 - ${userRegistration.name} ${userRegistration.surname}`
-      : `Wtyczka 2025 - ${user?.email}`,
+      : `Wtyczka 2025 - IMIE I NAZWISKO`,
     amount: `${calculateAmount()}zł`,
   }
 
