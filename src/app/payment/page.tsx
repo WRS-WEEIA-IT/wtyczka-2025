@@ -479,19 +479,19 @@ export default function PaymentPage() {
 
           <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
             {/* Uwaga / kontakt na dole */}
-            <div className="mt-6 sm:mt-8 rounded-xl border-t border-[#262626] bg-[#1a1a1a] p-3 sm:p-4 pt-4 sm:pt-6">
-              <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-3 rounded-xl border-2 border-[#ff0033] bg-[#1a1a1a] p-3 sm:p-4 shadow-[0_0_12px_2px_#ff0033]">
-                <AlertTriangle className="h-6 w-6 flex-shrink-0 text-red-500 self-center sm:self-start sm:mt-0.5" />
+            <div className="mt-6 rounded-xl border-t border-[#262626] bg-[#1a1a1a] p-3 pt-4 sm:mt-8 sm:p-4 sm:pt-6">
+              <div className="flex flex-col space-y-3 rounded-xl border-2 border-[#ff0033] bg-[#1a1a1a] p-3 shadow-[0_0_12px_2px_#ff0033] sm:flex-row sm:items-start sm:space-y-0 sm:space-x-3 sm:p-4">
+                <AlertTriangle className="h-6 w-6 flex-shrink-0 self-center text-red-500 sm:mt-0.5 sm:self-start" />
                 <div className="w-full">
-                  <h3 className="text-base sm:text-lg font-semibold text-red-400 text-center sm:text-left">
+                  <h3 className="text-center text-base font-semibold text-red-400 sm:text-left sm:text-lg">
                     Zauważyłeś błąd w swoich danych?
                   </h3>
-                  <p className="mt-2 text-sm sm:text-base text-gray-300 text-center sm:text-left">
+                  <p className="mt-2 text-center text-sm text-gray-300 sm:text-left sm:text-base">
                     Jeśli jakiekolwiek dane zostały wprowadzone błędnie,
                     skontaktuj się z nami jak najszybciej:
                   </p>
                   <ul className="mt-3 space-y-3 sm:space-y-2">
-                    <li className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 p-2 sm:p-0 rounded-lg sm:rounded-none bg-[#0f0f0f] sm:bg-transparent">
+                    <li className="flex flex-col space-y-2 rounded-lg bg-[#0f0f0f] p-2 sm:flex-row sm:items-center sm:space-y-0 sm:rounded-none sm:bg-transparent sm:p-0">
                       <div className="flex items-center justify-center sm:justify-start">
                         <span className="mr-2 rounded-full bg-red-900/40 p-1">
                           <svg
@@ -509,16 +509,18 @@ export default function PaymentPage() {
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                           </svg>
                         </span>
-                        <span className="text-sm sm:text-base text-gray-300 font-medium">Telefon:</span>
+                        <span className="font-medium text-gray-300 sm:text-base">
+                          Telefon:
+                        </span>
                       </div>
                       <a
                         href="tel:+48690150650"
-                        className="text-red-400 hover:underline text-center sm:text-left text-lg sm:text-base font-semibold sm:font-normal sm:ml-1 transition-colors duration-200 hover:text-red-300"
+                        className="text-center text-lg font-semibold text-red-400 transition-colors duration-200 hover:text-red-300 hover:underline sm:ml-1 sm:text-left sm:text-base sm:font-normal"
                       >
                         +48 690 150 650
                       </a>
                     </li>
-                    <li className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 p-2 sm:p-0 rounded-lg sm:rounded-none bg-[#0f0f0f] sm:bg-transparent">
+                    <li className="flex flex-col space-y-2 rounded-lg bg-[#0f0f0f] p-2 sm:flex-row sm:items-center sm:space-y-0 sm:rounded-none sm:bg-transparent sm:p-0">
                       <div className="flex items-center justify-center sm:justify-start">
                         <span className="mr-2 rounded-full bg-red-900/40 p-1">
                           <svg
@@ -537,11 +539,13 @@ export default function PaymentPage() {
                             <polyline points="22,6 12,13 2,6"></polyline>
                           </svg>
                         </span>
-                        <span className="text-sm sm:text-base text-gray-300 font-medium">Email:</span>
+                        <span className="font-medium text-gray-300 sm:text-base">
+                          Email:
+                        </span>
                       </div>
                       <a
                         href="mailto:wtyczka@samorzad.p.lodz.pl"
-                        className="text-red-400 hover:underline text-center sm:text-left text-base sm:text-base break-all sm:break-normal sm:ml-1 transition-colors duration-200 hover:text-red-300"
+                        className="text-center text-base break-all text-red-400 transition-colors duration-200 hover:text-red-300 hover:underline sm:ml-1 sm:text-left sm:text-base sm:break-normal"
                       >
                         wtyczka@samorzad.p.lodz.pl
                       </a>
