@@ -129,6 +129,8 @@ export default function PaymentPage() {
   const [isFileUploading, setIsFileUploading] = useState(false)
   const [isDragActive, setIsDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] =
+    useState(false)
 
   // Payment open date logic
   const [isPaymentOpen, setIsPaymentOpen] = useState(false) // Start with closed
@@ -1249,9 +1251,16 @@ export default function PaymentPage() {
                         <div className="custom-checkbox-check">✓</div>
                       </span>
                       <span className="ml-3 text-gray-300">
-                        Rozumiem i akceptuję politykę anulowania, zgodnie z
-                        którą zwrot pieniędzy jest możliwy tylko do 30 dni przed
-                        wydarzeniem. <span className="text-red-500">*</span>
+                        Rozumiem i akceptuję{' '}
+                        <button
+                          type="button"
+                          onClick={() => setIsCancellationPolicyModalOpen(true)}
+                          className="text-amber-400 underline hover:text-amber-500 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-[#18181b] focus:outline-none"
+                        >
+                          politykę anulowania
+                        </button>{' '}
+                        zgodnie z regulaminem wydarzenia.
+                        <span className="text-red-500">*</span>
                       </span>
                     </label>
                   </div>
@@ -1476,6 +1485,116 @@ export default function PaymentPage() {
           </>
         )}
       </div>
+
+      {/* Cancellation Policy Modal */}
+      {isCancellationPolicyModalOpen && (
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4 sm:p-6">
+          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[#262626] bg-[#18181b] p-4 shadow-xl sm:p-6 md:p-8">
+            <div className="mb-4 flex items-center justify-between sm:mb-6">
+              <h2 className="pr-4 text-lg font-bold text-white sm:text-xl md:text-2xl">
+                Polityka anulowania
+              </h2>
+              <button
+                onClick={() => setIsCancellationPolicyModalOpen(false)}
+                className="flex-shrink-0 rounded-full bg-[#232323] p-1.5 text-gray-300 transition-colors hover:bg-[#2c2c2c] sm:p-2"
+              >
+                <X className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-gray-300 sm:space-y-4">
+              <div className="rounded-lg border border-[#262626] bg-[#0F0F0F] p-3 sm:p-4">
+                <h3 className="mb-2 text-sm font-semibold text-amber-400 sm:mb-3 sm:text-base">
+                  Zgodnie z punktem 12 regulaminu:
+                </h3>
+                <ul className="space-y-1.5 text-xs sm:space-y-2 sm:text-sm">
+                  <li className="flex items-start">
+                    <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400"></span>
+                    <span>
+                      <strong>Zwrot kosztów możliwy</strong> w ciągu{' '}
+                      <strong>24 godzin</strong> od otrzymania potwierdzenia
+                      zakwalifikowania się na wyjazd
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400"></span>
+                    <span>
+                      Rezygnacja możliwa{' '}
+                      <strong>
+                        nie później niż po 13 października 2025 r.
+                      </strong>
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-400"></span>
+                    <span>
+                      <strong>Po tym terminie</strong> wymagane jest wskazanie{' '}
+                      <strong>zastępcy</strong> na &quot;Wtyczkę 2025&quot; w
+                      miejsce rezygnującego
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-400"></span>
+                    <span>
+                      Osoba wskazana jako zastępca musi{' '}
+                      <strong>uiścić opłatę</strong> za uczestnictwo w
+                      wydarzeniu
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-[#262626] bg-[#0F0F0F] p-3 sm:p-4">
+                <h3 className="mb-2 text-sm font-semibold text-blue-400 sm:mb-3 sm:text-base">
+                  Rezygnacja z przyczyn losowych:
+                </h3>
+                <p className="text-xs sm:text-sm">
+                  W przypadku rezygnacji z przyczyn losowych, Uczestnik powinien
+                  skontaktować się niezwłocznie z Koordynatorem.
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-[#262626] bg-[#0F0F0F] p-3 sm:p-4">
+                <h3 className="mb-2 text-sm font-semibold text-green-400 sm:mb-3 sm:text-base">
+                  Kontakt w sprawie rezygnacji:
+                </h3>
+                <p className="mb-2 text-xs sm:text-sm">
+                  Informację o rezygnacji należy wysłać na adresy:
+                </p>
+                <div className="space-y-1 text-xs sm:text-sm">
+                  <div className="flex items-center">
+                    <span className="mr-2">📧</span>
+                    <a
+                      href="mailto:l.wilczura@samorzad.p.lodz.pl"
+                      className="break-all text-amber-400 hover:text-amber-500"
+                    >
+                      l.wilczura@samorzad.p.lodz.pl
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="mr-2">📧</span>
+                    <a
+                      href="mailto:wtyczka@samorzad.p.lodz.pl"
+                      className="break-all text-amber-400 hover:text-amber-500"
+                    >
+                      wtyczka@samorzad.p.lodz.pl
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 flex justify-end sm:mt-6">
+              <button
+                onClick={() => setIsCancellationPolicyModalOpen(false)}
+                className="rounded-xl bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700 sm:px-6 sm:text-base"
+              >
+                Rozumiem
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
