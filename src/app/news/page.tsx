@@ -9,7 +9,7 @@ import {
 } from '@/usecases/facebookPosts'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export default function NewsPage() {
   const { t } = useLanguage()
@@ -26,30 +26,33 @@ export default function NewsPage() {
   const postsPerPage = 5
   const [page, setPage] = useState(0)
 
-  const loadPosts = async (isInitial: boolean = false) => {
-    setLoading(true)
-    try {
-      const posts = await getFacebookPostsInQuantity(postsPerPage, page)
-      setPage((prevPage) => prevPage + 1)
-      if (isInitial) {
-        setFacebookPosts(posts)
-      } else {
-        setFacebookPosts((prevPosts) => [...prevPosts, ...posts])
-      }
+  const loadPosts = useCallback(
+    async (isInitial: boolean = false) => {
+      setLoading(true)
+      try {
+        const posts = await getFacebookPostsInQuantity(postsPerPage, page)
+        setPage((prevPage) => prevPage + 1)
+        if (isInitial) {
+          setFacebookPosts(posts)
+        } else {
+          setFacebookPosts((prevPosts) => [...prevPosts, ...posts])
+        }
 
-      if (posts.length != postsPerPage) {
-        setNoMorePosts(true)
+        if (posts.length != postsPerPage) {
+          setNoMorePosts(true)
+        }
+      } catch (error) {
+        console.error('Error loading posts:', error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Error loading posts:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+    [page],
+  )
 
   useEffect(() => {
     loadPosts(true)
-  }, [])
+  }, [loadPosts])
 
   const handleShowMore = () => {
     loadPosts()

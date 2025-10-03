@@ -356,34 +356,46 @@ export default function PaymentPage() {
   // Kalkulacja kwoty w zależności od opcji
   const calculateAmount = () => {
     let baseAmount = 500 // Cena początkowa
-    
+
     // Jeśli dieta wegetariańska, dodaj 20zł
     if (userRegistration?.dietName === 'vegetarian') {
       baseAmount += 20
     }
-    
+
     // Jeśli checkbox zaznaczony (nie potrzebuje transportu), odlicz 100zł
     const needsTransportValue = watch('needsTransport')
     if (needsTransportValue) {
       baseAmount -= 100
     }
-    
+
     return baseAmount
   }
 
   const getAmountBreakdown = () => {
     const breakdown = []
-    breakdown.push({ label: 'Cena podstawowa', amount: '500zł', color: 'text-gray-500' })
-    
+    breakdown.push({
+      label: 'Cena podstawowa',
+      amount: '500zł',
+      color: 'text-gray-500',
+    })
+
     if (userRegistration?.dietName === 'vegetarian') {
-      breakdown.push({ label: '+ Dieta wegetariańska', amount: '+20zł', color: 'text-amber-400' })
+      breakdown.push({
+        label: '+ Dieta wegetariańska',
+        amount: '+20zł',
+        color: 'text-amber-400',
+      })
     }
-    
+
     const needsTransportValue = watch('needsTransport')
     if (needsTransportValue) {
-      breakdown.push({ label: '+ Transport na własną rękę', amount: '-100zł', color: 'text-green-400' })
+      breakdown.push({
+        label: '+ Transport na własną rękę',
+        amount: '-100zł',
+        color: 'text-green-400',
+      })
     }
-    
+
     return breakdown
   }
 
@@ -1021,7 +1033,10 @@ export default function PaymentPage() {
                           <div className="custom-checkbox-check">✓</div>
                         </span>
                         <span className="text-sm text-white">
-                          Tak, dojeżdżam samodzielnie <span className="text-green-400 font-medium">(-100 zł)</span>
+                          Tak, dojeżdżam samodzielnie{' '}
+                          <span className="font-medium text-green-400">
+                            (-100 zł)
+                          </span>
                         </span>
                       </label>
                     </div>
@@ -1264,10 +1279,12 @@ export default function PaymentPage() {
                   </h3>
                   <div className="space-y-4 text-white">
                     <div>
-                      <span className="block text-gray-400 mb-2">Numer konta:</span>
+                      <span className="mb-2 block text-gray-400">
+                        Numer konta:
+                      </span>
                       <button
                         type="button"
-                        className="block w-full cursor-pointer rounded bg-[#232323] px-3 py-2 text-left font-mono break-words hover:bg-[#2c2c2c] focus:ring-2 focus:ring-amber-500 focus:outline-none transition-colors"
+                        className="block w-full cursor-pointer rounded bg-[#232323] px-3 py-2 text-left font-mono break-words transition-colors hover:bg-[#2c2c2c] focus:ring-2 focus:ring-amber-500 focus:outline-none"
                         onClick={() => {
                           navigator.clipboard.writeText(
                             bankAccountDetails.accountNumber,
@@ -1284,25 +1301,29 @@ export default function PaymentPage() {
                         {bankAccountDetails.accountNumber}
                       </button>
                     </div>
-                    
+
                     <div>
-                      <span className="block text-gray-400 mb-2">
+                      <span className="mb-2 block text-gray-400">
                         Tytuł przelewu:
                       </span>
-                      <span className="block font-medium break-words text-amber-400 mb-1">
+                      <span className="mb-1 block font-medium break-words text-amber-400">
                         {bankAccountDetails.transferTitle}
                       </span>
                       <p className="text-xs text-gray-400">
-                        Koniecznie musi być słowo <strong className="underline text-amber-400">"Wtyczka"</strong> w tytule <span className="text-red-500">⚠️</span>
+                        Koniecznie musi być słowo{' '}
+                        <strong className="text-amber-400 underline">
+                          &quot;Wtyczka&quot;
+                        </strong>{' '}
+                        w tytule <span className="text-red-500">⚠️</span>
                       </p>
                     </div>
-                    
+
                     <div>
-                      <span className="block text-gray-400 mb-2">Kwota:</span>
-                      <span className="block text-xl font-bold text-amber-400 mb-2">
+                      <span className="mb-2 block text-gray-400">Kwota:</span>
+                      <span className="mb-2 block text-xl font-bold text-amber-400">
                         {bankAccountDetails.amount}
                       </span>
-                      <div className="text-xs text-gray-500 space-y-1">
+                      <div className="space-y-1 text-xs text-gray-500">
                         {getAmountBreakdown().map((item, index) => (
                           <div key={index} className={item.color}>
                             {item.label}: {item.amount}
