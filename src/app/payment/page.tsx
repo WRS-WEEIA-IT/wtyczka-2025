@@ -403,6 +403,7 @@ export default function PaymentPage() {
 
   const bankAccountDetails = {
     accountNumber: '03 1240 3028 1111 0010 3741 8675',
+    recipient: 'Politechnika Łódzka',
     transferTitle: userRegistration
       ? `Wtyczka 2025 - ${userRegistration.name} ${userRegistration.surname}`
       : `Wtyczka 2025 - IMIE I NAZWISKO`,
@@ -1291,6 +1292,15 @@ export default function PaymentPage() {
                     Dane do przelewu
                   </h3>
                   <div className="space-y-4 text-white">
+                    <div>
+                      <span className="mb-2 block text-gray-400">
+                        Odbiorca:
+                      </span>
+                      <span className="block font-medium text-white">
+                        {bankAccountDetails.recipient}
+                      </span>
+                    </div>
+
                     <div>
                       <span className="mb-2 block text-gray-400">
                         Numer konta:
