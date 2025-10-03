@@ -57,8 +57,8 @@ export async function POST(request: Request) {
     // This is to determine if we should allow access at all
     // Payment date check removed as it's not being used
 
-    // Check the password
-    if (password === expected) {
+    // Check the password (case insensitive)
+    if (password.toLowerCase() === expected.toLowerCase()) {
       // Reset attempts on success
       attempts.delete(ip)
 

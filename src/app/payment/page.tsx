@@ -230,7 +230,7 @@ export default function PaymentPage() {
       const res = await fetch('/api/verify-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: adminPassword }),
+        body: JSON.stringify({ password: adminPassword?.toLowerCase() }),
       })
       const data = await res.json()
 
