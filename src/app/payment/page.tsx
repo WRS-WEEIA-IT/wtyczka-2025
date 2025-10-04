@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -205,6 +205,9 @@ export default function PaymentPage() {
     mode: 'onChange',
   })
 
+  // Watch needsTransport value
+  const needsTransportValue = watch('needsTransport')
+
   // Character count for textareas
   useEffect(() => {
     const updateCharCount = (elementId: string, value: string | undefined) => {
@@ -321,7 +324,7 @@ export default function PaymentPage() {
         emergencyContactNameSurname: paymentData.emergencyContactNameSurname,
         emergencyContactPhone: paymentData.emergencyContactPhone,
         emergencyContactRelation: paymentData.emergencyContactRelation,
-        needsTransport: paymentData.needsTransport,
+        needsTransport: !paymentData.needsTransport, // Odwracamy logikę: checkbox zaznaczony = dojeżdża sam = NIE potrzebuje transportu
         medicalConditions: paymentData.medicalConditions,
         medications: paymentData.medications,
         transferConfirmation: paymentData.transferConfirmation,
@@ -356,7 +359,7 @@ export default function PaymentPage() {
   }
 
   // Kalkulacja kwoty w zależności od opcji
-  const calculateAmount = () => {
+  const calculateAmount = useMemo(() => {
     let baseAmount = 500 // Cena początkowa
 
     // Jeśli dieta wegetariańska, dodaj 20zł
@@ -364,14 +367,13 @@ export default function PaymentPage() {
       baseAmount += 20
     }
 
-    // Jeśli checkbox zaznaczony (nie potrzebuje transportu), odlicz 100zł
-    const needsTransportValue = watch('needsTransport')
+    // Jeśli checkbox zaznaczony (dojeżdża samodzielnie), odlicz 100zł
     if (needsTransportValue) {
       baseAmount -= 100
     }
 
     return baseAmount
-  }
+  }, [userRegistration?.dietName, needsTransportValue])
 
   const getAmountBreakdown = () => {
     const breakdown = []
@@ -389,10 +391,9 @@ export default function PaymentPage() {
       })
     }
 
-    const needsTransportValue = watch('needsTransport')
     if (needsTransportValue) {
       breakdown.push({
-        label: '+ Transport na własną rękę',
+        label: '- Dojeżdżam samodzielnie',
         amount: '-100zł',
         color: 'text-green-400',
       })
@@ -407,7 +408,7 @@ export default function PaymentPage() {
     transferTitle: userRegistration
       ? `Wtyczka 2025 - ${userRegistration.name} ${userRegistration.surname}`
       : `Wtyczka 2025 - IMIE I NAZWISKO`,
-    amount: `${calculateAmount()}zł`,
+    amount: `${calculateAmount}zł`,
   }
 
   // Redirect to login if not authenticated
@@ -1031,9 +1032,7 @@ export default function PaymentPage() {
                           <input
                             id="needsTransport"
                             type="checkbox"
-                            {...register('needsTransport', {
-                              setValueAs: (v) => !v,
-                            })}
+                            {...register('needsTransport')}
                             className="custom-checkbox-input"
                           />
                           <div className="custom-checkbox-glow"></div>
