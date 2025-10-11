@@ -36,9 +36,9 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
         <Image
           src={member.photoUrl}
           alt={member.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          style={{ objectFit: 'cover' }}
+          width={250}
+          height={250}
+          style={{ objectFit: 'cover', display: 'block', overflow: 'hidden', width: '250px', height: '250px' }}
           className={
             isHovered
               ? 'scale-105 transition-transform duration-300'
