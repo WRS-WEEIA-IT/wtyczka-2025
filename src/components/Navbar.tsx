@@ -301,6 +301,27 @@ export default function Navbar() {
                         {t.nav.regulations}
                       </div>
                     </a>
+                    <a
+                      href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="western-button western-button--sign186 western-dropdown-animated"
+                      style={{
+                        backgroundImage: 'url(/western/sign186.svg)',
+                        backgroundSize: '145% 135%',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                        backgroundColor: 'rgba(0,0,0,0)',
+                        boxShadow: 'none',
+                        border: 'none',
+                        minHeight: '96px',
+                        transitionDelay: '0ms',
+                      }}
+                    >
+                      <div style={{ marginTop: '8px' }}>
+                        Obozowe oświadczenie
+                      </div>
+                    </a>
                     <div
                       className="chain-container western-dropdown-animated"
                       style={{ transitionDelay: '80ms' }}
@@ -694,6 +715,33 @@ export default function Navbar() {
                     }}
                   >
                     {t.nav.regulations}
+                  </a>
+                  <a
+                    href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="western-dropdown-item mobile-dropdown-item"
+                    style={{
+                      backgroundImage: 'url(/western/wooden-sign.png)',
+                      backgroundSize: '100% 100%',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center',
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                      border: 'none',
+                      transition:
+                        'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform =
+                        'scaleX(1.08) scaleY(0.95)'
+                      e.currentTarget.style.cursor = 'pointer'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'
+                    }}
+                  >
+                    Obozowe oświadczenie
                   </a>
                   <Link
                     href="/essentials"
