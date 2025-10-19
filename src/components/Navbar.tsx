@@ -318,9 +318,7 @@ export default function Navbar() {
                         transitionDelay: '0ms',
                       }}
                     >
-                      <div style={{ marginTop: '8px' }}>
-                        Oświadczenie
-                      </div>
+                      <div style={{ marginTop: '8px' }}>Oświadczenie</div>
                     </a>
                     <div
                       className="chain-container western-dropdown-animated"
@@ -464,9 +462,7 @@ export default function Navbar() {
                           zIndex: 102,
                         }}
                       >
-                        <div style={{ marginTop: '8px' }}>
-                          Oświadczenie
-                        </div>
+                        <div style={{ marginTop: '8px' }}>Oświadczenie</div>
                       </a>
                       {/* Pozostałe przyciski */}
                       <div
