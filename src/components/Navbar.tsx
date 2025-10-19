@@ -319,7 +319,7 @@ export default function Navbar() {
                       }}
                     >
                       <div style={{ marginTop: '8px' }}>
-                        Obozowe oświadczenie
+                        Oświadczenie
                       </div>
                     </a>
                     <div
@@ -443,6 +443,29 @@ export default function Navbar() {
                       >
                         <div style={{ marginTop: '8px' }}>
                           {t.nav.regulations}
+                        </div>
+                      </a>
+                      <a
+                        href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="western-button western-button--sign186 western-dropdown-animated"
+                        style={{
+                          backgroundImage: 'url(/western/sign186.svg)',
+                          backgroundSize: '145% 135%',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'center',
+                          backgroundColor: 'rgba(0,0,0,0)',
+                          boxShadow: 'none',
+                          border: 'none',
+                          minHeight: '96px',
+                          transitionDelay: '0ms',
+                          position: 'relative',
+                          zIndex: 102,
+                        }}
+                      >
+                        <div style={{ marginTop: '8px' }}>
+                          Oświadczenie
                         </div>
                       </a>
                       {/* Pozostałe przyciski */}
@@ -741,7 +764,7 @@ export default function Navbar() {
                       e.currentTarget.style.transform = 'scaleX(1) scaleY(1)'
                     }}
                   >
-                    Obozowe oświadczenie
+                    Oświadczenie
                   </a>
                   <Link
                     href="/essentials"
