@@ -9,6 +9,7 @@ import Link from 'next/link'
 
 import { getPayment, PaymentRecord } from '@/usecases/payments'
 import { getRegistration, RegistrationRecord } from '@/usecases/registrations'
+import { useYear } from '@/contexts/YearContext'
 
 export default function StatusPage() {
   // Hydration fix
@@ -16,6 +17,7 @@ export default function StatusPage() {
   useEffect(() => {
     setIsMounted(true)
   }, [])
+  const { year } = useYear()
   const { user, loading } = useAuth()
   useLanguage()
   const [registration, setRegistration] = useState<RegistrationRecord | null>(
@@ -67,10 +69,10 @@ export default function StatusPage() {
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="status-page flex min-h-screen items-center justify-center">
         <div className="mx-auto max-w-md rounded-lg border border-[#262626] bg-[#0F0F0F] p-8 text-center shadow-lg">
           <div className="mb-4 text-6xl">🔒</div>
-          <h1 className="mb-4 text-2xl font-bold text-amber-400">
+          <h1 className="mb-4 text-2xl font-bold text-[#4fb3ff]">
             Dostęp ograniczony
           </h1>
           <p className="mb-6 text-gray-300">
@@ -78,7 +80,7 @@ export default function StatusPage() {
           </p>
           <Link
             href="/"
-            className="rounded-md bg-[#E7A801] px-6 py-3 font-semibold text-black transition-colors hover:bg-amber-700"
+            className="status-primary-button rounded-md px-6 py-3 font-semibold transition-colors"
           >
             Wróć do strony głównej
           </Link>
@@ -120,11 +122,11 @@ export default function StatusPage() {
 
   if (!isMounted) return null
   return (
-    <div className="min-h-screen py-8">
+    <div className="status-page min-h-screen py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Status Overview */}
         <div className="mb-8 rounded-lg border border-[#262626] bg-[#0F0F0F] p-6 shadow-lg">
-          <h2 className="mt-4 mb-6 text-center text-2xl font-bold text-amber-400">
+          <h2 className="mt-4 mb-6 text-center text-2xl font-bold text-[#4fb3ff]">
             Status Twojej Aplikacji
           </h2>
 
@@ -133,7 +135,7 @@ export default function StatusPage() {
               {statusType === 'none' && (
                 <>
                   <XCircle className="mx-auto h-16 w-16 text-red-500" />
-                  <div className="mt-2 text-center text-3xl font-bold text-amber-400">
+                  <div className="mt-2 text-center text-3xl font-bold text-[#4fb3ff]">
                     Brak rejestracji
                   </div>
                   <div className="mt-2 text-center text-gray-300">
@@ -145,7 +147,7 @@ export default function StatusPage() {
               {statusType === 'registration' && (
                 <>
                   <Clock className="mx-auto h-16 w-16 text-yellow-500" />
-                  <div className="mt-2 text-center text-3xl font-bold text-amber-400">
+                  <div className="mt-2 text-center text-3xl font-bold text-[#4fb3ff]">
                     Czekamy na formularz płatności
                   </div>
                   <div className="mt-2 text-center text-gray-300">
@@ -156,7 +158,7 @@ export default function StatusPage() {
               {statusType === 'pending' && (
                 <>
                   <Clock className="mx-auto h-16 w-16 text-yellow-500" />
-                  <div className="mt-2 text-center text-3xl font-bold text-amber-400">
+                  <div className="mt-2 text-center text-3xl font-bold text-[#4fb3ff]">
                     Oczekiwanie na werdykt
                   </div>
                   <div className="mt-2 text-center text-gray-300">
@@ -169,11 +171,11 @@ export default function StatusPage() {
               {statusType === 'qualified' && (
                 <>
                   <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
-                  <div className="mt-2 text-center text-3xl font-bold text-amber-400">
+                  <div className="mt-2 text-center text-3xl font-bold text-[#4fb3ff]">
                     Zakwalifikowany!
                   </div>
                   <div className="mt-2 text-center text-green-400">
-                    Gratulacje! Zostałeś zakwalifikowany na Wtyczkę 2025! 🎉
+                    {`Gratulacje! Zostałeś zakwalifikowany na Wtyczkę ${year}! 🎉`}
                   </div>
                 </>
               )}
@@ -198,8 +200,8 @@ export default function StatusPage() {
           <div className="rounded-lg border border-[#262626] bg-[#0F0F0F] p-6 shadow-lg">
             <div className="flex flex-col items-center justify-center text-center">
               <div className="mb-4 flex items-center space-x-3">
-                <FileText className="h-6 w-6 text-amber-400" />
-                <h3 className="text-xl font-bold text-amber-400">
+                <FileText className="h-6 w-6 text-[#4fb3ff]" />
+                <h3 className="text-xl font-bold text-[#4fb3ff]">
                   Formularz rejestracji
                 </h3>
               </div>
@@ -220,7 +222,7 @@ export default function StatusPage() {
                   {registration && (
                     <Link
                       href="/registration"
-                      className="rounded-md bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                      className="rounded-md bg-[#4fb3ff] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#66d9ff]"
                     >
                       Sprawdź swoje odpowiedzi
                     </Link>
@@ -234,7 +236,7 @@ export default function StatusPage() {
                   <div className="h-4"></div>
                   <Link
                     href="/registration"
-                    className="rounded-md bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                    className="rounded-md bg-[#4fb3ff] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#66d9ff]"
                   >
                     Wypełnij formularz
                   </Link>
@@ -268,7 +270,7 @@ export default function StatusPage() {
                   <div className="h-4"></div>
                   <Link
                     href="/payment"
-                    className="rounded-md bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                    className="rounded-md bg-[#4fb3ff] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#66d9ff]"
                   >
                     Sprawdź swoje odpowiedzi
                   </Link>
@@ -281,7 +283,7 @@ export default function StatusPage() {
                   <div className="h-4"></div>
                   <Link
                     href="/payment"
-                    className="rounded-md bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                    className="rounded-md bg-[#4fb3ff] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#66d9ff]"
                   >
                     Wypełnij formularz płatności
                   </Link>
@@ -301,28 +303,6 @@ export default function StatusPage() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        {/* Help Section */}
-        <div className="mt-16 text-center">
-          <p className="mb-8 text-gray-300">
-            Masz pytania? Sprawdź naszą sekcję FAQ lub skontaktuj się z
-            organizatorami.
-          </p>
-          <div className="space-x-4">
-            <Link
-              href="/faq"
-              className="rounded-md border border-[#E7A801] bg-[#0F0F0F] px-6 py-2 font-semibold text-amber-400 transition-colors hover:bg-[#232323] hover:text-amber-300"
-            >
-              FAQ
-            </Link>
-            <Link
-              href="/contacts"
-              className="rounded-md border border-[#E7A801] bg-[#0F0F0F] px-6 py-2 font-semibold text-amber-400 transition-colors hover:bg-[#232323] hover:text-amber-300"
-            >
-              Kontakt
-            </Link>
           </div>
         </div>
       </div>

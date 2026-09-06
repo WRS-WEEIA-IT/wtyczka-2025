@@ -13,15 +13,24 @@ import {
   FacebookCardSkeleton,
 } from '@/components/ui/FacebookCard'
 import Link from 'next/link'
+import { getDateFromDatabase } from '@/lib/supabase'
 
 export default function HomePage() {
   const { t } = useLanguage()
   const [daysUntilEvent, setDaysUntilEvent] = useState(0)
+  const [eventDate, setEventDate] = useState<Date | null>(null)
   const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([])
 
   useEffect(() => {
-    // Przykładowa data wydarzenia - można zmienić
-    const eventDate = new Date('2025-10-23')
+    getDateFromDatabase('TRIP_DATE')
+      .then((date) => {
+        if (date) setEventDate(new Date(`${date}T12:00:00`))
+      })
+      .catch((error) => console.error('Error fetching trip date:', error))
+  }, [])
+
+  useEffect(() => {
+    if (!eventDate) return
 
     const calculateDaysUntilEvent = () => {
       const today = new Date()
@@ -30,6 +39,13 @@ export default function HomePage() {
       setDaysUntilEvent(daysDiff > 0 ? daysDiff : 0)
     }
 
+    calculateDaysUntilEvent()
+    const interval = setInterval(calculateDaysUntilEvent, 86400000) // Update daily
+
+    return () => clearInterval(interval)
+  }, [eventDate])
+
+  useEffect(() => {
     const fetchFacebookPosts = async () => {
       try {
         const posts = await getFacebookPostsInQuantity(2, 0)
@@ -39,35 +55,36 @@ export default function HomePage() {
       }
     }
 
-    calculateDaysUntilEvent()
     fetchFacebookPosts()
-    const interval = setInterval(calculateDaysUntilEvent, 86400000) // Update daily
-
-    return () => clearInterval(interval)
   }, [])
+
+  const calendarDate = eventDate
+    ? eventDate.toISOString().slice(0, 10).replace(/-/g, '')
+    : ''
+  const calendarYear = eventDate?.getFullYear() ?? ''
+  const calendarUrl = eventDate
+    ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Wtyczka ${calendarYear} - Wyjazd Integracyjny`)}&dates=${calendarDate}T120000Z/${calendarDate}T130000Z&details=${encodeURIComponent('Wyjazd Integracyjny Wydziału EEIA PŁ')}`
+    : undefined
 
   return (
     <div className="flex min-h-screen flex-col font-sans">
       {/* Hero Section */}
-      <section className="relative overflow-hidden p-4 text-white">
-        <div className="home-hero-section relative mx-auto flex max-w-4xl flex-col items-center justify-center px-4 py-10 text-center">
+      <section className="cosmos-hero relative overflow-hidden px-4 text-white">
+        <div className="relative mx-auto flex min-h-[600px] max-w-4xl flex-col items-center justify-center px-4 py-12 text-center md:min-h-[660px]">
           <div className="flex flex-col items-center">
             <Image
-              src="/logo2.svg"
+              src="/cosmos/logo.svg"
               alt="Logo wtyczka"
-              width={1200}
-              height={440}
-              className="m-0 p-0 leading-none drop-shadow-2xl"
+              width={430}
+              height={348}
+              className="cosmos-logo m-0 p-0 leading-none"
               style={{
                 display: 'block',
-                marginTop: '26px',
-                marginBottom: '-8px',
+                marginTop: '8px',
+                marginBottom: '18px',
               }}
             />
-            <p
-              className="western-title m-0 p-0 text-2xl font-extrabold tracking-widest text-[#E7A801] uppercase drop-shadow-lg md:text-3xl"
-              style={{ marginTop: '-2px' }}
-            >
+            <p className="cosmos-kicker m-0 p-0 text-xl font-semibold tracking-[0.12em] uppercase md:text-2xl">
               {t.home.subtitle}
             </p>
           </div>
@@ -80,8 +97,7 @@ export default function HomePage() {
               <span className="zapisz-glow" aria-hidden="true"></span>
               <Link
                 href="/registration"
-                className="homepage-btn zapisz-btn western-btn-roboto relative flex w-full max-w-xs min-w-[180px] flex-1 items-center justify-center overflow-hidden rounded-full border-none bg-[#E7A801] px-8 py-4 text-lg font-bold text-white shadow-none transition-all duration-200 hover:bg-yellow-400"
-                style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+                className="cosmos-primary-btn homepage-btn relative flex w-full max-w-xs min-w-[180px] flex-1 items-center justify-center overflow-hidden rounded-full border-none px-8 py-4 text-lg font-bold shadow-none transition-all duration-200"
               >
                 ZAPISZ SIĘ
               </Link>
@@ -89,15 +105,14 @@ export default function HomePage() {
 
             <Link
               href="/faq"
-              className="homepage-btn western-btn-roboto relative mb-0 flex w-full max-w-xs min-w-[180px] flex-1 items-center justify-center overflow-hidden rounded-full border-none bg-[#232323] px-8 py-4 text-lg font-bold text-[#E7A801] shadow-none transition-all duration-200 hover:bg-[#18181b]"
-              style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+              className="cosmos-secondary-btn homepage-btn relative mb-0 flex w-full max-w-xs min-w-[180px] flex-1 items-center justify-center overflow-hidden rounded-full border px-8 py-4 text-lg font-bold shadow-none transition-all duration-200"
             >
               DOWIEDZ SIĘ WIĘCEJ
             </Link>
           </div>
 
           <p
-            className="text-md western-title m-0 p-0 font-extrabold tracking-widest text-[#E7A801] uppercase drop-shadow-lg md:text-lg"
+            className="cosmos-label text-md m-0 p-0 font-semibold tracking-widest uppercase md:text-lg"
             style={{ marginBottom: '-15px' }}
           >
             Dodaj wydarzenie do kalendarza Google
@@ -105,14 +120,13 @@ export default function HomePage() {
 
           <div className="mt-5 mb-2 flex w-full justify-center">
             <a
-              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wtyczka+2025+-+Wyjazd+Integracyjny&dates=20251023T120000Z/20251023T130000Z&details=Wyjazd+Integracyjny+Wydziału+EEIA+PŁ"
+              href={calendarUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="homepage-btn western-btn-roboto relative flex w-full max-w-xs min-w-[180px] flex-row items-center justify-center gap-3 overflow-hidden rounded-full border-none bg-[#232323] px-8 py-4 text-lg font-bold text-[#E7A801] shadow-none transition-all duration-200 hover:bg-[#18181b]"
-              style={{ fontFamily: 'Roboto Slab, Times New Roman, serif' }}
+              className="cosmos-secondary-btn homepage-btn relative flex w-full max-w-xs min-w-[180px] flex-row items-center justify-center gap-3 overflow-hidden rounded-full border px-8 py-4 text-lg font-bold shadow-none transition-all duration-200"
               title="Dodaj wydarzenie do kalendarza Google"
             >
-              <Calendar className="h-7 w-7 text-[#E7A801]" />
+              <Calendar className="h-7 w-7 text-[#ffe000]" />
               <span
                 className="tracking-wide uppercase"
                 style={{ fontFamily: 'inherit' }}
@@ -127,24 +141,24 @@ export default function HomePage() {
           </div>
 
           <div className="star-divider mt-8 mb-2">
-            <span className="text-3xl text-[#E7A801] select-none">★ ★ ★</span>
+            <span className="cosmos-stars text-3xl select-none">✦</span>
           </div>
         </div>
       </section>
 
       {/* Latest News Section */}
-      <section className="flex-1 px-4 py-8">
+      <section className="cosmos-news flex-1 px-4 py-10 md:py-16">
         <div className="home-content-container mx-auto flex h-full w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
           <div className="mb-10 flex w-full flex-col items-center justify-center pt-8 text-center">
-            <h2 className="latest-news-title xs:text-xl western-title w-full text-center text-base font-extrabold tracking-widest break-words text-[#E7A801] uppercase drop-shadow-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+            <h2 className="latest-news-title cosmos-heading xs:text-xl w-full text-center text-base font-semibold tracking-widest break-words uppercase sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
               {t.home.latestNews}
             </h2>
             <div className="star-divider flex w-full items-center justify-center text-center">
-              <span className="text-2xl text-[#E7A801] select-none">★ ★</span>
+              <span className="cosmos-stars text-2xl select-none">✦</span>
             </div>
             <div className="flex w-full justify-center text-center">
-              <span className="inline-block border-b-2 border-dotted border-[#E7A801] px-4 pb-1 text-center text-lg tracking-widest text-gray-300 uppercase">
-                Wiadomości z saloonu
+              <span className="cosmos-subheading inline-block border-b px-4 pb-2 text-center text-lg tracking-widest uppercase">
+                Wiadomości z kosmosu
               </span>
             </div>
           </div>
@@ -164,8 +178,7 @@ export default function HomePage() {
           <div className="mt-10 pb-10 text-center">
             <Link
               href="/news"
-              className="western-btn inline-flex items-center space-x-2 rounded-xl bg-[#E7A801] px-6 py-3 text-base font-bold tracking-widest text-black uppercase shadow-md transition-colors hover:bg-amber-700"
-              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
+              className="cosmos-primary-btn inline-flex items-center space-x-2 rounded-xl px-6 py-3 text-base font-bold tracking-wider uppercase shadow-md transition-colors"
             >
               <Facebook className="h-5 w-5" />
               <span>{t.home.viewAllNews}</span>

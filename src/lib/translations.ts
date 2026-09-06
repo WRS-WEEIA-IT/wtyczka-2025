@@ -16,14 +16,14 @@ export const translations: Record<'pl', Translations> = {
       partners: 'Partnerzy',
     },
     home: {
-      title: 'Wtyczka 2025',
+      title: 'Wtyczka',
       subtitle: 'Wyjazd integracyjno-szkoleniowy',
-      theme: 'Motyw: Western',
+      theme: 'Motyw: Kosmos',
       countdown: 'Dni do wydarzenia',
       latestNews: 'Najnowsze aktualności',
       viewAllNews: 'Zobacz wszystkie aktualności',
       sponsors: 'Sponsorzy wydarzenia',
-      welcomeMessage: 'Witamy na oficjalnej stronie wydarzenia Wtyczka 2025!',
+      welcomeMessage: 'Witamy na oficjalnej stronie wydarzenia Wtyczka!',
       eventDescription:
         'Dołącz do nas na niezapomnianym wyjeździe integracyjno-szkoleniowym w klimacie Dzikiego Zachodu!',
     },

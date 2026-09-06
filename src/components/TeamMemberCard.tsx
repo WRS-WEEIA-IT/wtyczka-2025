@@ -88,7 +88,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
             <Facebook
               size={20}
               className={isHovered ? 'animate-pulse' : ''}
-              color={isHovered ? '#ffffff' : '#E7A801'}
+              color={isHovered ? '#ffffff' : '#4fb3ff'}
             />
             <span style={{ fontWeight: 500 }}>Facebook</span>
           </a>

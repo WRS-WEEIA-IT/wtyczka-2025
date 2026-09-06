@@ -39,24 +39,24 @@
   border: none;
   padding: 5px;
   cursor: pointer;
-  color: #E7A801;
+  color: #4fb3ff;
   z-index: 2;
 }
 
 .date-calendar-button:hover {
-  color: #f3b305;
+  color: #66d9ff;
 }
 
 /* Change focus ring color to match the theme for any input */
 input:focus {
   outline: none !important;
-  box-shadow: 0 0 0 2px rgba(231, 168, 1, 0.4) !important;
-  border-color: #E7A801 !important;
+  box-shadow: 0 0 0 2px rgba(79,179,255,0.35) !important;
+  border-color: #4fb3ff !important;
 }
 
 /* Highlight colors - orange/yellow theme */
 input[type="date"]:focus::-webkit-datetime-edit {
-  background-color: rgba(231, 168, 1, 0.05);
+  background-color: rgba(79,179,255,0.04);
   color: white;
 }
 
@@ -88,7 +88,7 @@ dialog::backdrop {
 .year-display {
   display: flex;
   justify-content: center;
-  color: #E7A801;
+  color: #4fb3ff;
   font-weight: bold;
   font-size: 1.2rem;
   margin-bottom: 0.75rem;
@@ -114,7 +114,7 @@ dialog::backdrop {
 .nav-button {
   background: none;
   border: none;
-  color: #E7A801;
+  color: #4fb3ff;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
@@ -122,7 +122,7 @@ dialog::backdrop {
 }
 
 .nav-button:hover {
-  color: #f3b305;
+  color: #66d9ff;
   transform: scale(1.1);
 }
 
@@ -150,17 +150,17 @@ dialog::backdrop {
 }
 
 .day:hover {
-  background-color: rgba(231, 168, 1, 0.2);
+  background-color: rgba(79,179,255,0.14);
 }
 
 .day.selected {
-  background-color: #E7A801;
+  background-color: #4fb3ff;
   color: #000;
   font-weight: bold;
 }
 
 .day.today {
-  border: 1px solid #E7A801;
+  border: 1px solid #4fb3ff;
 }
 
 .day.outside-month {
@@ -189,11 +189,11 @@ dialog::backdrop {
 }
 
 .year-option:hover {
-  background-color: rgba(231, 168, 1, 0.2);
+  background-color: rgba(79,179,255,0.14);
 }
 
 .year-option.selected {
-  background-color: #E7A801;
+  background-color: #4fb3ff;
   color: #000;
   font-weight: bold;
 }
@@ -214,5 +214,5 @@ dialog::backdrop {
 }
 
 .year-selector::-webkit-scrollbar-thumb:hover {
-  background: #E7A801;
+  background: #4fb3ff;
 }

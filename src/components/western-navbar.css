@@ -32,17 +32,16 @@ a.western-button.western-dropdown-animated {
 
 /* Base navbar styles */
 .western-navbar {
-  background-color: rgba(27, 27, 27, 0.485) !important; /* Slightly less transparent light grey */
+  background: transparent !important;
   /* border-bottom removed */
-  padding: 0.8rem 0 1.2rem 0; 
+  padding: 0.8rem 0 1.2rem 0;
   width: 100%;
   box-sizing: border-box;
   position: relative;
   overflow: visible;
   max-width: 100vw;
   min-height: fit-content;
-  margin-bottom: 1rem; /* Add margin at the bottom for spacing */
-  /* Removed blur/backdrop-filter for full transparency */
+  margin-bottom: 1rem;
   z-index: 50;
 }
 
@@ -71,6 +70,7 @@ a.western-button.western-dropdown-animated {
   margin: 0 auto;
   width: fit-content;
   text-align: center;
+  background: transparent !important;
 }
 
 /* Media query for desktop navigation */
@@ -123,36 +123,67 @@ a.western-button.western-dropdown-animated {
   background-size: 100% 100%;
   background-repeat: no-repeat;
   position: relative;
-  background-color: transparent;
-  color: #ffe066;
-  text-shadow: 2px 2px 6px #42210b, 0 2px 8px #00000099;
-  font-family: 'Rye', 'Segoe UI', 'Arial', sans-serif;
-  letter-spacing: 0.07em;
-  font-size: 1.13rem;
-  padding: 1.1rem 2.2rem 0.9rem 2.2rem;
-  font-weight: bold;
-  transform: rotate(-1deg);
-  transition: all 0.3s ease;
-  border: none;
-  /* border-radius: 12px; */
+  background-color: rgba(7, 9, 13, 0.12) !important;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  font-family: var(--font-tagesschrift), 'Segoe UI', Arial, sans-serif;
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+  padding: 0.9rem 1.6rem;
+  font-weight: 400;
+  transform: none;
+  transition: all 0.22s ease;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.75rem;
+  backdrop-filter: blur(2px);
   margin: 0 0.25rem;
-  /* box-shadow: 0 3px 6px rgba(0,0,0,0.4); */
   white-space: nowrap;
   flex-shrink: 0;
   overflow: visible;
   text-align: center;
-  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
+  min-height: 64px;
+  height: 64px;
   line-height: 1.1;
   z-index: 50;
-  text-align: center;
-  vertical-align: middle;
   box-sizing: border-box;
+}
+
+@media screen and (max-width: 1100px) {
+  .western-button {
+    min-height: 52px;
+    height: 52px;
+    padding: 0.8rem 1rem;
+    width: 100%;
+    margin: 0;
+    border-radius: 0.75rem;
+    background-color: rgba(6, 9, 13, 0.62) !important;
+  }
+
+  .western-mobile-menu {
+    background: linear-gradient(180deg, rgba(11, 15, 22, 0.9), rgba(8, 10, 16, 0.7));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.8rem;
+    padding: 0.7rem;
+    margin-top: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  }
+
+  .western-mobile-menu > div {
+    gap: 6px;
+  }
+
+  .western-dropdown-item.mobile-dropdown-item {
+    min-height: 52px;
+    height: 52px;
+    width: 100%;
+    margin: 0;
+    border-radius: 0.75rem;
+    background-color: rgba(15, 18, 22, 0.7) !important;
+    border: none;
+  }
 }
 
 /* Specjalna klasa dla pierwszych trzech przycisków nawigacji */
@@ -175,8 +206,10 @@ a.western-button.western-dropdown-animated {
 }
 
 .western-button:hover {
-  transform: rotate(1deg) scale(1.05);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  transform: translateY(-2px);
+  border-color: rgba(255, 224, 0, 0.75);
+  color: #ffe000;
+  box-shadow: 0 0 22px rgba(255, 224, 0, 0.12);
   transition:
     transform 0.18s cubic-bezier(0.23, 1, 0.32, 1),
     box-shadow 0.18s cubic-bezier(0.23, 1, 0.32, 1);
@@ -190,11 +223,11 @@ a.western-button.western-dropdown-animated {
 }
 
 .western-button:nth-child(odd) {
-  transform: rotate(1deg);
+  transform: none;
 }
 
 .western-button:nth-child(odd):hover {
-  transform: rotate(-1deg) scale(1.05);
+  transform: translateY(-2px);
 }
 
 /* Responsive adjustments for western buttons */
@@ -359,14 +392,14 @@ html, body {
 
 /* Mobile western menu */
 .western-mobile-menu {
-  background: #3d2817;
-  border-radius: 0 0 10px 10px;
+  background: transparent;
+  border-radius: 0.8rem;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: 0.5rem 0 0;
   margin: 0;
   overflow: hidden;
-  max-width: 100vw; /* Ensure it doesn't exceed viewport width */
+  max-width: 100vw;
 }
 
 /* Ensure navbar container is responsive */
@@ -423,17 +456,17 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   margin-top: 16px;
-  row-gap: 1px;
+  row-gap: 10px;
 }
 
 /* Chain connection between wooden signs */
 .chain-container {
   position: relative;
-  height: 25px;
+  height: 12px;
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin: -10px 0;
+  margin: 0;
   padding: 0 90px;
   z-index: 39;
   pointer-events: none;
@@ -441,22 +474,19 @@ html, body {
 }
 
 .chain-link {
-  background-image: url('/western/chain.svg');
-  background-repeat: repeat-y;
-  background-size: contain;
+  background: none;
   width: 20px;
-  height: 170%;
-  image-rendering: pixelated;
+  height: 100%;
 }
 
 /* Main chain connection from parent menu to first dropdown item */
 .western-parent-chain {
   position: absolute;
-  top: 92%;
-  height: 30px;
+  top: calc(100% - 2px);
+  height: 14px;
   width: 100%;
   z-index: 39 !important;
-  margin-top: -8px;
+  margin-top: 0;
   display: flex;
   justify-content: space-between;
   padding: 0 90px;
@@ -464,38 +494,32 @@ html, body {
 }
 
 .western-parent-chain-link {
-  background-image: url('/western/chain.svg');
-  background-repeat: repeat-y;
-  background-size: contain;
+  background: none;
   width: 20px;
-  height: 150%;
-  image-rendering: pixelated;
+  height: 100%;
 }
 
 /* Wooden sign dropdown items */
 .western-dropdown-item {
-  background-image: url('/western/wooden-sign.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+  background: linear-gradient(180deg, rgba(4,18,48,0.6), rgba(6,22,58,0.45));
   position: relative;
-  color: #ffe066;
-  text-shadow: 2px 2px 6px #42210b, 0 2px 8px #00000099;
-  font-family: 'Rye', 'Segoe UI', 'Arial', sans-serif;
-  letter-spacing: 0.07em;
+  color: var(--foreground);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  font-family: var(--font-libre-baskerville), 'Segoe UI', Arial, sans-serif;
+  letter-spacing: 0.02em;
   font-size: 1rem;
-  padding: 1.1rem 2.2rem 0.9rem 2.2rem;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  border: none;
+  padding: 0.9rem 1.6rem;
+  font-weight: 600;
+  transition: all 0.18s ease;
+  border: 1px solid rgba(255,255,255,0.03);
   margin: 0;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 48px;
-  min-width: 220px;
+  min-height: 44px;
+  min-width: 180px;
   width: 100%;
-  transform: rotate(2deg);
   z-index: 40;
   box-sizing: border-box;
 }
@@ -567,50 +591,48 @@ html, body {
 
 /* For the language and user buttons */
 .western-icon-button {
-  color: #f8e8b0;
-  background: #8B4513;
-  border: 1px solid #42210b;
-  border-radius: 5px;
-  padding: 0.3rem 0.6rem;
-  transition: all 0.3s ease;
+  color: var(--foreground);
+  background: rgba(79,179,255,0.12);
+  border: 1px solid rgba(79,179,255,0.14);
+  border-radius: 6px;
+  padding: 0.28rem 0.6rem;
+  transition: all 0.18s ease;
 }
 
 .western-icon-button:hover {
-  background: #42210b;
+  background: rgba(79,179,255,0.18);
 }
 
 /* Special login button */
 .western-login-button {
-  background: #8B4513;
-  color: #f8e8b0;
-  border: 2px solid #42210b;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  font-family: 'Rye', 'Western', serif;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-  transition: all 0.3s ease;
+  background: linear-gradient(180deg, var(--primary), #0f5fbf);
+  color: var(--primary-foreground);
+  border: 2px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 0.45rem 0.95rem;
+  font-family: var(--font-tagesschrift), sans-serif;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  transition: all 0.18s ease;
 }
 
 .western-login-button:hover {
-  background: #42210b;
+  filter: brightness(1.06);
 }
 
 /* Status button styling - highlighted version */
 .status-button {
-  background: #a84e00 !important;
-  border: 2px solid gold !important;
-  color: #ffed97 !important;
+  background: linear-gradient(180deg, #1e90ff, #4fb3ff) !important;
+  border: 2px solid rgba(255,255,255,0.06) !important;
+  color: #fff !important;
   font-size: 1.05em !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9) !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 215, 0, 0.3) !important;
-  transform: rotate(0deg) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45) !important;
 }
 
 .status-button:hover {
-  background: #c96100 !important;
-  transform: scale(1.05) !important;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.5) !important;
+  transform: scale(1.03) !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Additional responsive tweaks */
@@ -651,3 +673,171 @@ html, body {
     box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
     z-index: 101;
   }
+
+/* Desktop navigation remains transparent and lightweight. */
+.western-navbar {
+  background: transparent !important;
+  border-bottom: 0;
+  padding: 0.75rem 0 1rem;
+}
+
+.western-nav-container {
+  gap: 0.6rem;
+  padding: 0.15rem 0 0.4rem;
+}
+
+@media screen and (min-width: 1101px) {
+  .western-nav-container > .western-button,
+  .western-nav-container > .group > .western-button {
+    border: 1px solid rgba(255, 224, 0, 0.52) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 224, 0, 0.06);
+  }
+
+  .western-nav-container > .western-button:hover,
+  .western-nav-container > .western-button:focus-visible,
+  .western-nav-container > .group > .western-button:hover,
+  .western-nav-container > .group > .western-button:focus-visible {
+    border-color: #ffe000 !important;
+    box-shadow:
+      0 0 16px rgba(255, 224, 0, 0.24),
+      inset 0 0 0 1px rgba(255, 224, 0, 0.2);
+    color: #ffe000;
+  }
+
+  .western-nav-container .western-dropdown .western-button {
+    border: 1px solid rgba(255, 224, 0, 0.72) !important;
+    outline: 1px solid rgba(255, 224, 0, 0.36) !important;
+    outline-offset: -1px;
+    box-shadow: inset 0 0 0 1px rgba(255, 224, 0, 0.08);
+  }
+
+  .western-nav-container .western-dropdown .western-button:hover,
+  .western-nav-container .western-dropdown .western-button:focus-visible {
+    border-color: #ffe000 !important;
+    outline-color: #ffe000 !important;
+    box-shadow: 0 0 18px rgba(255, 224, 0, 0.24);
+    color: #ffe000;
+  }
+
+  .western-nav-container .western-dropdown {
+    margin-top: 16px;
+    padding: 0 !important;
+    row-gap: 4px !important;
+  }
+
+  .western-nav-container .western-dropdown > .western-button,
+  .western-nav-container .western-dropdown > .chain-container {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .western-nav-container .western-dropdown > .chain-container {
+    display: none;
+  }
+
+  .western-nav-container .western-logout-button {
+    min-width: 150px;
+    border: 1px solid rgba(255, 224, 0, 0.52) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 224, 0, 0.06);
+  }
+
+  .western-nav-container .western-logout-button:hover,
+  .western-nav-container .western-logout-button:focus-visible {
+    border-color: #ffe000 !important;
+    color: #ffe000;
+    box-shadow: 0 0 16px rgba(255, 224, 0, 0.24);
+  }
+}
+
+/* Mobile-only burger menu treatment. */
+@media screen and (max-width: 1100px) {
+  .western-navbar {
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .western-navbar > div > div:first-child {
+    justify-content: center;
+  }
+
+  .western-icon-button {
+    width: 56px !important;
+    height: 56px !important;
+    padding: 0 !important;
+    border-radius: 0.85rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(7, 10, 16, 0.68) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+  }
+
+  .western-icon-button:hover {
+    background: rgba(20, 16, 8, 0.8) !important;
+    border-color: rgba(255, 224, 0, 0.7) !important;
+    color: #ffe000 !important;
+  }
+
+  .western-navbar .western-mobile-menu {
+    width: calc(100% - 1rem);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0.75rem 0.7rem 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1rem;
+    background: rgba(3, 5, 12, 0.9) !important;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(16px);
+    overflow: visible;
+  }
+
+  .western-navbar .western-mobile-menu-content,
+  .western-navbar .western-mobile-menu > div {
+    display: flex;
+    width: 100%;
+    gap: 0.55rem !important;
+    padding: 0 !important;
+    overflow: visible;
+  }
+
+  .western-navbar .western-mobile-menu .western-button,
+  .western-navbar .western-mobile-menu .western-dropdown-item,
+  .western-navbar .western-mobile-menu .mobile-dropdown-item {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    padding: 0.7rem 1rem !important;
+    border: none !important;
+    border-radius: 0.8rem !important;
+    background: rgba(8, 11, 18, 0.72) !important;
+    color: rgba(255, 255, 255, 0.94) !important;
+    font-size: 1rem;
+    font-weight: 500;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .western-navbar .western-mobile-menu .western-button:hover,
+  .western-navbar .western-mobile-menu .western-button:focus-visible,
+  .western-navbar .western-mobile-menu .western-dropdown-item:hover,
+  .western-navbar .western-mobile-menu .mobile-dropdown-item:hover {
+    border-color: #ffe000 !important;
+    background: rgba(30, 27, 8, 0.78) !important;
+    color: #ffe000 !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .western-navbar .western-mobile-menu .space-y-3 {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.55rem;
+    margin-top: 0.1rem;
+  }
+
+  .western-navbar .western-mobile-menu .space-y-3 > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}

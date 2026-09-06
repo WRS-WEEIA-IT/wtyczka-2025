@@ -32,30 +32,20 @@ export default function Navbar() {
 
     document.addEventListener('click', initializeAudio, { once: true })
 
-    // Preload sound and images
+    // Preload neutral assets (background + logo)
     const preloadResources = () => {
-      // Preload gunshot sound
-      const audio = new Audio()
-      audio.src = '/western/gunshot.mp3'
-
-      // Preload images
-      const imageUrls = [
-        '/western/wooden-sign.svg',
-        '/western/bullet-hole.png',
-        '/western/wooden-background.jpg',
-      ]
+      const imageUrls = ['/cosmos/tlo.png', '/cosmos/logo.svg']
       imageUrls.forEach((url) => {
         const img = new Image()
         img.src = url
       })
     }
 
-    // Call preloadResources
     preloadResources()
 
     // Handle responsive menu based on screen size
     const handleResize = () => {
-      const isMobileView = window.innerWidth <= 768
+      const isMobileView = window.innerWidth <= 1100
       setIsMobile(isMobileView)
       if (!isMobileView && isMenuOpen) {
         setIsMenuOpen(false)
@@ -79,43 +69,8 @@ export default function Navbar() {
   const handleNavigation = (e: React.MouseEvent, href: string) => {
     // Prevent default navigation
     e.preventDefault()
-    // Get click coordinates
-    const x = e.clientX
-    const y = e.clientY
-    // Play gunshot sound
-    const audio = new Audio('/western/gunshot.mp3')
-    audio.currentTime = 0
-    audio.volume = 0.15
-    audio.play().catch(() => {})
-    // Create bullet icon
-    const bulletIcon = document.createElement('img')
-    bulletIcon.src = '/western/bullet.svg'
-    bulletIcon.alt = 'bullet'
-    bulletIcon.className = 'navbar-bullet'
-    bulletIcon.style.position = 'absolute'
-    bulletIcon.style.left = `${x - 12}px`
-    bulletIcon.style.top = `${y - 12}px`
-    bulletIcon.style.width = '24px'
-    bulletIcon.style.height = '24px'
-    bulletIcon.style.pointerEvents = 'none'
-    bulletIcon.style.zIndex = '9999'
-    bulletIcon.style.transition =
-      'transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s'
-    document.body.appendChild(bulletIcon)
-    // Animacja: powiększenie, zostaje i znika
-    setTimeout(() => {
-      bulletIcon.style.transform = 'scale(1.5)'
-    }, 30)
-    setTimeout(() => {
-      bulletIcon.style.opacity = '0'
-    }, 600)
-    setTimeout(() => {
-      bulletIcon.remove()
-    }, 1100)
-    // Navigate after a delay (0.75s)
-    setTimeout(() => {
-      window.location.href = href
-    }, 750)
+    // Immediate navigation without sound or Western visuals
+    window.location.href = href
   }
 
   const handleLogout = async () => {
@@ -150,7 +105,6 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="western-icon-button"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -192,7 +146,6 @@ export default function Navbar() {
                   href="/"
                   className="western-button western-button--sign186 western-button--first"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -209,7 +162,6 @@ export default function Navbar() {
                   href="/news"
                   className="western-button western-button--sign186"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -226,7 +178,6 @@ export default function Navbar() {
                   href="/partners"
                   className="western-button western-button--sign186"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -246,7 +197,6 @@ export default function Navbar() {
                   <button
                     className="western-button"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -286,7 +236,6 @@ export default function Navbar() {
                       rel="noopener noreferrer"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
-                        backgroundImage: 'url(/western/sign186.svg)',
                         backgroundSize: '145% 135%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -307,7 +256,6 @@ export default function Navbar() {
                       rel="noopener noreferrer"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
-                        backgroundImage: 'url(/western/sign186.svg)',
                         backgroundSize: '145% 135%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -318,7 +266,16 @@ export default function Navbar() {
                         transitionDelay: '0ms',
                       }}
                     >
-                      <div style={{ marginTop: '8px' }}>Oświadczenie</div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: '100%',
+                        }}
+                      >
+                        Oświadczenie
+                      </div>
                     </a>
                     <div
                       className="chain-container western-dropdown-animated"
@@ -331,7 +288,6 @@ export default function Navbar() {
                       href="/essentials"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
-                        backgroundImage: 'url(/western/sign186.svg)',
                         backgroundSize: '145% 135%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -356,7 +312,6 @@ export default function Navbar() {
                       href="/faq"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
-                        backgroundImage: 'url(/western/sign186.svg)',
                         backgroundSize: '145% 135%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -381,7 +336,6 @@ export default function Navbar() {
                       href="/contacts"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
-                        backgroundImage: 'url(/western/sign186.svg)',
                         backgroundSize: '145% 135%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -426,7 +380,6 @@ export default function Navbar() {
                         rel="noopener noreferrer"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
-                          backgroundImage: 'url(/western/sign186.svg)',
                           backgroundSize: '145% 135%',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -449,7 +402,6 @@ export default function Navbar() {
                         rel="noopener noreferrer"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
-                          backgroundImage: 'url(/western/sign186.svg)',
                           backgroundSize: '145% 135%',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -462,7 +414,16 @@ export default function Navbar() {
                           zIndex: 102,
                         }}
                       >
-                        <div style={{ marginTop: '8px' }}>Oświadczenie</div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%',
+                          }}
+                        >
+                          Oświadczenie
+                        </div>
                       </a>
                       {/* Pozostałe przyciski */}
                       <div
@@ -476,7 +437,6 @@ export default function Navbar() {
                         href="/essentials"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
-                          backgroundImage: 'url(/western/sign186.svg)',
                           backgroundSize: '145% 135%',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -503,7 +463,6 @@ export default function Navbar() {
                         href="/faq"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
-                          backgroundImage: 'url(/western/sign186.svg)',
                           backgroundSize: '145% 135%',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -528,7 +487,6 @@ export default function Navbar() {
                         href="/contacts"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
-                          backgroundImage: 'url(/western/sign186.svg)',
                           backgroundSize: '145% 135%',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -552,7 +510,6 @@ export default function Navbar() {
                       href="/status"
                       className="western-button western-button--sign186"
                       style={{
-                        backgroundImage: 'url(/western/sign420.png)',
                         backgroundSize: '100% 100%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -571,9 +528,8 @@ export default function Navbar() {
                   <div className="flex items-center">
                     <button
                       onClick={handleLogout}
-                      className="western-button"
+                      className="western-button western-logout-button"
                       style={{
-                        backgroundImage: 'url(/western/wooden-sign.png)',
                         backgroundSize: '100% 100%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -601,7 +557,6 @@ export default function Navbar() {
                     onClick={() => setIsAuthModalOpen(true)}
                     className="western-button"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -626,14 +581,13 @@ export default function Navbar() {
           {isMenuOpen && isMobile && (
             <div className="western-mobile-menu w-full py-2 md:hidden">
               <div
-                className="flex max-h-screen flex-col overflow-x-hidden overflow-y-auto px-2 pb-2"
-                style={{ rowGap: '3px' }}
+                className="western-mobile-menu-content flex w-full flex-col"
+                style={{ rowGap: '6px' }}
               >
                 <Link
                   href="/"
                   className="western-button text-center"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -659,7 +613,6 @@ export default function Navbar() {
                   href="/news"
                   className="western-button text-center"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -685,7 +638,6 @@ export default function Navbar() {
                   href="/partners"
                   className="western-button text-center"
                   style={{
-                    backgroundImage: 'url(/western/wooden-sign.png)',
                     backgroundSize: '100% 100%',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -714,7 +666,6 @@ export default function Navbar() {
                     rel="noopener noreferrer"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -741,7 +692,6 @@ export default function Navbar() {
                     rel="noopener noreferrer"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -766,7 +716,6 @@ export default function Navbar() {
                     href="/essentials"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -792,7 +741,6 @@ export default function Navbar() {
                     href="/faq"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -818,7 +766,6 @@ export default function Navbar() {
                     href="/contacts"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',
@@ -848,7 +795,6 @@ export default function Navbar() {
                       href="/status"
                       className="western-button text-center"
                       style={{
-                        backgroundImage: 'url(/western/sign420.png)',
                         backgroundSize: '100% 100%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -869,7 +815,6 @@ export default function Navbar() {
                       onClick={handleLogout}
                       className="western-button mx-auto block"
                       style={{
-                        backgroundImage: 'url(/western/wooden-sign.png)',
                         backgroundSize: '100% 100%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -908,7 +853,6 @@ export default function Navbar() {
                     onClick={() => setIsAuthModalOpen(true)}
                     className="western-button mx-auto block"
                     style={{
-                      backgroundImage: 'url(/western/wooden-sign.png)',
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center',

@@ -5,39 +5,35 @@
 
 // Create a bullet hole at the specified position
 export const createBulletHole = (x: number, y: number): HTMLElement => {
-  // Create bullet hole element
-  const bulletHole = document.createElement('div')
-  bulletHole.className = 'bullet-hole'
-  bulletHole.style.left = `${x - 10}px`
-  bulletHole.style.top = `${y - 10}px`
-  document.body.appendChild(bulletHole)
+  // Create a small sparkle for space theme
+  const sparkle = document.createElement('div')
+  sparkle.className = 'space-sparkle'
+  sparkle.style.left = `${x - 6}px`
+  sparkle.style.top = `${y - 6}px`
+  sparkle.style.position = 'absolute'
+  document.body.appendChild(sparkle)
 
-  // Remove the bullet hole after animation completes (for cleanup)
+  // Remove after animation completes
   setTimeout(() => {
-    bulletHole.remove()
-  }, 5000)
+    sparkle.remove()
+  }, 1200)
 
-  return bulletHole
+  return sparkle
 }
 
 // Create a gunshot flash effect
 export const createGunshotFlash = (): HTMLElement => {
-  // Create gunshot flash overlay
-  const gunshotFlash = document.createElement('div')
-  gunshotFlash.className = 'gunshot-flash'
-  document.body.appendChild(gunshotFlash)
-
-  // Play gunshot sound
-  const gunshotSound = new Audio('/western/gunshot.mp3')
-  gunshotSound.volume = 0.3
-  gunshotSound.play().catch((e) => console.log('Audio playback error:', e))
+  // Create a subtle space flash overlay (no sound)
+  const flash = document.createElement('div')
+  flash.className = 'space-flash'
+  document.body.appendChild(flash)
 
   // Remove the flash effect after animation completes
   setTimeout(() => {
-    gunshotFlash.remove()
-  }, 150)
+    flash.remove()
+  }, 250)
 
-  return gunshotFlash
+  return flash
 }
 
 // Handle navigation with shooting delay
@@ -58,12 +54,12 @@ export const handleWesternNavigation = (
   const x = e.clientX
   const y = e.clientY
 
-  // Create gunshot effects
+  // Create small space effect and navigate quickly
   createBulletHole(x, y)
   createGunshotFlash()
 
-  // Navigate after a delay
+  // Navigate after a short delay for the animation
   setTimeout(() => {
     router.push(href)
-  }, 1000) // 1 second delay as requested
+  }, 250)
 }

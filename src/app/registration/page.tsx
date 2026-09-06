@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -16,10 +16,8 @@ import {
   getRegistration,
   RegistrationRecord,
 } from '@/usecases/registrations'
-import { handleSupabaseError } from '@/lib/supabase'
-
-// Schema walidacji dla formularza
-const EVENT_DATE = new Date('2025-10-23') // data wydarzenia
+import { getDateFromDatabase, handleSupabaseError } from '@/lib/supabase'
+import { useYear } from '@/contexts/YearContext'
 
 const registrationSchema = z.object({
   // Imię - tylko litery alfabetu + spacje, max 50 znaków
@@ -43,41 +41,7 @@ const registrationSchema = z.object({
     ),
 
   // Data urodzenia - osoba musi być 18+ w dniu wyjazdu i mieć mniej niż 70 lat
-  dob: z
-    .string()
-    .min(1, 'Data urodzenia jest wymagana')
-    .refine(
-      (value) => {
-        const birthDate = new Date(value)
-        if (isNaN(birthDate.getTime())) return false
-
-        // Sprawdzenie czy osoba ma ukończone 18 lat w dniu wydarzenia
-        let age = EVENT_DATE.getFullYear() - birthDate.getFullYear()
-        const m = EVENT_DATE.getMonth() - birthDate.getMonth()
-        if (m < 0 || (m === 0 && EVENT_DATE.getDate() < birthDate.getDate())) {
-          age--
-        }
-        return age >= 18
-      },
-      {
-        message: 'Musisz mieć ukończone 18 lat w dniu wydarzenia (23.10.2025)',
-      },
-    )
-    .refine(
-      (value) => {
-        const birthDate = new Date(value)
-        if (isNaN(birthDate.getTime())) return false
-
-        // Sprawdzenie czy osoba ma mniej niż 70 lat
-        let age = EVENT_DATE.getFullYear() - birthDate.getFullYear()
-        const m = EVENT_DATE.getMonth() - birthDate.getMonth()
-        if (m < 0 || (m === 0 && EVENT_DATE.getDate() < birthDate.getDate())) {
-          age--
-        }
-        return age < 70
-      },
-      { message: 'Podaj poprawne dane' },
-    ),
+  dob: z.string().min(1, 'Data urodzenia jest wymagana'),
 
   // Numer telefonu - tylko cyfry, znak + i spacje, min 9 cyfr
   phoneNumber: z
@@ -176,10 +140,49 @@ export default function RegistrationPage() {
 
   const realLang = language || 'pl'
 
+  const { year } = useYear()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isInvoice, setIsInvoice] = useState(false)
+  const [tripDate, setTripDate] = useState<Date | null>(null)
   const [existingRegistration, setExistingRegistration] =
     useState<RegistrationRecord | null>(null)
+
+  const registrationValidationSchema = useMemo(
+    () =>
+      registrationSchema.superRefine((data, context) => {
+        if (!tripDate) {
+          context.addIssue({
+            code: 'custom',
+            path: ['dob'],
+            message: 'Nie udało się pobrać daty wyjazdu',
+          })
+          return
+        }
+
+        const birthDate = new Date(`${data.dob}T12:00:00`)
+        let age = tripDate.getFullYear() - birthDate.getFullYear()
+        const monthDifference = tripDate.getMonth() - birthDate.getMonth()
+        if (
+          monthDifference < 0 ||
+          (monthDifference === 0 && tripDate.getDate() < birthDate.getDate())
+        ) {
+          age--
+        }
+
+        if (age < 18 || age >= 70) {
+          context.addIssue({
+            code: 'custom',
+            path: ['dob'],
+            message:
+              age < 18
+                ? 'Musisz mieć ukończone 18 lat w dniu wydarzenia'
+                : 'Podaj poprawne dane',
+          })
+        }
+      }),
+    [tripDate],
+  )
 
   const {
     register,
@@ -187,10 +190,18 @@ export default function RegistrationPage() {
     watch,
     formState: { errors },
   } = useForm<RegistrationFormData>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(registrationValidationSchema),
   })
 
   // Check if user already has a registration
+  useEffect(() => {
+    getDateFromDatabase('TRIP_DATE')
+      .then((date) => {
+        if (date) setTripDate(new Date(`${date}T12:00:00`))
+      })
+      .catch((error) => console.error('Error fetching trip date:', error))
+  }, [])
+
   useEffect(() => {
     const checkExistingRegistration = async () => {
       if (user) {
@@ -238,8 +249,8 @@ export default function RegistrationPage() {
           </p>
           <Link
             href="/"
-            className="western-btn block w-full rounded-xl bg-[#E7A801] px-6 py-3 font-bold tracking-wider break-words text-black uppercase transition-colors hover:bg-amber-700"
-            style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
+            className="western-btn block w-full rounded-xl bg-[#4fb3ff] px-6 py-3 font-bold tracking-wider break-words text-black uppercase transition-colors hover:bg-[#66d9ff]"
+            style={{ boxShadow: '0 4px 12px rgba(79,179,255,0.36)' }}
           >
             Wróć do strony głównej
           </Link>
@@ -488,7 +499,7 @@ export default function RegistrationPage() {
                 <div className="hidden md:block">
                   <Link
                     href="/status"
-                    className="rounded-xl bg-[#E7A801] px-6 py-3 font-semibold text-black shadow-md transition-colors hover:bg-amber-700"
+                    className="registration-primary-button rounded-xl px-6 py-3 font-semibold shadow-md transition-colors"
                   >
                     Sprawdź status
                   </Link>
@@ -498,7 +509,7 @@ export default function RegistrationPage() {
               <div className="mt-4 block flex items-center justify-center md:hidden">
                 <Link
                   href="/status"
-                  className="rounded-xl bg-[#E7A801] px-6 py-3 font-semibold text-black shadow-md transition-colors hover:bg-amber-700"
+                  className="registration-primary-button rounded-xl px-6 py-3 font-semibold shadow-md transition-colors"
                 >
                   Sprawdź status
                 </Link>
@@ -596,7 +607,7 @@ export default function RegistrationPage() {
               Formularz rejestracji
             </h1>
             <p className="text-xl text-gray-200">
-              Wypełnij wszystkie pola, aby zarejestrować się na Wtyczkę 2025
+              {`Wypełnij wszystkie pola, aby zarejestrować się na Wtyczkę ${year}`}
             </p>
             <p className="mt-2 text-sm text-gray-400">
               Zalogowany jako:{' '}
@@ -671,7 +682,17 @@ export default function RegistrationPage() {
                 <input
                   type="date"
                   min="1955-01-01"
-                  max="2008-10-23"
+                  max={
+                    tripDate
+                      ? new Date(
+                          tripDate.getFullYear() - 18,
+                          tripDate.getMonth(),
+                          tripDate.getDate(),
+                        )
+                          .toISOString()
+                          .slice(0, 10)
+                      : undefined
+                  }
                   {...register('dob')}
                   className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   required
@@ -1091,7 +1112,7 @@ export default function RegistrationPage() {
                   <span className="ml-3 text-xs text-gray-300">
                     Wyrażam zgodę na przetwarzanie moich danych osobowych przez
                     Politechnikę Łódzką w celu zorganizowania i przeprowadzenia
-                    wyjazdu integracyjno-szkoleniowego &quot;Wtyczka 2025&quot;.
+                    wyjazdu integracyjno-szkoleniowego {`"Wtyczka ${year}"`}.
                     Także zgadzam się na otrzymywanie wiadomości tekstowych
                     dotyczących spraw organizacyjnych związanych z Wyjazdem na
                     adres e-mail i numer telefonu podany w formularzu. Klauzula
@@ -1121,7 +1142,7 @@ export default function RegistrationPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center space-x-2 rounded-xl bg-[#E7A801] px-12 py-4 text-lg font-semibold text-black shadow-md transition-colors hover:bg-amber-700 disabled:opacity-50"
+              className="registration-primary-button inline-flex items-center space-x-2 rounded-xl px-12 py-4 text-lg font-semibold shadow-md transition-colors disabled:opacity-50"
             >
               <Save className="h-5 w-5" />
               <span>{isSubmitting ? 'Wysyłanie...' : t.forms.submit}</span>

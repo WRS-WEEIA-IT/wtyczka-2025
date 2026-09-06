@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 
 import { getFAQ, QuestionRecord } from '@/usecases/faq'
+import { useYear } from '@/contexts/YearContext'
 
 export default function FAQPage() {
   // Hydration fix
@@ -21,6 +22,8 @@ export default function FAQPage() {
     setIsMounted(true)
   }, [])
   const [openSections, setOpenSections] = useState<string[]>([])
+
+  const { year } = useYear()
 
   const [faqGeneral, setFaqGeneral] = useState<QuestionRecord[]>([])
   const [faqPayments, setFaqPayments] = useState<QuestionRecord[]>([])
@@ -110,7 +113,7 @@ export default function FAQPage() {
               Najczęściej zadawane pytania
             </h1>
             <p className="text-xl text-gray-200">
-              Odpowiedzi na najważniejsze pytania dotyczące Wtyczki 2025
+              {`Odpowiedzi na najważniejsze pytania dotyczące Wtyczki ${year}`}
             </p>
           </div>
         </div>

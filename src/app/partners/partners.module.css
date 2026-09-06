@@ -1,9 +1,9 @@
-/* Western gold rush theme styles */
+/* Space theme styles for partners */
 
 .goldRushTitle {
-  font-family: var(--font-rye), fantasy, serif;
-  letter-spacing: 2px;
-  transform: perspective(500px) rotateX(5deg);
+  font-family: var(--font-tagesschrift), sans-serif;
+  letter-spacing: 0.06em;
+  transform: perspective(500px) rotateX(2deg);
 }
 
 /* Adding semi-transparent overlay to the background - similar to navbar */
@@ -13,14 +13,15 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(27, 27, 27, 0.5); /* Slightly darker than navbar for better contrast */
-  backdrop-filter: blur(8px); /* Enhanced blur effect */
+  background: rgba(3, 4, 10, 0.58);
+  backdrop-filter: none;
   z-index: -1;
   pointer-events: none;
 }
 
 .treasureChest {
   transition: transform 0.3s ease;
+  filter: drop-shadow(0 0 28px rgba(255, 224, 0, 0.22));
 }
 
 .treasureChest:hover {
@@ -50,19 +51,30 @@
 
 /* Container for grid items with responsive styles */
 .gridItemsContainer {
-  /* Base styles are defined inline in the component */
+  /* Orbit lines sit behind the circular logo nodes. */
   position: relative;
+  isolation: isolate;
   transition: all 0.3s ease;
 }
 
+.gridItemsContainer::before {
+  position: absolute;
+  inset: 0 -28% 0;
+  z-index: 0;
+  content: '';
+  display: none;
+  pointer-events: none;
+}
+
+
 /* Grid item styling */
 .gridItem {
-  aspect-ratio: 4/3; /* Standardowy rozmiar dla wszystkich sztabek */
+  aspect-ratio: 1;
   transform-style: preserve-3d;
   cursor: pointer;
   position: relative; /* Important for proper animation */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-width: 220px;
+  min-width: 0;
   max-width: 100%;
   height: auto;
 }
@@ -78,24 +90,69 @@
 }
 
 .gridItem:hover {
-  filter: drop-shadow(0 12px 18px rgba(255, 215, 0, 0.5)) brightness(1.2) saturate(1.2);
-  transform: translateY(-5px) scale(1.03);
+  filter: drop-shadow(0 12px 18px rgba(255, 224, 0, 0.3)) brightness(1.08) saturate(1.05);
+  transform: translateY(-6px) scale(1.03);
   z-index: 5;
+}
+
+.partner-logo-card.partner-logo-card {
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: 1;
+  background: rgba(248, 248, 244, 0.98) !important;
+  border: 2px solid rgba(230, 142, 0, 0.85) !important;
+  color: #171717;
+  border-radius: 999px !important;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.partner-logo-card img {
+  max-width: 70% !important;
+  max-height: 70% !important;
+}
+
+.gridItem:hover .partner-logo-card {
+  border-color: #ffe000;
+  box-shadow: 0 8px 20px rgba(255, 224, 0, 0.18);
 }
 
 /* Removed dust particles effect */
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .gridItemsContainer {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-    max-width: 600px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: clamp(18px, 4vw, 42px) !important;
+    row-gap: clamp(18px, 4vw, 42px) !important;
+    width: min(92vw, 520px) !important;
+    max-width: min(92vw, 520px) !important;
+    padding: 0 !important;
+  }
+
+  .gridItemsContainer::before {
+    display: none;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .gridItemsContainer {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-    max-width: 300px !important;
+    width: min(92vw, 420px) !important;
+    max-width: min(92vw, 420px) !important;
+  }
+
+  .gridItemsContainer::before {
+    display: none;
+  }
+}
+
+@media (min-width: 1101px) {
+  .gridItemsContainer {
+    column-gap: 60px !important;
+    row-gap: 60px !important;
+  }
+
+  .gridItemsContainer::before {
+    inset: 0 -12% 0;
   }
 }

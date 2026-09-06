@@ -28,7 +28,7 @@ let cacheExpiry: number = 0
 const CACHE_DURATION = 10 * 1000 // 10 seconds (reduced from 5 minutes for faster testing)
 
 export async function getDateFromDatabase(
-  dateName: 'CONTACT_DATE' | 'PAYMENT_OPEN_DATE',
+  dateName: 'CONTACT_DATE' | 'PAYMENT_OPEN_DATE' | 'TRIP_DATE',
 ): Promise<string | null> {
   // Check cache first
   const now = Date.now()
@@ -58,6 +58,26 @@ export async function getDateFromDatabase(
     return null
   } catch (error) {
     console.error(`Error fetching ${dateName} from database:`, error)
+    return null
+  }
+}
+
+export async function getDataValue(dataKey: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase
+      .from('data')
+      .select('value')
+      .eq('key', dataKey)
+      .single()
+
+    if (error) {
+      console.error(`Error fetching ${dataKey} from database:`, error)
+      return null
+    }
+
+    return typeof data?.value === 'string' ? data.value : null
+  } catch (error) {
+    console.error(`Error fetching ${dataKey} from database:`, error)
     return null
   }
 }

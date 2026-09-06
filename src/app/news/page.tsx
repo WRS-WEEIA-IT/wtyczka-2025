@@ -3,6 +3,7 @@
 import { Card } from '@/components/ui/card'
 import { FacebookCard } from '@/components/ui/FacebookCard'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useYear } from '@/contexts/YearContext'
 import {
   FacebookPost,
   getFacebookPostsInQuantity,
@@ -13,6 +14,7 @@ import { useEffect, useState } from 'react'
 
 export default function NewsPage() {
   const { t } = useLanguage()
+  const { year } = useYear()
 
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false)
@@ -65,17 +67,16 @@ export default function NewsPage() {
             {t.home.latestNews}
           </h1>
           <p className="text-xl text-gray-200">
-            Śledź najnowsze informacje o wydarzeniu Wtyczka 2025
+            {`Śledź najnowsze informacje o wydarzeniu Wtyczka ${year}`}
           </p>
           <div className="mt-6 flex justify-center">
             <Link
               href="https://facebook.com/wtyczka.eeia"
               target="_blank"
               rel="noopener noreferrer"
-              className="western-btn inline-flex items-center space-x-2 rounded-xl border-2 border-[#145db2] bg-[#1877F2] px-7 py-3 font-bold tracking-wider text-white uppercase shadow-lg transition-all hover:bg-[#145db2] focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2 focus:outline-none"
+              className="cosmos-primary-btn inline-flex items-center space-x-2 rounded-xl px-7 py-3 font-bold tracking-wider uppercase shadow-lg transition-all focus:ring-2 focus:ring-[#ffe000] focus:ring-offset-2 focus:outline-none"
               style={{
-                fontFamily: 'var(--font-rye), fantasy, serif',
-                boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)',
+                boxShadow: '0 4px 16px rgba(255, 224, 0, 0.25)',
               }}
             >
               <ExternalLink className="h-5 w-5" />
@@ -120,31 +121,6 @@ export default function NewsPage() {
               </Card>
             )}
           </div>
-        </div>
-      </section>
-
-      <section className="border-t border-[#262626] bg-[#18181b] py-16">
-        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-3xl font-bold text-amber-400">
-            Nie przegap żadnych aktualności!
-          </h2>
-          <p className="mb-8 text-gray-200">
-            Obserwuj naszą stronę na Facebooku, aby być na bieżąco z wszystkimi
-            informacjami dotyczącymi Wtyczki 2025.
-          </p>
-          <Link
-            href="https://www.facebook.com/wtyczka.eeia"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="western-btn inline-flex items-center space-x-2 rounded-xl border-2 border-[#145db2] bg-[#1877F2] px-8 py-3 font-bold tracking-wider text-white uppercase shadow-lg transition-all hover:bg-[#145db2] focus:ring-2 focus:ring-[#1877F2] focus:ring-offset-2 focus:outline-none"
-            style={{
-              fontFamily: 'var(--font-rye), fantasy, serif',
-              boxShadow: '0 4px 16px rgba(24, 119, 242, 0.25)',
-            }}
-          >
-            <ExternalLink className="h-5 w-5" />
-            <span>Odwiedź naszego Facebooka</span>
-          </Link>
         </div>
       </section>
     </div>

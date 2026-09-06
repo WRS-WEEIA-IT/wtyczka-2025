@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 // Nieużywane importy usunięte
 import { TeamMember } from '@/usecases/team-members'
 import TeamMemberCard from '@/components/TeamMemberCard'
+import { useYear } from '@/contexts/YearContext'
 // All styles are now consolidated in app/css
 
 import {
@@ -21,6 +22,7 @@ export default function ContactsPage() {
   const [isLoading, setIsLoading] = useState(true)
   // Hydration fix
   const [isMounted, setIsMounted] = useState(false)
+  const { year } = useYear()
 
   // Stan do karuzeli
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
@@ -201,9 +203,9 @@ export default function ContactsPage() {
     <div className="contactsContainer">
       <div className="pageOverlay"></div>
       <h1 className="pageTitle fadeIn">Kadra Wyjazdu</h1>
+      {/* Year-specific description */}
       <p className="pageDescription fadeIn" style={{ animationDelay: '0.2s' }}>
-        Poznaj osoby organizujące obóz adaptacyjny Wtyczka 2025. W razie pytań
-        możesz się z nami skontaktować bezpośrednio poprzez email lub Facebook.
+        {`Poznaj osoby organizujące obóz adaptacyjny Wtyczka ${year}. W razie pytań możesz się z nami skontaktować bezpośrednio poprzez email lub Facebook.`}
       </p>
 
       <div className="carouselContainer">

@@ -1,3 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@font-face {
+  font-family: 'Helvetica Now Display';
+  src: url('/fonts/HelveticaNowDisplay-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Now Display';
+  src: url('/fonts/HelveticaNowDisplay-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica Now Display';
+  src: url('/fonts/HelveticaNowDisplay-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 /* Responsive font sizes for latest news title */
 .latest-news-title {
   font-size: 2rem;
@@ -19,30 +47,30 @@
 }
 /* Font utility classes for consistent typography */
 .font-tagesschrift {
-  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
+  font-family: var(--font-site), Helvetica, Arial, sans-serif;
 }
 .font-libre-baskerville {
-  font-family: var(--font-libre-baskerville), 'Libre Baskerville', serif;
+  font-family: var(--font-site), Helvetica, Arial, sans-serif;
 }
 
 /* Apply Tagesschrift to all headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
+  font-family: var(--font-site), Helvetica, Arial, sans-serif;
   letter-spacing: 0.03em;
 }
 
 /* Apply Libre Baskerville to all body text elements */
 p, span, li, label, a, button, input, textarea, th, td, div, section, article {
-  font-family: var(--font-libre-baskerville), 'Libre Baskerville', serif;
+  font-family: var(--font-site), Helvetica, Arial, sans-serif;
 }
 
 /* Western title class using Tagesschrift */
 .western-title {
-  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
+  font-family: var(--font-site), Helvetica, Arial, sans-serif;
   letter-spacing: 0.08em;
 }
 .western-title {
-  font-family: var(--font-tagesschrift), 'Tagesschrift', sans-serif;
+  font-family: var(--font-site), Helvetica, Arial, sans-serif;
 }
 @keyframes toast-bottom-in {
   from {
@@ -85,8 +113,7 @@ p, span, li, label, a, button, input, textarea, th, td, div, section, article {
 .animate-toast-bottom {
   animation: toast-bottom-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
-@import "tailwindcss";
-@import "tw-animate-css";
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -153,72 +180,65 @@ h1, h2, h3 {
 }
 
 :root {
+  --font-site: 'Helvetica Now Display', Helvetica, Arial, sans-serif;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Space theme colors */
+  --background: #000814; /* deep space */
+  --foreground: #E6F0FF; /* pale, near-white */
+  --card: #071233; /* dark navy card */
+  --card-foreground: #E6F0FF;
+  --popover: #071233;
+  --popover-foreground: #E6F0FF;
+  --primary: #ffe000; /* cosmos gold */
+  --primary-foreground: #ffffff;
+  --secondary: #b89b00; /* muted stellar gold */
+  --secondary-foreground: #ffffff;
+  --muted: #6b7280;
+  --muted-foreground: #9aa8bf;
+  --accent: #ffe86b;
+  --accent-foreground: #031124;
+  --destructive: #ff6b6b;
+  --border: rgba(255,255,255,0.06);
+  --input: rgba(255,255,255,0.03);
+  --ring: rgba(79,179,255,0.35);
+  --chart-1: #ffe86b;
+  --chart-2: #ffe000;
+  --chart-3: #b89b00;
+  --chart-4: #d7c34a;
+  --chart-5: #fff3a3;
+  --sidebar: #071233;
+  --sidebar-foreground: #E6F0FF;
+  --sidebar-primary: #ffe000;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #b89b00;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255,255,255,0.04);
+  --sidebar-ring: rgba(79,179,255,0.25);
+  /* Font substitutions so existing classnames keep working */
+  --font-tagesschrift: var(--font-site);
+  --font-libre-baskerville: var(--font-site);
+  --font-rye: var(--font-site);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #00040a;
+  --foreground: #e6f2ff;
+  --card: #041026;
+  --card-foreground: #e6f2ff;
+  --popover: #041026;
+  --popover-foreground: #e6f2ff;
+  --primary: #ffe000;
+  --primary-foreground: #ffffff;
+  --secondary: #b89b00;
+  --secondary-foreground: #ffffff;
+  --muted: #475569;
+  --muted-foreground: #94a3b8;
+  --accent: #ffe86b;
+  --accent-foreground: #031124;
+  --destructive: #ff6b6b;
+  --border: rgba(255,255,255,0.06);
+  --input: rgba(255,255,255,0.06);
+  --ring: rgba(79,179,255,0.4);
 }
 
 @layer base {
@@ -243,7 +263,7 @@ h1, h2, h3 {
   position: absolute;
   inset: 0;
   border-radius: 0.25rem;
-  background-color: rgba(231, 168, 1, 0.05);
+  background-color: rgba(79,179,255,0.04);
   filter: blur(1px);
   margin: -1px;
   opacity: 0;
@@ -256,7 +276,7 @@ h1, h2, h3 {
   -webkit-appearance: none;
   height: 1.25rem;
   width: 1.25rem;
-  border: 2px solid #E7A801;
+  border: 2px solid var(--primary);
   border-radius: 0.25rem;
   background-color: transparent;
   cursor: pointer;
@@ -264,12 +284,12 @@ h1, h2, h3 {
 }
 
 .custom-checkbox-input:hover {
-  border-color: #f3b305;
+  border-color: #66d9ff;
 }
 
 .custom-checkbox-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(231, 168, 1, 0.3);
+  box-shadow: 0 0 0 2px rgba(79,179,255,0.3);
 }
 
 .custom-checkbox-input:checked + .custom-checkbox-glow {
@@ -283,7 +303,7 @@ h1, h2, h3 {
   justify-content: center;
   inset: 0;
   pointer-events: none;
-  color: #E7A801;
+  color: var(--primary);
   font-size: 0.875rem;
   font-weight: bold;
   opacity: 0;

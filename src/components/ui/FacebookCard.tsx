@@ -39,7 +39,12 @@ export function FacebookCard({
   className,
 }: FacebookPost & { className?: string }) {
   const [showImage, setShowImage] = useState(true)
+  const [imageVersion] = useState(() => Date.now())
   const date = new Date(timeCreated)
+
+  const imageSource = imageUrl
+    ? `${imageUrl}${imageUrl.includes('?') ? '&' : '?'}v=${imageVersion}`
+    : undefined
 
   const handleImageError = () => {
     setShowImage(false)
@@ -84,10 +89,10 @@ export function FacebookCard({
           ))}
         </div>
       </div>
-      {imageUrl && showImage ? (
+      {imageSource && showImage ? (
         <div className="w-full">
           <Image
-            src={imageUrl}
+            src={imageSource}
             alt="Post image"
             width={800}
             height={450}

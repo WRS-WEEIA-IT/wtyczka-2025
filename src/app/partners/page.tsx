@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
+import styles from './partners.module.css'
 // All styles are now consolidated in app/css
 import {
   getPartnersByCategories,
@@ -57,6 +58,7 @@ export default function PartnersPage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const chestPositionRef = useRef({ x: 0, y: 0 })
+  const [isCompactLayout, setIsCompactLayout] = useState(false)
   // ...existing code...
 
   // Add window resize event handler to trigger re-render for responsive grid
@@ -116,13 +118,20 @@ export default function PartnersPage() {
     }
   }, [isChestOpen])
 
-  // Play sound when chest opens
+  useEffect(() => {
+    const handleResize = () => {
+      setIsCompactLayout(window.innerWidth <= 480)
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Play sound when chest opens (disabled - using silent UI for space theme)
   const playChestOpenSound = () => {
-    // Create audio element
-    const audioElement = new Audio('/western/chest-opening.mp3')
-    audioElement.volume = 0.2 // Lower volume
-    // Play the sound
-    audioElement.play().catch((e) => console.log('Audio playback error:', e))
+    // intentionally left blank
   }
 
   // Handle chest click animation with improved sequence
@@ -191,14 +200,14 @@ export default function PartnersPage() {
   return (
     <div
       ref={containerRef}
-      className={`relative flex min-h-screen flex-col items-center justify-start overflow-x-hidden px-4 py-6`}
+      className="partners-page relative flex min-h-screen flex-col items-center justify-start overflow-x-hidden px-4 py-6"
     >
       {/* Add blurred background overlay similar to navbar */}
       <div className="pageOverlay"></div>
 
-      {/* Western-themed header */}
-      <div className="mb-8 w-full max-w-5xl text-center">
-        <h1 className="goldRushTitle mb-3 text-5xl font-bold text-yellow-300 md:text-6xl">
+      {/* Cosmos-themed header */}
+      <div className="relative z-10 mb-8 w-full max-w-5xl text-center">
+        <h1 className="goldRushTitle cosmos-partners-heading mb-3 text-4xl font-bold md:text-6xl">
           Nasi Partnerzy
         </h1>
 
@@ -219,7 +228,7 @@ export default function PartnersPage() {
       </div>
 
       {/* Main treasure chest container */}
-      <div className="relative z-1 mx-auto mt-8 w-full max-w-md">
+      <div className="relative z-1 mx-auto mt-8 w-full max-w-6xl">
         <AnimatePresence>
           {Object.values(partnersByCategory).some((arr) => arr.length > 0) &&
             !loading && (
@@ -278,12 +287,13 @@ export default function PartnersPage() {
                   >
                     {/* Closed chest SVG - visible when chest is closed */}
                     <motion.img
-                      src="/western/chest-closed.svg"
-                      alt="Closed Treasure Chest"
-                      className="h-full w-full object-contain"
+                      src="/cosmos/Sun.svg"
+                      alt="Słońce partnerów"
+                      className="h-full w-full object-cover"
                       style={{
                         position: 'absolute',
                         zIndex: isChestOpen ? 0 : 1,
+                        filter: 'brightness(0.6) contrast(1.1)',
                       }}
                       animate={{
                         opacity: isChestOpen ? 0 : 1,
@@ -297,13 +307,14 @@ export default function PartnersPage() {
 
                     {/* Open chest SVG - visible when chest is open */}
                     <motion.img
-                      src="/western/chest-open.svg"
-                      alt="Open Treasure Chest"
-                      className="h-full w-full object-contain"
+                      src="/cosmos/Sun.svg"
+                      alt="Otwarte słońce partnerów"
+                      className="h-full w-full object-cover"
                       style={{
                         position: 'absolute',
                         zIndex: isChestOpen ? 1 : 0,
-                        opacity: 0, // Początkowy stan - niewidoczny
+                        opacity: 0,
+                        filter: 'brightness(1.1) contrast(1.05)',
                       }}
                       animate={{
                         opacity: isChestOpen ? 1 : 0,
@@ -402,21 +413,25 @@ export default function PartnersPage() {
                       {/* Partners Grid for this category */}
                       <div className="flex w-full justify-center">
                         <motion.div
-                          className="gridItemsContainer mt-4 h-full"
+                          className={`${styles.gridItemsContainer} gridItemsContainer mt-4 h-full`}
                           style={{
                             display: 'grid',
                             gridTemplateColumns: `repeat(${Math.min(
                               partners.length,
-                              3,
-                            )}, minmax(220px, 280px))`,
-                            gap: '30px',
+                              isCompactLayout ? 2 : 3,
+                            )}, minmax(0, 1fr))`,
+                            gap: isCompactLayout ? '28px' : '32px',
                             width: '100%',
                             maxWidth:
                               partners.length === 1
-                                ? '320px'
+                                ? '240px'
                                 : partners.length === 2
-                                  ? '640px'
-                                  : '960px',
+                                  ? isCompactLayout
+                                    ? '240px'
+                                    : '480px'
+                                  : isCompactLayout
+                                    ? '520px'
+                                    : '860px',
                             margin: '0 auto',
                             padding: '5px',
                             position: 'relative',
@@ -441,7 +456,7 @@ export default function PartnersPage() {
                             return (
                               <motion.div
                                 key={partner.id || `${category}-${idx}`}
-                                className="gridItem"
+                                className={`${styles.gridItem} gridItem`}
                                 initial={{
                                   y: -200, // Start from chest position
                                   x: randomOffsetX,
@@ -505,32 +520,11 @@ export default function PartnersPage() {
                                   <div
                                     className={`relative flex h-full w-full flex-col`}
                                   >
-                                    {/* Using the SVG gold ingot as background with enhanced effects */}
-                                    <div className="absolute inset-0 h-full w-full">
-                                      <Image
-                                        src="/western/ingot.svg"
-                                        alt="Gold Ingot"
-                                        className="ingot-hover-glow h-full w-full object-contain"
-                                        width={200}
-                                        height={100}
-                                        style={{
-                                          filter: categoryStyle.barFilter,
-                                          transition: 'all 0.3s ease',
-                                        }}
-                                      />
-                                    </div>
-
-                                    {/* Partner logo - enhanced version with improved styling */}
+                                    {/* Neutral logo panel, matching the supplied partners visualization. */}
                                     <div className="relative z-10 flex h-full flex-col">
-                                      {/* Partner logo area positioned over the ingot */}
                                       <div className="mt-2 flex flex-grow items-center justify-center p-3">
                                         <div
-                                          className={`h-[90%] w-[90%] bg-gradient-to-br ${categoryStyle.logoBackground} flex items-center justify-center overflow-hidden rounded-md border-2 ${categoryStyle.borderColor}`}
-                                          style={{
-                                            boxShadow:
-                                              'inset 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(255,215,0,0.4)',
-                                            transition: 'all 0.3s ease',
-                                          }}
+                                          className={`${styles['partner-logo-card']} flex h-[90%] w-[90%] items-center justify-center overflow-hidden rounded-md`}
                                         >
                                           {partner.logo ? (
                                             <Image

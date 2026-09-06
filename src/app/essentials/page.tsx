@@ -30,6 +30,7 @@ import {
   deleteCustomEssential,
 } from '@/usecases/essentials'
 import { useAuth } from '@/contexts/AuthContext'
+import { useYear } from '@/contexts/YearContext'
 
 export default function EssentialsPage() {
   // Hydration fix
@@ -37,6 +38,8 @@ export default function EssentialsPage() {
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  const { year } = useYear()
 
   const { user } = useAuth()
 
@@ -295,7 +298,7 @@ export default function EssentialsPage() {
 
   if (!isMounted) return null
   return (
-    <div className="min-h-screen">
+    <div className="essentials-page min-h-screen">
       {/* Hero Section */}
       <section className="border-b border-[#262626] py-16 text-white">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
@@ -303,19 +306,19 @@ export default function EssentialsPage() {
             Niezbędnik uczestnika
           </h1>
           <p className="text-xl text-gray-200">
-            Lista rzeczy, które warto zabrać na Wtyczkę 2025
+            {`Lista rzeczy, które warto zabrać na Wtyczkę ${year}`}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Link
               href="/registration"
-              className="western-btn min-w-[180px] rounded-xl border border-[#262626] bg-[#E7A801] px-6 py-3 font-semibold text-black backdrop-blur-sm transition-colors hover:bg-amber-700"
-              style={{ boxShadow: '0 4px 12px rgba(231, 168, 1, 0.4)' }}
+              className="western-btn essentials-primary-button min-w-[180px] rounded-xl px-6 py-3 font-semibold backdrop-blur-sm transition-colors"
+              style={{ boxShadow: '0 4px 12px rgba(79,179,255,0.36)' }}
             >
               Zapisz się
             </Link>
             <Link
               href="/news"
-              className="western-btn min-w-[180px] rounded-xl border border-[#262626] bg-[#232323]/90 px-6 py-3 font-semibold text-white backdrop-blur-sm transition-colors hover:bg-[#3a2c13]"
+              className="western-btn essentials-secondary-button min-w-[180px] rounded-xl px-6 py-3 font-semibold backdrop-blur-sm transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)' }}
             >
               Aktualności
@@ -329,12 +332,12 @@ export default function EssentialsPage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-lg border border-[#262626] bg-[#1a1a1a]/70 p-6">
             <div className="mb-2 flex items-center space-x-2">
-              <AlertCircle className="h-6 w-6 text-[#E7A801]" />
-              <h3 className="text-lg font-bold text-[#E7A801]">
+              <AlertCircle className="h-6 w-6 text-[#4fb3ff]" />
+              <h3 className="text-lg font-bold text-[#4fb3ff]">
                 Ważne informacje
               </h3>
             </div>
-            <ul className="space-y-1 text-sm text-amber-200">
+            <ul className="space-y-1 text-sm text-[#9bdcff]">
               <li>• Pamiętaj o udziale w odprawie przed wyjazdem!</li>
               <li>
                 • Zabierz tylko to, co naprawdę potrzebne - miejsce w autokarze
@@ -351,7 +354,7 @@ export default function EssentialsPage() {
       <section className="py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-lg border border-[#262626] bg-[#1a1a1a]/70 p-6 shadow-lg">
-            <h2 className="mb-8 text-center text-3xl font-bold text-amber-400">
+            <h2 className="mb-8 text-center text-3xl font-bold text-[#4fb3ff]">
               Lista rzeczy do zabrania
             </h2>
             {loading ? (

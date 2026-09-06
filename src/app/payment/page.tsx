@@ -26,7 +26,7 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { createPayment, getPayment, PaymentRecord } from '@/usecases/payments'
 import { getRegistration, RegistrationRecord } from '@/usecases/registrations'
-import { handleSupabaseError } from '@/lib/supabase'
+import { getDataValue, handleSupabaseError } from '@/lib/supabase'
 import Image from 'next/image'
 import {
   uploadPaymentConfirmation,
@@ -34,6 +34,7 @@ import {
   formatFileSize,
   FileUploadResult,
 } from '@/lib/storage'
+import { useYear } from '@/contexts/YearContext'
 
 // Helper to show toast
 const showLimitedToast = (
@@ -115,6 +116,8 @@ export default function PaymentPage() {
 
   const realLang = language || 'pl'
 
+  const { year } = useYear()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
@@ -135,6 +138,8 @@ export default function PaymentPage() {
   // Payment open date logic
   const [isPaymentOpen, setIsPaymentOpen] = useState(false) // Start with closed
   const [isPageLoading, setIsPageLoading] = useState(true) // Add loading state
+  const [defaultPrice, setDefaultPrice] = useState(500)
+  const [transportDiscount, setTransportDiscount] = useState(100)
 
   // Function to check payment access that can be called multiple times
   const checkPaymentAccess = () => {
@@ -167,6 +172,24 @@ export default function PaymentPage() {
   useEffect(() => {
     // Call the function when component mounts
     checkPaymentAccess()
+  }, [])
+
+  useEffect(() => {
+    const loadPaymentSettings = async () => {
+      const [priceValue, discountValue] = await Promise.all([
+        getDataValue('default_price'),
+        getDataValue('transport_discount'),
+      ])
+
+      const parsedPrice = Number(priceValue)
+      const parsedDiscount = Number(discountValue)
+      if (Number.isFinite(parsedPrice)) setDefaultPrice(parsedPrice)
+      if (Number.isFinite(parsedDiscount)) setTransportDiscount(parsedDiscount)
+    }
+
+    loadPaymentSettings().catch((error) =>
+      console.error('Error loading payment settings:', error),
+    )
   }, [])
 
   // Obliczanie dni do wydarzenia zostało usunięte, ponieważ nie jest już potrzebne
@@ -360,7 +383,7 @@ export default function PaymentPage() {
 
   // Kalkulacja kwoty w zależności od opcji
   const calculateAmount = useMemo(() => {
-    let baseAmount = 500 // Cena początkowa
+    let baseAmount = defaultPrice
 
     // Jeśli dieta wegetariańska, dodaj 20zł
     if (userRegistration?.dietName === 'vegetarian') {
@@ -369,17 +392,22 @@ export default function PaymentPage() {
 
     // Jeśli checkbox zaznaczony (dojeżdża samodzielnie), odlicz 100zł
     if (needsTransportValue) {
-      baseAmount -= 100
+      baseAmount -= transportDiscount
     }
 
     return baseAmount
-  }, [userRegistration?.dietName, needsTransportValue])
+  }, [
+    defaultPrice,
+    transportDiscount,
+    userRegistration?.dietName,
+    needsTransportValue,
+  ])
 
   const getAmountBreakdown = () => {
     const breakdown = []
     breakdown.push({
       label: 'Cena podstawowa',
-      amount: '500zł',
+      amount: `${defaultPrice}zł`,
       color: 'text-gray-500',
     })
 
@@ -394,7 +422,7 @@ export default function PaymentPage() {
     if (needsTransportValue) {
       breakdown.push({
         label: '- Dojeżdżam samodzielnie',
-        amount: '-100zł',
+        amount: `-${transportDiscount}zł`,
         color: 'text-green-400',
       })
     }
@@ -406,8 +434,8 @@ export default function PaymentPage() {
     accountNumber: '03 1240 3028 1111 0010 3741 8675',
     recipient: 'Politechnika Łódzka',
     transferTitle: userRegistration
-      ? `Wtyczka 2025 - ${userRegistration.name} ${userRegistration.surname}`
-      : `Wtyczka 2025 - IMIE I NAZWISKO`,
+      ? `Wtyczka ${year} - ${userRegistration.name} ${userRegistration.surname}`
+      : `Wtyczka ${year} - IMIE I NAZWISKO`,
     amount: `${calculateAmount}zł`,
   }
 
@@ -442,7 +470,7 @@ export default function PaymentPage() {
           </p>
           <Link
             href="/"
-            className="rounded-xl bg-[#E7A801] px-6 py-3 font-semibold text-black transition-colors hover:bg-amber-700"
+            className="rounded-xl bg-[#4fb3ff] px-6 py-3 font-semibold text-black transition-colors hover:bg-[#66d9ff]"
           >
             Wróć do strony głównej
           </Link>
@@ -718,7 +746,7 @@ export default function PaymentPage() {
                   href={existingPayment.paymentConfirmationFile.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="xs:mx-0 mx-auto mt-2 flex flex-col items-center justify-center rounded-xl bg-[#E7A801] px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-amber-700 sm:mx-0 sm:flex-row md:mx-0 md:flex-row lg:mx-0 lg:flex-row xl:mx-0 xl:flex-row"
+                  className="xs:mx-0 mx-auto mt-2 flex flex-col items-center justify-center rounded-xl bg-[#4fb3ff] px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-[#66d9ff] sm:mx-0 sm:flex-row md:mx-0 md:flex-row lg:mx-0 lg:flex-row xl:mx-0 xl:flex-row"
                   style={{
                     textAlign: 'center',
                     maxWidth: 'fit-content',
@@ -740,7 +768,7 @@ export default function PaymentPage() {
               <div className="flex justify-center">
                 <Link
                   href="/status"
-                  className="inline-flex items-center rounded-xl bg-[#E7A801] px-6 py-3 font-semibold text-black shadow-md transition-colors hover:bg-amber-700"
+                  className="payment-primary-button inline-flex items-center rounded-xl px-6 py-3 font-semibold shadow-md transition-colors"
                 >
                   <CheckCircle className="mr-2 h-5 w-5" />
                   <span>Sprawdź status</span>
@@ -774,7 +802,7 @@ export default function PaymentPage() {
                   className="m-0 p-0 text-xl leading-none text-white md:text-2xl"
                   style={{ marginTop: '-4px' }}
                 >
-                  Płatność za Wtyczkę 2025
+                  {`Płatność za Wtyczkę ${year}`}
                 </p>
               </div>
             </div>
@@ -793,7 +821,7 @@ export default function PaymentPage() {
             </p>
             <Link
               href="/registration"
-              className="rounded-xl bg-[#E7A801] px-6 py-3 font-semibold text-black transition-colors hover:bg-amber-700"
+              className="rounded-xl bg-[#4fb3ff] px-6 py-3 font-semibold text-black transition-colors hover:bg-[#66d9ff]"
             >
               Przejdź do rejestracji
             </Link>
@@ -813,7 +841,7 @@ export default function PaymentPage() {
               Formularz płatności
             </h1>
             <p className="text-xl text-gray-200">
-              Wypełnij formularz płatności za Wtyczkę 2025
+              {`Wypełnij formularz płatności za Wtyczkę ${year}`}
             </p>
           </div>
         </section>
@@ -923,7 +951,7 @@ export default function PaymentPage() {
               <button
                 type="button"
                 onClick={checkAdminPassword}
-                className="flex w-full items-center justify-center rounded-xl bg-[#E7A801] px-4 py-3 font-semibold text-black transition-colors hover:bg-amber-700"
+                className="payment-primary-button flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold transition-colors"
               >
                 <Lock className="mr-2 h-5 w-5" />
                 <span>Weryfikuj hasło</span>
@@ -1041,7 +1069,7 @@ export default function PaymentPage() {
                         <span className="text-sm text-white">
                           Tak, dojeżdżam samodzielnie{' '}
                           <span className="font-medium text-green-400">
-                            (-100 zł)
+                            (-{transportDiscount} zł)
                           </span>
                         </span>
                       </label>
@@ -1434,7 +1462,7 @@ export default function PaymentPage() {
                         />
                         <button
                           type="button"
-                          className="mx-auto flex items-center justify-center rounded-xl bg-[#E7A801] px-6 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700"
+                          className="mx-auto flex items-center justify-center rounded-xl bg-[#4fb3ff] px-6 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#66d9ff]"
                           disabled={isFileUploading}
                           onClick={(e) => {
                             e.stopPropagation()
@@ -1487,7 +1515,7 @@ export default function PaymentPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className={`inline-flex items-center rounded-xl px-8 py-3 font-semibold shadow-md transition-colors ${isSubmitting ? 'cursor-not-allowed opacity-60' : ''} ${!uploadedFile || !isValid ? 'bg-amber-700 text-black' : 'bg-[#E7A801] text-black hover:bg-amber-700'} `}
+                  className={`payment-submit-button inline-flex items-center rounded-xl px-8 py-3 font-semibold shadow-md transition-colors ${isSubmitting ? 'cursor-not-allowed opacity-60' : ''} ${uploadedFile && isValid ? 'payment-submit-button--ready' : ''}`}
                   disabled={isSubmitting}
                 >
                   <Save className="mr-2 h-5 w-5" />
@@ -1533,16 +1561,14 @@ export default function PaymentPage() {
                     <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400"></span>
                     <span>
                       Rezygnacja możliwa{' '}
-                      <strong>
-                        nie później niż po 13 października 2025 r.
-                      </strong>
+                      <strong>{`nie później niż po 13 października ${year} r.`}</strong>
                     </span>
                   </li>
                   <li className="flex items-start">
                     <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red-400"></span>
                     <span>
                       <strong>Po tym terminie</strong> wymagane jest wskazanie{' '}
-                      <strong>zastępcy</strong> na &quot;Wtyczkę 2025&quot; w
+                      <strong>zastępcy</strong> na {`"Wtyczkę ${year}"`} w
                       miejsce rezygnującego
                     </span>
                   </li>
@@ -1600,7 +1626,7 @@ export default function PaymentPage() {
             <div className="mt-4 flex justify-end sm:mt-6">
               <button
                 onClick={() => setIsCancellationPolicyModalOpen(false)}
-                className="rounded-xl bg-[#E7A801] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-amber-700 sm:px-6 sm:text-base"
+                className="rounded-xl bg-[#4fb3ff] px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-[#66d9ff] sm:px-6 sm:text-base"
               >
                 Rozumiem
               </button>
