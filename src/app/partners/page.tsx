@@ -16,21 +16,21 @@ import {
 const CATEGORY_STYLES = {
   partner: {
     barFilter: 'brightness(1.1) saturate(1.1) hue-rotate(10deg)',
-    logoBackground: 'from-amber-50 to-amber-100',
-    borderColor: 'border-amber-800',
-    headingColor: 'text-amber-300',
+    logoBackground: 'from-blue-50 to-blue-100',
+    borderColor: 'border-[#96C1FF]',
+    headingColor: 'text-[#96C1FF]',
   },
   patronat: {
     barFilter: 'brightness(1.1) saturate(1.1) hue-rotate(10deg)',
-    logoBackground: 'from-amber-50 to-amber-100',
-    borderColor: 'border-amber-800',
-    headingColor: 'text-amber-200',
+    logoBackground: 'from-blue-50 to-blue-100',
+    borderColor: 'border-[#96C1FF]',
+    headingColor: 'text-[#c6ddff]',
   },
   kolo: {
     barFilter: 'brightness(1.1) saturate(1.1) hue-rotate(10deg)',
-    logoBackground: 'from-amber-50 to-amber-100',
-    borderColor: 'border-amber-800',
-    headingColor: 'text-amber-300',
+    logoBackground: 'from-blue-50 to-blue-100',
+    borderColor: 'border-[#96C1FF]',
+    headingColor: 'text-[#96C1FF]',
   },
 }
 
@@ -213,7 +213,7 @@ export default function PartnersPage() {
 
         {/* Loading and error states */}
         {loading && (
-          <p className="mt-4 text-amber-200">Ładowanie partnerów...</p>
+          <p className="mt-4 text-[#c6ddff]">Ładowanie partnerów...</p>
         )}
 
         {error && <p className="mt-4 text-red-400">{error}</p>}
@@ -221,7 +221,7 @@ export default function PartnersPage() {
         {!loading &&
           Object.values(partnersByCategory).every((arr) => arr.length === 0) &&
           !error && (
-            <p className="mt-4 text-amber-200">
+            <p className="mt-4 text-[#c6ddff]">
               Nie znaleziono żadnych partnerów.
             </p>
           )}
@@ -330,7 +330,7 @@ export default function PartnersPage() {
                     {/* Light flash effect when chest opens */}
                     {isChestOpen && (
                       <motion.div
-                        className="absolute inset-0 rounded-full bg-yellow-100"
+                        className="absolute inset-0 rounded-full bg-blue-100"
                         initial={{ opacity: 0, scale: 0 }}
                         animate={{
                           opacity: [0, 0.9, 0],
@@ -407,7 +407,7 @@ export default function PartnersPage() {
                         >
                           {CATEGORY_DISPLAY_NAMES[category]}
                         </h2>
-                        <div className="mx-auto h-1 w-48 rounded-full bg-amber-600"></div>
+                        <div className="mx-auto h-1 w-48 rounded-full bg-[#96C1FF]"></div>
                       </motion.div>
 
                       {/* Partners Grid for this category */}
@@ -540,7 +540,7 @@ export default function PartnersPage() {
                                             />
                                           ) : (
                                             <div
-                                              className="p-2 text-center text-sm font-medium text-amber-900"
+                                              className="p-2 text-center text-sm font-medium text-[#071426]"
                                               style={{
                                                 textShadow:
                                                   '0 1px 1px rgba(255,255,255,0.5)',
@@ -565,7 +565,7 @@ export default function PartnersPage() {
 
                 {/* No partners message - only shown if all categories are empty */}
                 {!hasAnyPartners && (
-                  <div className="py-4 text-center text-amber-200">
+                  <div className="py-4 text-center text-[#c6ddff]">
                     <p>Niestety, nie mamy jeszcze żadnych partnerów.</p>
                   </div>
                 )}
@@ -584,7 +584,7 @@ export default function PartnersPage() {
             transition={{ delay: 0.5, duration: 0.8 }}
           >
             <p
-              className="text-3xl font-bold tracking-wide text-amber-200"
+              className="text-3xl font-bold tracking-wide text-[#c6ddff]"
               style={{
                 fontFamily:
                   "var(--font-rye), fantasy, 'Copperplate Gothic', serif",

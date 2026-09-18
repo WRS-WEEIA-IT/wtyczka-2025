@@ -126,7 +126,7 @@ export default function HomePage() {
               className="cosmos-secondary-btn homepage-btn relative flex w-full max-w-xs min-w-[180px] flex-row items-center justify-center gap-3 overflow-hidden rounded-full border px-8 py-4 text-lg font-bold shadow-none transition-all duration-200"
               title="Dodaj wydarzenie do kalendarza Google"
             >
-              <Calendar className="h-7 w-7 text-[#ffe000]" />
+              <Calendar className="h-7 w-7 text-[#96C1FF]" />
               <span
                 className="tracking-wide uppercase"
                 style={{ fontFamily: 'inherit' }}

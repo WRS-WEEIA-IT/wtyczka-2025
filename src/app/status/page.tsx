@@ -96,7 +96,7 @@ export default function StatusPage() {
     if (completed) {
       return <CheckCircle className="h-6 w-6 text-green-500" />
     }
-    return <Clock className="h-6 w-6 text-yellow-500" />
+    return <Clock className="h-6 w-6 text-[#96C1FF]" />
   }
 
   // Nowa logika statusu
@@ -146,7 +146,7 @@ export default function StatusPage() {
               )}
               {statusType === 'registration' && (
                 <>
-                  <Clock className="mx-auto h-16 w-16 text-yellow-500" />
+                  <Clock className="mx-auto h-16 w-16 text-[#96C1FF]" />
                   <div className="mt-2 text-center text-3xl font-bold text-[#4fb3ff]">
                     Czekamy na formularz płatności
                   </div>
@@ -157,7 +157,7 @@ export default function StatusPage() {
               )}
               {statusType === 'pending' && (
                 <>
-                  <Clock className="mx-auto h-16 w-16 text-yellow-500" />
+                  <Clock className="mx-auto h-16 w-16 text-[#96C1FF]" />
                   <div className="mt-2 text-center text-3xl font-bold text-[#4fb3ff]">
                     Oczekiwanie na werdykt
                   </div>
@@ -277,7 +277,7 @@ export default function StatusPage() {
                 </div>
               ) : registrationCompleted ? (
                 <div>
-                  <p className="mb-3 text-sm text-yellow-400">
+                  <p className="mb-3 text-sm text-[#96C1FF]">
                     Wypełnij formularz płatności, aby przejść dalej
                   </p>
                   <div className="h-4"></div>

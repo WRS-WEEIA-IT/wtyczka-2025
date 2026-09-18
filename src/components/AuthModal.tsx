@@ -521,14 +521,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </div>
 
                 {/* WebView Warning Message */}
-                <div className="mt-4 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4">
+                <div className="mt-4 rounded-xl border border-red-400/40 bg-red-400/10 p-4">
                   <div className="flex items-start gap-3">
-                    <TriangleAlert className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-400" />
-                    <div className="text-sm text-amber-200">
+                    <TriangleAlert className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-400" />
+                    <div className="text-sm text-red-200">
                       <p className="mb-1 font-medium">
                         Wykryto przeglądarkę w aplikacji
                       </p>
-                      <p className="text-amber-300/80">
+                      <p className="text-red-300/80">
                         Logowanie przez Google może nie działać w tej
                         przeglądarce.
                         {webViewInfo.webViewType === 'facebook' ||

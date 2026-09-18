@@ -21,7 +21,7 @@
 
 .treasureChest {
   transition: transform 0.3s ease;
-  filter: drop-shadow(0 0 28px rgba(255, 224, 0, 0.22));
+  filter: drop-shadow(0 0 28px rgba(150, 193, 255, 0.22));
 }
 
 .treasureChest:hover {
@@ -90,7 +90,7 @@
 }
 
 .gridItem:hover {
-  filter: drop-shadow(0 12px 18px rgba(255, 224, 0, 0.3)) brightness(1.08) saturate(1.05);
+  filter: drop-shadow(0 12px 18px rgba(150, 193, 255, 0.3)) brightness(1.08) saturate(1.05);
   transform: translateY(-6px) scale(1.03);
   z-index: 5;
 }
@@ -113,8 +113,8 @@
 }
 
 .gridItem:hover .partner-logo-card {
-  border-color: #ffe000;
-  box-shadow: 0 8px 20px rgba(255, 224, 0, 0.18);
+  border-color: #96C1FF;
+  box-shadow: 0 8px 20px rgba(150, 193, 255, 0.22);
 }
 
 /* Removed dust particles effect */

@@ -1217,7 +1217,7 @@ export default function PaymentPage() {
               {/* Terms and conditions */}
               <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 <div className="mb-6 flex items-center space-x-2 pb-4">
-                  <AlertTriangle className="h-6 w-6 text-amber-400" />
+                  <AlertTriangle className="h-6 w-6 text-red-400" />
                   <h2 className="text-2xl font-bold text-white">
                     Zgody i oświadczenia
                   </h2>

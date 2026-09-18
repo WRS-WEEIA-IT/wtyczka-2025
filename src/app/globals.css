@@ -189,28 +189,28 @@ h1, h2, h3 {
   --card-foreground: #E6F0FF;
   --popover: #071233;
   --popover-foreground: #E6F0FF;
-  --primary: #ffe000; /* cosmos gold */
-  --primary-foreground: #ffffff;
-  --secondary: #b89b00; /* muted stellar gold */
+  --primary: #96C1FF;
+  --primary-foreground: #071426;
+  --secondary: #5f8fd8;
   --secondary-foreground: #ffffff;
   --muted: #6b7280;
   --muted-foreground: #9aa8bf;
-  --accent: #ffe86b;
-  --accent-foreground: #031124;
+  --accent: #c6ddff;
+  --accent-foreground: #071426;
   --destructive: #ff6b6b;
   --border: rgba(255,255,255,0.06);
   --input: rgba(255,255,255,0.03);
   --ring: rgba(79,179,255,0.35);
-  --chart-1: #ffe86b;
-  --chart-2: #ffe000;
-  --chart-3: #b89b00;
-  --chart-4: #d7c34a;
-  --chart-5: #fff3a3;
+  --chart-1: #c6ddff;
+  --chart-2: #96C1FF;
+  --chart-3: #5f8fd8;
+  --chart-4: #7ba8e8;
+  --chart-5: #e1edff;
   --sidebar: #071233;
   --sidebar-foreground: #E6F0FF;
-  --sidebar-primary: #ffe000;
+  --sidebar-primary: #96C1FF;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #b89b00;
+  --sidebar-accent: #5f8fd8;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(255,255,255,0.04);
   --sidebar-ring: rgba(79,179,255,0.25);
@@ -227,14 +227,14 @@ h1, h2, h3 {
   --card-foreground: #e6f2ff;
   --popover: #041026;
   --popover-foreground: #e6f2ff;
-  --primary: #ffe000;
+  --primary: #96C1FF;
   --primary-foreground: #ffffff;
-  --secondary: #b89b00;
+  --secondary: #5f8fd8;
   --secondary-foreground: #ffffff;
   --muted: #475569;
   --muted-foreground: #94a3b8;
-  --accent: #ffe86b;
-  --accent-foreground: #031124;
+  --accent: #c6ddff;
+  --accent-foreground: #071426;
   --destructive: #ff6b6b;
   --border: rgba(255,255,255,0.06);
   --input: rgba(255,255,255,0.06);
@@ -284,7 +284,7 @@ h1, h2, h3 {
 }
 
 .custom-checkbox-input:hover {
-  border-color: #66d9ff;
+  border-color: #c6ddff;
 }
 
 .custom-checkbox-input:focus {

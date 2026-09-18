@@ -39,19 +39,19 @@
   border: none;
   padding: 5px;
   cursor: pointer;
-  color: #4fb3ff;
+  color: #96C1FF;
   z-index: 2;
 }
 
 .date-calendar-button:hover {
-  color: #66d9ff;
+  color: #c6ddff;
 }
 
 /* Change focus ring color to match the theme for any input */
 input:focus {
   outline: none !important;
   box-shadow: 0 0 0 2px rgba(79,179,255,0.35) !important;
-  border-color: #4fb3ff !important;
+  border-color: #96C1FF !important;
 }
 
 /* Highlight colors - orange/yellow theme */
@@ -88,7 +88,7 @@ dialog::backdrop {
 .year-display {
   display: flex;
   justify-content: center;
-  color: #4fb3ff;
+  color: #96C1FF;
   font-weight: bold;
   font-size: 1.2rem;
   margin-bottom: 0.75rem;
@@ -97,7 +97,7 @@ dialog::backdrop {
 }
 
 .year-display:hover {
-  color: #f3b305;
+  color: #c6ddff;
 }
 
 .month-navigation {
@@ -114,7 +114,7 @@ dialog::backdrop {
 .nav-button {
   background: none;
   border: none;
-  color: #4fb3ff;
+  color: #96C1FF;
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
@@ -122,7 +122,7 @@ dialog::backdrop {
 }
 
 .nav-button:hover {
-  color: #66d9ff;
+  color: #c6ddff;
   transform: scale(1.1);
 }
 
@@ -154,13 +154,13 @@ dialog::backdrop {
 }
 
 .day.selected {
-  background-color: #4fb3ff;
+  background-color: #96C1FF;
   color: #000;
   font-weight: bold;
 }
 
 .day.today {
-  border: 1px solid #4fb3ff;
+  border: 1px solid #96C1FF;
 }
 
 .day.outside-month {
@@ -193,7 +193,7 @@ dialog::backdrop {
 }
 
 .year-option.selected {
-  background-color: #4fb3ff;
+  background-color: #96C1FF;
   color: #000;
   font-weight: bold;
 }
@@ -214,5 +214,5 @@ dialog::backdrop {
 }
 
 .year-selector::-webkit-scrollbar-thumb:hover {
-  background: #4fb3ff;
+  background: #96C1FF;
 }

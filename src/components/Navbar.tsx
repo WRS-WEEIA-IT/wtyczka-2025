@@ -546,7 +546,7 @@ export default function Navbar() {
                         style={{
                           marginRight: '8px',
                           background: 'transparent',
-                          color: '#ffe066',
+                          color: '#96C1FF',
                         }}
                       />
                       {t.nav.logout}
@@ -842,7 +842,7 @@ export default function Navbar() {
                         style={{
                           marginRight: '8px',
                           background: 'transparent',
-                          color: '#ffe066',
+                          color: '#96C1FF',
                         }}
                       />
                       {t.nav.logout}

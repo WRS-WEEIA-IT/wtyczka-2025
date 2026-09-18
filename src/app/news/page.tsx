@@ -74,9 +74,9 @@ export default function NewsPage() {
               href="https://facebook.com/wtyczka.eeia"
               target="_blank"
               rel="noopener noreferrer"
-              className="cosmos-primary-btn inline-flex items-center space-x-2 rounded-xl px-7 py-3 font-bold tracking-wider uppercase shadow-lg transition-all focus:ring-2 focus:ring-[#ffe000] focus:ring-offset-2 focus:outline-none"
+              className="cosmos-primary-btn inline-flex items-center space-x-2 rounded-xl px-7 py-3 font-bold tracking-wider uppercase shadow-lg transition-all focus:ring-2 focus:ring-[#96C1FF] focus:ring-offset-2 focus:outline-none"
               style={{
-                boxShadow: '0 4px 16px rgba(255, 224, 0, 0.25)',
+                boxShadow: '0 4px 16px rgba(150, 193, 255, 0.25)',
               }}
             >
               <ExternalLink className="h-5 w-5" />
