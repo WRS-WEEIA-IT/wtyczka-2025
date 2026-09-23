@@ -144,8 +144,8 @@ a.western-button.western-dropdown-animated {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 64px;
-  height: 64px;
+  min-height: 56px;
+  height: 56px;
   line-height: 1.1;
   z-index: 50;
   box-sizing: border-box;

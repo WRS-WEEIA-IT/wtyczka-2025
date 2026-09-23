@@ -111,8 +111,6 @@ export default function Navbar() {
                     backgroundColor: 'transparent',
                     boxShadow: 'none',
                     border: 'none',
-                    width: '160px',
-                    height: '80px',
                     padding: '0',
                     display: 'flex',
                     alignItems: 'center',

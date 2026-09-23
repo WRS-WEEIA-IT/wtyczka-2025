@@ -94,7 +94,12 @@ export default function RootLayout({
                     <Facebook className="h-5 w-5" />
                     Odwiedź naszego Facebooka
                   </Link>
-                  <p className="cosmos-footer-copyright mt-16 text-base md:text-lg">
+                  <p className="cosmos-footer-contact mt-12 text-base md:text-lg">
+                    <a href="mailto:wtyczka@samorzad.p.lodz.pl">
+                      wtyczka@samorzad.p.lodz.pl
+                    </a>
+                  </p>
+                  <p className="cosmos-footer-copyright mt-9 text-base md:text-lg">
                     © 2026 WTYCZKA
                   </p>
                 </div>

@@ -305,7 +305,7 @@ export default function EssentialsPage() {
           <h1 className="mb-4 text-4xl font-bold text-amber-400 md:text-5xl">
             Niezbędnik uczestnika
           </h1>
-          <p className="text-xl text-gray-200">
+          <p className="mx-auto max-w-2xl text-xl text-gray-200">
             {`Lista rzeczy, które warto zabrać na Wtyczkę ${year}`}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-4">
@@ -328,7 +328,7 @@ export default function EssentialsPage() {
       </section>
 
       {/* Important Info */}
-      <section className="py-8">
+      <section className="py-6">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-lg border border-[#262626] bg-[#1a1a1a]/70 p-6">
             <div className="mb-2 flex items-center space-x-2">
@@ -351,7 +351,7 @@ export default function EssentialsPage() {
       </section>
 
       {/* Packing List - styl FAQ, zawsze rozwinięty */}
-      <section className="py-8">
+      <section className="py-6">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-lg border border-[#262626] bg-[#1a1a1a]/70 p-6 shadow-lg">
             <h2 className="mb-8 text-center text-3xl font-bold text-[#4fb3ff]">
@@ -385,9 +385,7 @@ export default function EssentialsPage() {
                       }`}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="mr-3 text-amber-400">
-                          {section.icon}
-                        </div>
+                        <div className="text-amber-400">{section.icon}</div>
                         <h2 className="text-xl font-bold text-amber-400">
                           {section.title}
                           {section.id === 'custom' &&
@@ -408,7 +406,7 @@ export default function EssentialsPage() {
                     </button>
 
                     {openSections.includes(section.id) && (
-                      <div className="mt-3 space-y-2 px-4 py-4">
+                      <div className="mt-3 space-y-2 px-4 py-3">
                         {section.id === 'custom' ? (
                           <>
                             {/* Add new item input */}
@@ -592,35 +590,6 @@ export default function EssentialsPage() {
                 ))}
               </div>
             )}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact for Questions */}
-      <section className="border-t border-[#262626] bg-[#1a1a1a]/70 py-16 text-white">
-        <div className="mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
-          <h3 className="mb-4 text-2xl font-bold text-amber-400">
-            Masz pytania dotyczące pakowania?
-          </h3>
-          <p className="mb-6 text-amber-200">
-            Skontaktuj się z organizatorami - chętnie pomożemy!
-          </p>
-          <div className="space-y-2">
-            <p className="text-amber-300">
-              📧 Email:{' '}
-              <a
-                href="mailto:wtyczka@samorzad.p.lodz.pl"
-                className="underline hover:text-white"
-              >
-                wtyczka@samorzad.p.lodz.pl
-              </a>
-            </p>
-            <p className="text-amber-300">
-              📱 Telefon:{' '}
-              <a href="tel:690150650" className="underline hover:text-white">
-                690 150 650
-              </a>
-            </p>
           </div>
         </div>
       </section>

@@ -111,14 +111,11 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <p
-            className="cosmos-label text-md m-0 p-0 font-semibold tracking-widest uppercase md:text-lg"
-            style={{ marginBottom: '-15px' }}
-          >
+          <p className="cosmos-label m-0 mb-4 p-0 text-lg font-semibold tracking-widest uppercase">
             Dodaj wydarzenie do kalendarza Google
           </p>
 
-          <div className="mt-5 mb-2 flex w-full justify-center">
+          <div className="mb-2 flex w-full justify-center">
             <a
               href={calendarUrl}
               target="_blank"
@@ -139,25 +136,28 @@ export default function HomePage() {
               </span>
             </a>
           </div>
-
-          <div className="star-divider mt-8 mb-2">
-            <span className="cosmos-stars text-3xl select-none">✦</span>
-          </div>
         </div>
       </section>
 
       {/* Latest News Section */}
       <section className="cosmos-news flex-1 px-4 py-10 md:py-16">
         <div className="home-content-container mx-auto flex h-full w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-          <div className="mb-10 flex w-full flex-col items-center justify-center pt-8 text-center">
+          <div className="mb-8 flex w-full flex-col items-center justify-center pt-4 text-center">
             <h2 className="latest-news-title cosmos-heading xs:text-xl w-full text-center text-base font-semibold tracking-widest break-words uppercase sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
               {t.home.latestNews}
             </h2>
-            <div className="star-divider flex w-full items-center justify-center text-center">
-              <span className="cosmos-stars text-2xl select-none">✦</span>
+            <div className="flex w-full items-center justify-center text-center">
+              <Image
+                src="/cosmos/rozdzielenie.svg"
+                alt=""
+                width={615}
+                height={86}
+                className="h-auto w-full max-w-[615px]"
+                aria-hidden="true"
+              />
             </div>
             <div className="flex w-full justify-center text-center">
-              <span className="cosmos-subheading inline-block border-b px-4 pb-2 text-center text-lg tracking-widest uppercase">
+              <span className="cosmos-subheading inline-block px-4 text-center text-lg tracking-widest uppercase">
                 Wiadomości z kosmosu
               </span>
             </div>
@@ -168,14 +168,14 @@ export default function HomePage() {
               {facebookPosts.map((post) => (
                 <FacebookCard
                   {...post}
-                  className="facebook-card-bottom-image w-full max-w-2xl cursor-pointer justify-self-center shadow-xl transition-shadow hover:shadow-2xl"
+                  className="facebook-card-bottom-image w-full max-w-2xl cursor-pointer justify-self-center text-left shadow-xl transition-shadow hover:shadow-2xl"
                   key={post.id}
                 />
               ))}
             </Suspense>
           </div>
 
-          <div className="mt-10 pb-10 text-center">
+          <div className="mt-8 pb-8 text-center">
             <Link
               href="/news"
               className="cosmos-primary-btn inline-flex items-center space-x-2 rounded-xl px-6 py-3 text-base font-bold tracking-wider uppercase shadow-md transition-colors"

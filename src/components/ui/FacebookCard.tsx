@@ -78,11 +78,11 @@ export function FacebookCard({
             </span>
           </div>
         </div>
-        <div className="flex w-full flex-col">
+        <div className="mt-3 flex w-full flex-col gap-1">
           {text.split('\n').map((line: string, index: number) => (
             <p
               key={index}
-              className="overflow-wrap-anywhere mt-2 text-sm break-words whitespace-pre-wrap"
+              className="overflow-wrap-anywhere text-sm break-words whitespace-pre-wrap"
             >
               {line}
             </p>

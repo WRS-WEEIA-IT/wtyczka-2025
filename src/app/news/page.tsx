@@ -66,7 +66,7 @@ export default function NewsPage() {
           <h1 className="mb-4 text-4xl font-bold text-amber-400 md:text-5xl">
             {t.home.latestNews}
           </h1>
-          <p className="text-xl text-gray-200">
+          <p className="mx-auto max-w-2xl text-xl text-gray-200">
             {`Śledź najnowsze informacje o wydarzeniu Wtyczka ${year}`}
           </p>
           <div className="mt-6 flex justify-center">
@@ -114,11 +114,9 @@ export default function NewsPage() {
               </Card>
             )}
             {noMorePosts && facebookPosts.length > 0 && (
-              <Card className="mb-12 inline-flex items-center justify-center shadow-xl">
-                <div className="text-muted-foreground p-6">
-                  To już wszystkie aktualności!
-                </div>
-              </Card>
+              <div className="text-muted-foreground mb-12 text-center">
+                To już wszystkie aktualności!
+              </div>
             )}
           </div>
         </div>

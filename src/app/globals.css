@@ -37,12 +37,7 @@
 }
 @media screen and (max-width: 350px) {
   .latest-news-title {
-    font-size: 0.95rem !important;
-  }
-}
-@media screen and (max-width: 350px) {
-  .latest-news-title {
-    font-size: 1.4rem !important;
+    font-size: 1.1rem !important;
   }
 }
 /* Font utility classes for consistent typography */
