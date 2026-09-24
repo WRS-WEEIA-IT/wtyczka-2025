@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -16,10 +16,12 @@ import {
   getRegistration,
   RegistrationRecord,
 } from '@/usecases/registrations'
-import { getDateFromDatabase, handleSupabaseError } from '@/lib/supabase'
+import { handleSupabaseError } from '@/lib/supabase'
 import { useYear } from '@/contexts/YearContext'
 
 const registrationSchema = z.object({
+  adultStatus: z.enum(['yes', 'no'], 'Wybierz odpowiedź'),
+
   // Imię - tylko litery alfabetu + spacje, max 50 znaków
   name: z
     .string()
@@ -40,9 +42,6 @@ const registrationSchema = z.object({
       'Nazwisko może zawierać tylko litery i spacje',
     ),
 
-  // Data urodzenia - osoba musi być 18+ w dniu wyjazdu i mieć mniej niż 70 lat
-  dob: z.string().min(1, 'Data urodzenia jest wymagana'),
-
   // Numer telefonu - tylko cyfry, znak + i spacje, min 9 cyfr
   phoneNumber: z
     .string()
@@ -59,9 +58,6 @@ const registrationSchema = z.object({
       { message: 'Numer telefonu musi zawierać co najmniej 9 cyfr' },
     ),
 
-  // PESEL - dokładnie 11 cyfr i zgodny z datą urodzenia
-  pesel: z.string().regex(/^\d{11}$/, 'PESEL musi składać się z 11 cyfr'),
-
   // Płeć - wymagana
   gender: z.enum(['male', 'female', 'other'], 'Wybierz płeć'),
 
@@ -75,7 +71,8 @@ const registrationSchema = z.object({
   studentNumber: z
     .string()
     .min(1, 'Numer indeksu jest wymagany')
-    .max(30, 'Numer indeksu nie może przekraczać 30 znaków'),
+    .max(30, 'Numer indeksu nie może przekraczać 30 znaków')
+    .regex(/^\d+$/, 'Numer indeksu może zawierać tylko cyfry'),
 
   // Kierunek studiów - litery i spacje, max 60 znaków
   studyField: z
@@ -91,10 +88,7 @@ const registrationSchema = z.object({
   studyLevel: z.enum(['bachelor', 'master', 'phd'], 'Wybierz jedną z opcji'),
 
   // Rok studiów - wymagany
-  studyYear: z.enum(['1', '2', '3', '4'], 'Wybierz jedną z opcji'),
-
-  // Dieta - wymagana
-  dietName: z.enum(['standard', 'vegetarian'], 'Wybierz jedną z opcji'),
+  studyYear: z.enum(['1', '2', '3', '4', '5'], 'Wybierz jedną z opcji'),
 
   // Rozmiar koszulki - wymagany
   tshirtSize: z.enum(
@@ -117,9 +111,8 @@ const registrationSchema = z.object({
   invoiceAddress: z.string().optional(),
 
   // Akceptacja regulaminu - wymagana
-  regAccept: z.boolean().refine((val) => val === true, {
-    message: 'Musisz zaakceptować regulamin',
-  }),
+  regDecision: z.enum(['yes', 'no'], 'Wybierz odpowiedź'),
+  regRejectionReason: z.string().optional(),
 
   // Zgoda na przetwarzanie danych - wymagana
   rodoAccept: z.boolean().refine((val) => val === true, {
@@ -127,7 +120,55 @@ const registrationSchema = z.object({
   }),
 })
 
-type RegistrationFormData = z.infer<typeof registrationSchema>
+const registrationValidationSchema = registrationSchema.superRefine(
+  (data, context) => {
+    if (data.regDecision === 'no' && !data.regRejectionReason?.trim()) {
+      context.addIssue({
+        code: 'custom',
+        path: ['regRejectionReason'],
+        message: 'Napisz, dlaczego nie akceptujesz regulaminu',
+      })
+    }
+    if (data.aboutWtyczka === 'other' && !data.aboutWtyczkaInfo?.trim()) {
+      context.addIssue({
+        code: 'custom',
+        path: ['aboutWtyczkaInfo'],
+        message: 'Podaj dodatkowe informacje',
+      })
+    }
+    if (data.invoice) {
+      const invoiceFields = [
+        ['invoiceName', data.invoiceName],
+        ['invoiceSurname', data.invoiceSurname],
+        ['invoiceId', data.invoiceId],
+        ['invoiceAddress', data.invoiceAddress],
+      ] as const
+      invoiceFields.forEach(([field, value]) => {
+        if (!value?.trim()) {
+          context.addIssue({
+            code: 'custom',
+            path: [field],
+            message: 'To pole jest wymagane przy fakturze',
+          })
+        }
+      })
+    }
+  },
+)
+
+type RegistrationFormData = z.infer<typeof registrationValidationSchema>
+
+const facultyLinks: Record<string, string> = {
+  w1: 'http://www.mechaniczny.p.lodz.pl/',
+  w2: 'http://www.weeia.p.lodz.pl/',
+  w3: 'http://chemia.p.lodz.pl/',
+  w4: 'http://www.style.p.lodz.pl/index.php',
+  w5: 'http://binoz.p.lodz.pl/',
+  w6: 'http://bais.p.lodz.pl/',
+  w7: 'http://ftims.p.lodz.pl/',
+  w8: 'http://wzip.p.lodz.pl/',
+  w9: 'http://wipos.p.lodz.pl/',
+}
 
 export default function RegistrationPage() {
   // Hydration fix
@@ -144,45 +185,8 @@ export default function RegistrationPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isInvoice, setIsInvoice] = useState(false)
-  const [tripDate, setTripDate] = useState<Date | null>(null)
   const [existingRegistration, setExistingRegistration] =
     useState<RegistrationRecord | null>(null)
-
-  const registrationValidationSchema = useMemo(
-    () =>
-      registrationSchema.superRefine((data, context) => {
-        if (!tripDate) {
-          context.addIssue({
-            code: 'custom',
-            path: ['dob'],
-            message: 'Nie udało się pobrać daty wyjazdu',
-          })
-          return
-        }
-
-        const birthDate = new Date(`${data.dob}T12:00:00`)
-        let age = tripDate.getFullYear() - birthDate.getFullYear()
-        const monthDifference = tripDate.getMonth() - birthDate.getMonth()
-        if (
-          monthDifference < 0 ||
-          (monthDifference === 0 && tripDate.getDate() < birthDate.getDate())
-        ) {
-          age--
-        }
-
-        if (age < 18 || age >= 70) {
-          context.addIssue({
-            code: 'custom',
-            path: ['dob'],
-            message:
-              age < 18
-                ? 'Musisz mieć ukończone 18 lat w dniu wydarzenia'
-                : 'Podaj poprawne dane',
-          })
-        }
-      }),
-    [tripDate],
-  )
 
   const {
     register,
@@ -192,15 +196,8 @@ export default function RegistrationPage() {
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationValidationSchema),
   })
-
-  // Check if user already has a registration
-  useEffect(() => {
-    getDateFromDatabase('TRIP_DATE')
-      .then((date) => {
-        if (date) setTripDate(new Date(`${date}T12:00:00`))
-      })
-      .catch((error) => console.error('Error fetching trip date:', error))
-  }, [])
+  const adultStatus = watch('adultStatus')
+  const invoiceField = register('invoice')
 
   useEffect(() => {
     const checkExistingRegistration = async () => {
@@ -259,58 +256,24 @@ export default function RegistrationPage() {
     )
   }
 
-  // Funkcja do walidacji PESEL z datą urodzenia
-  const validatePeselWithDob = (pesel: string, dob: Date): boolean => {
-    if (!pesel || pesel.length !== 11) return false
-
-    // Pobieramy dane z daty urodzenia
-    const year = dob.getFullYear()
-    const month = dob.getMonth() + 1 // Miesiące w JS są 0-based
-    const day = dob.getDate()
-
-    // Pobieramy dane z PESEL
-    const peselYearDigits = parseInt(pesel.substring(0, 2), 10) // Pierwsze 2 cyfry - rok (ostatnie 2 cyfry roku)
-    const peselMonthDigits = parseInt(pesel.substring(2, 4), 10) // Kolejne 2 cyfry - miesiąc z modyfikacją wieku
-    const peselDayDigits = parseInt(pesel.substring(4, 6), 10) // Kolejne 2 cyfry - dzień
-
-    // Określamy rzeczywisty rok i miesiąc w PESEL
-    let peselYear, peselMonth
-
-    // Dla osób urodzonych po 2000 roku, miesiąc ma dodane 20
-    if (year >= 2000) {
-      // Sprawdzamy czy miesiąc w PESEL ma dodane 20
-      peselYear = 2000 + peselYearDigits
-      peselMonth = peselMonthDigits - 20 // Odejmujemy 20, aby uzyskać właściwy miesiąc
-    } else {
-      // Dla osób urodzonych w XX wieku (1900-1999)
-      peselYear = 1900 + peselYearDigits
-      peselMonth = peselMonthDigits
-    }
-
-    // Sprawdzamy zgodność roku, miesiąca i dnia
-    const yearMatch = year === peselYear
-    const monthMatch = month === peselMonth
-    const dayMatch = day === peselDayDigits
-
-    // Wszystkie elementy muszą się zgadzać
-    return yearMatch && monthMatch && dayMatch
-  }
-
   const onSubmit = async (data: RegistrationFormData) => {
     if (!user) return
 
-    // Walidacja PESEL z datą urodzenia przed wysłaniem
-    const dobDate = new Date(data.dob)
-    if (!validatePeselWithDob(data.pesel, dobDate)) {
-      toast.error('PESEL nie zgadza się z datą urodzenia')
-      return
-    }
-
     setIsSubmitting(true)
     try {
+      const {
+        adultStatus: _adultStatus,
+        regDecision,
+        regRejectionReason,
+        ...formValues
+      } = data
       const formData = {
-        ...data,
-        dob: dobDate,
+        ...formValues,
+        dob: undefined,
+        pesel: undefined,
+        dietName: 'standard' as const,
+        regAccept: regDecision === 'yes',
+        regRejectionReason,
         studentNumber: parseInt(data.studentNumber),
         studyYear: parseInt(data.studyYear),
       } as Omit<
@@ -364,14 +327,11 @@ export default function RegistrationPage() {
                   Email: {existingRegistration.email}
                 </p>
                 <p className="text-base text-gray-400">
+                  Pełnoletność:{' '}
+                  {existingRegistration.over18 === false ? 'Nie' : 'Tak'}
+                </p>
+                <p className="text-base text-gray-400">
                   Telefon: {existingRegistration.phoneNumber}
-                </p>
-                <p className="text-base text-gray-400">
-                  Data urodzenia:{' '}
-                  {existingRegistration.dob.toLocaleDateString('pl-PL')}
-                </p>
-                <p className="text-base text-gray-400">
-                  PESEL: {existingRegistration.pesel}
                 </p>
                 <p className="text-base text-gray-400">
                   Płeć:{' '}
@@ -433,12 +393,6 @@ export default function RegistrationPage() {
                   Preferencje
                 </h3>
                 <p className="text-base text-gray-400">
-                  Dieta:{' '}
-                  {existingRegistration.dietName === 'standard'
-                    ? 'Standardowa'
-                    : 'Wegetariańska'}
-                </p>
-                <p className="text-base text-gray-400">
                   Rozmiar koszulki: {existingRegistration.tshirtSize}
                 </p>
                 <p className="text-base text-gray-400">
@@ -487,6 +441,30 @@ export default function RegistrationPage() {
                   )}
                 </div>
               )}
+            </div>
+
+            <div className="mt-6 grid gap-6 border-t border-[#262626] pt-6 md:grid-cols-2">
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-200">
+                  Zgody
+                </h3>
+                <p className="text-base text-gray-400">
+                  Regulamin:{' '}
+                  {existingRegistration.regAccept
+                    ? 'Zaakceptowany'
+                    : 'Niezaakceptowany'}
+                </p>
+                {!existingRegistration.regAccept &&
+                  existingRegistration.regRejectionReason && (
+                    <p className="text-base text-gray-400">
+                      Powód: {existingRegistration.regRejectionReason}
+                    </p>
+                  )}
+                <p className="text-base text-gray-400">
+                  Zgoda RODO:{' '}
+                  {existingRegistration.rodoAccept ? 'Wyrażona' : 'Brak zgody'}
+                </p>
+              </div>
             </div>
 
             <div className="mt-8 border-t border-[#262626] pt-6">
@@ -623,17 +601,56 @@ export default function RegistrationPage() {
             <div>
               <h3 className="text-lg font-semibold text-red-400">UWAGA!</h3>
               <p className="text-gray-200">
-                Podawanie fałszywych informacji (np. osoba niepełnoletnia w dniu
-                wyjazdu wpisująca fałszywą datę urodzenia) będzie wiązało się z
-                negatywnymi konsekwencjami - niedopuszczenie uczestnika do
-                wyjazdu oraz permanentny zakaz uczestniczenia w przyszłych tego
-                typu wyjazdach.
+                Wyjazd jest przeznaczony wyłącznie dla osób pełnoletnich.
+                Podanie nieprawdziwych informacji skutkuje pozbawieniem
+                możliwości uczestniczenia w tej i kolejnych edycjach „Wtyczki”
+                oraz zwrotu kosztów.
               </p>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="mb-6 rounded-2xl border border-[#262626] bg-[#18181b] p-6 shadow-xl">
+          <h2 className="mb-4 text-xl font-bold text-white">
+            Czy jesteś osobą pełnoletnią?
+          </h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
+            {[
+              { value: 'yes', label: 'Tak' },
+              { value: 'no', label: 'Nie' },
+            ].map((option) => (
+              <label
+                key={option.value}
+                className="flex cursor-pointer items-center gap-3 text-gray-300"
+              >
+                <input
+                  type="radio"
+                  value={option.value}
+                  {...register('adultStatus')}
+                  className="h-4 w-4 accent-amber-400"
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+          {errors.adultStatus && (
+            <p className="mt-2 text-sm text-red-500">
+              {errors.adultStatus.message}
+            </p>
+          )}
+        </div>
+
+        {adultStatus === 'no' && (
+          <div className="mb-6 rounded-xl border border-red-700 bg-red-900/30 p-4 text-gray-200">
+            Niestety, w wyjeździe mogą uczestniczyć wyłącznie osoby pełnoletnie.
+            Zapraszamy do udziału w przyszłych edycjach „Wtyczki”.
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={adultStatus === 'yes' ? 'space-y-8' : 'hidden'}
+        >
           {/* Dane uczestnika */}
           <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-6 shadow-xl">
             <div className="mb-6 flex items-center space-x-2">
@@ -677,34 +694,6 @@ export default function RegistrationPage() {
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-300">
-                  {t.forms.birthDate} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  min="1955-01-01"
-                  max={
-                    tripDate
-                      ? new Date(
-                          tripDate.getFullYear() - 18,
-                          tripDate.getMonth(),
-                          tripDate.getDate(),
-                        )
-                          .toISOString()
-                          .slice(0, 10)
-                      : undefined
-                  }
-                  {...register('dob')}
-                  className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  required
-                />
-                {errors.dob && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.dob.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-300">
                   {t.forms.phone} <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -715,22 +704,6 @@ export default function RegistrationPage() {
                 {errors.phoneNumber && (
                   <p className="mt-1 text-sm text-red-500">
                     {errors.phoneNumber.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  {t.forms.pesel} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  maxLength={11}
-                  {...register('pesel')}
-                  className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                />
-                {errors.pesel && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.pesel.message}
                   </p>
                 )}
               </div>
@@ -764,6 +737,11 @@ export default function RegistrationPage() {
                 {t.forms.studentData}
               </h2>
             </div>
+            <p className="mb-6 rounded-lg border border-amber-700/60 bg-amber-900/20 p-3 text-sm text-amber-200">
+              Dane o posiadaniu statusu studenta będą weryfikowane. Podanie
+              nieprawdziwych informacji może skutkować wykluczeniem z tej i
+              kolejnych edycji „Wtyczki”.
+            </p>
             <div className="grid gap-6 md:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-300">
@@ -800,6 +778,16 @@ export default function RegistrationPage() {
                   <p className="mt-1 text-sm text-red-500">
                     {errors.faculty.message}
                   </p>
+                )}
+                {watch('faculty') && (
+                  <a
+                    href={facultyLinks[watch('faculty')]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-block text-sm text-amber-400 underline hover:text-amber-300"
+                  >
+                    Strona wybranego wydziału
+                  </a>
                 )}
               </div>
               <div>
@@ -867,6 +855,7 @@ export default function RegistrationPage() {
                   <option value="2">2 rok</option>
                   <option value="3">3 rok</option>
                   <option value="4">4 rok</option>
+                  <option value="5">5 rok</option>
                 </select>
                 {errors.studyYear && (
                   <p className="mt-1 text-sm text-red-500">
@@ -886,24 +875,6 @@ export default function RegistrationPage() {
               </h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  {t.forms.diet} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  {...register('dietName')}
-                  className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                >
-                  <option value="">Wybierz diete</option>
-                  <option value="standard">Standardowa</option>
-                  <option value="vegetarian">Wegetariańska (+20zł)</option>
-                </select>
-                {errors.dietName && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.dietName.message}
-                  </p>
-                )}
-              </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-300">
                   {t.forms.tshirtSize} <span className="text-red-500">*</span>
@@ -932,9 +903,12 @@ export default function RegistrationPage() {
                     <span className="custom-checkbox-container">
                       <input
                         type="checkbox"
-                        {...register('invoice')}
+                        {...invoiceField}
                         className="custom-checkbox-input"
-                        onChange={() => setIsInvoice(!isInvoice)}
+                        onChange={(event) => {
+                          invoiceField.onChange(event)
+                          setIsInvoice(event.target.checked)
+                        }}
                       />
                       <div className="custom-checkbox-glow"></div>
                       <div className="custom-checkbox-check">✓</div>
@@ -1068,35 +1042,64 @@ export default function RegistrationPage() {
               Zgody i regulamin
             </h3>
             <div className="space-y-4">
-              <div className="flex items-start">
-                <label className="flex cursor-pointer items-center select-none">
-                  <span className="custom-checkbox-container">
-                    <input
-                      type="checkbox"
-                      {...register('regAccept')}
-                      className="custom-checkbox-input"
-                    />
-                    <div className="custom-checkbox-glow"></div>
-                    <div className="custom-checkbox-check">✓</div>
-                  </span>
-                  <span className="ml-3 text-gray-300">
-                    Akceptuję{' '}
-                    <a
-                      href={process.env.NEXT_PUBLIC_REGULATIONS_LINK}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-amber-400 underline hover:text-amber-500"
-                    >
-                      regulamin
-                    </a>{' '}
-                    <span className="text-red-500">*</span>
-                  </span>
-                </label>
-              </div>
-              {errors.regAccept && (
-                <p className="text-sm text-red-500">
-                  {errors.regAccept.message}
+              <div>
+                <p className="mb-3 text-gray-300">
+                  Czy akceptujesz regulamin wyjazdu?{' '}
+                  <a
+                    href={process.env.NEXT_PUBLIC_REGULATIONS_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 underline hover:text-amber-500"
+                  >
+                    Otwórz regulamin
+                  </a>{' '}
+                  <span className="text-red-500">*</span>
                 </p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
+                  {[
+                    { value: 'yes', label: 'Tak' },
+                    { value: 'no', label: 'Nie' },
+                  ].map((option) => (
+                    <label
+                      key={option.value}
+                      className="flex cursor-pointer items-center gap-3 text-gray-300"
+                    >
+                      <input
+                        type="radio"
+                        value={option.value}
+                        {...register('regDecision')}
+                        className="h-4 w-4 accent-amber-400"
+                      />
+                      {option.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              {errors.regDecision && (
+                <p className="text-sm text-red-500">
+                  {errors.regDecision.message}
+                </p>
+              )}
+              {watch('regDecision') === 'no' && (
+                <div>
+                  <label
+                    htmlFor="regRejectionReason"
+                    className="mb-2 block text-sm font-medium text-gray-300"
+                  >
+                    Dlaczego nie? <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    id="regRejectionReason"
+                    rows={3}
+                    {...register('regRejectionReason')}
+                    className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                  {errors.regRejectionReason && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.regRejectionReason.message}
+                    </p>
+                  )}
+                </div>
               )}
               <div className="flex items-start">
                 <label className="flex cursor-pointer items-center select-none">

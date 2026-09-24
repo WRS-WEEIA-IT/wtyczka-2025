@@ -72,7 +72,7 @@ export const translations: Record<'pl', Translations> = {
       studyYear: 'Rok studiów',
       diet: 'Dieta',
       tshirtSize: 'Rozmiar koszulki',
-      invoice: 'Faktura',
+      invoice: 'Czy potrzebujesz faktury?',
       howDidYouKnow: 'Skąd wiesz o Wtyczce?',
       acceptRegulations: 'Akceptuję regulamin',
       dataProcessingConsent:

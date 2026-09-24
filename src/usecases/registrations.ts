@@ -3,20 +3,21 @@ import { supabase } from '@/lib/supabase'
 
 export interface RegistrationRecord {
   userId: string
+  over18?: boolean
 
   name: string
   surname: string
-  dob: Date
+  dob?: Date
   email: string
   phoneNumber: string
-  pesel: string
+  pesel?: string
   gender: 'male' | 'female' | 'other'
 
   faculty: 'w1' | 'w2' | 'w3' | 'w4' | 'w5' | 'w6' | 'w7' | 'w8' | 'w9'
   studentNumber: number
   studyField: string
   studyLevel: 'bachelor' | 'master' | 'phd'
-  studyYear: 1 | 2 | 3 | 4
+  studyYear: 1 | 2 | 3 | 4 | 5
 
   dietName: 'standard' | 'vegetarian'
   tshirtSize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'
@@ -36,6 +37,7 @@ export interface RegistrationRecord {
   aboutWtyczkaInfo?: string
 
   regAccept: boolean
+  regRejectionReason?: string
   rodoAccept: boolean
 
   qualified?: boolean
@@ -56,15 +58,15 @@ export const createRegistration = async (
       .from('registrations')
       .insert([
         {
-          over18: true, // TODO: zrobić check do tego.
+          over18: true,
           userId: user.id,
 
           name: registrationData.name,
           surname: registrationData.surname,
-          dob: registrationData.dob,
+          dob: registrationData.dob ?? null,
           email: user.email,
           phoneNumber: registrationData.phoneNumber,
-          pesel: registrationData.pesel,
+          pesel: registrationData.pesel ?? null,
           gender: registrationData.gender,
 
           faculty: registrationData.faculty,
@@ -86,6 +88,7 @@ export const createRegistration = async (
           aboutWtyczkaInfo: registrationData.aboutWtyczkaInfo,
 
           regAccept: registrationData.regAccept,
+          regRejectionReason: registrationData.regRejectionReason,
           rodoAccept: registrationData.rodoAccept,
 
           createdAt: new Date().toISOString(),

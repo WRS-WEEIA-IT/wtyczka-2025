@@ -69,7 +69,7 @@ export default function RootLayout({
             <AuthProvider>
               <Navbar />
               <main className="relative z-10 min-h-screen">{children}</main>
-              <footer className="cosmos-footer relative z-10 overflow-hidden">
+              <footer className="cosmos-footer relative z-0 overflow-hidden">
                 <Image
                   src="/cosmos/futer_aktualności.png"
                   alt=""

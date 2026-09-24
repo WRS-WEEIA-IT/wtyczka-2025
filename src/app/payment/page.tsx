@@ -88,15 +88,38 @@ const paymentSchema = z.object({
     .string()
     .min(1, 'Stopień pokrewieństwa jest wymagany')
     .max(50, 'Stopień pokrewieństwa nie może przekraczać 50 znaków'),
-  needsTransport: z.boolean(),
+  needsTransport: z
+    .union([z.boolean(), z.enum(['true', 'false'])])
+    .transform((value) => value === true || value === 'true'),
+  hasMedicalConditions: z.enum(['yes', 'no'], 'Wybierz odpowiedź'),
   medicalConditions: z
     .string()
     .max(512, 'Stan zdrowia nie może przekraczać 512 znaków')
     .optional(),
+  takesMedications: z.enum(['yes', 'no'], 'Wybierz odpowiedź'),
   medications: z
     .string()
     .max(512, 'Lista przyjmowanych leków nie może przekraczać 512 znaków')
     .optional(),
+  hoodieSize: z.enum(
+    ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    'Wybierz rozmiar bluzy',
+  ),
+  pantsSize: z.enum(['S', 'M', 'L', 'XL', 'XXL'], 'Wybierz rozmiar spodni'),
+  tshirtSize: z.enum(
+    ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    'Wybierz rozmiar koszulki',
+  ),
+  sportsCard: z.enum(
+    ['multisport', 'medicover', 'fitprofit', 'other', 'none'],
+    'Wybierz kartę sportową',
+  ),
+  sportsCardOther: z.string().optional(),
+  invoiceNeeded: z.enum(['yes', 'no'], 'Wybierz odpowiedź'),
+  invoiceName: z.string().optional(),
+  invoiceSurname: z.string().optional(),
+  invoiceId: z.string().optional(),
+  invoiceAddress: z.string().optional(),
   transferConfirmation: z.boolean().refine((val) => val === true, {
     message: 'Musisz potwierdzić wykonanie przelewu',
   }),
@@ -108,7 +131,49 @@ const paymentSchema = z.object({
   }),
 })
 
-type PaymentFormData = z.infer<typeof paymentSchema>
+const paymentValidationSchema = paymentSchema.superRefine((data, context) => {
+  if (data.hasMedicalConditions === 'yes' && !data.medicalConditions?.trim()) {
+    context.addIssue({
+      code: 'custom',
+      path: ['medicalConditions'],
+      message: 'Podaj choroby lub alergie',
+    })
+  }
+  if (data.takesMedications === 'yes' && !data.medications?.trim()) {
+    context.addIssue({
+      code: 'custom',
+      path: ['medications'],
+      message: 'Podaj leki i dawki',
+    })
+  }
+  if (data.sportsCard === 'other' && !data.sportsCardOther?.trim()) {
+    context.addIssue({
+      code: 'custom',
+      path: ['sportsCardOther'],
+      message: 'Podaj nazwę karty sportowej',
+    })
+  }
+  if (data.invoiceNeeded === 'yes') {
+    const invoiceFields = [
+      ['invoiceName', data.invoiceName],
+      ['invoiceSurname', data.invoiceSurname],
+      ['invoiceId', data.invoiceId],
+      ['invoiceAddress', data.invoiceAddress],
+    ] as const
+    invoiceFields.forEach(([field, value]) => {
+      if (!value?.trim()) {
+        context.addIssue({
+          code: 'custom',
+          path: [field],
+          message: 'To pole jest wymagane przy fakturze',
+        })
+      }
+    })
+  }
+})
+
+type PaymentFormInput = z.input<typeof paymentValidationSchema>
+type PaymentFormData = z.output<typeof paymentValidationSchema>
 
 export default function PaymentPage() {
   const { user, loading } = useAuth()
@@ -220,13 +285,24 @@ export default function PaymentPage() {
     handleSubmit,
     formState: { errors, isValid },
     watch,
+    setValue,
     setError,
-    trigger,
-  } = useForm<PaymentFormData>({
-    resolver: zodResolver(paymentSchema),
-    defaultValues: { needsTransport: false, studentStatus: '' },
+  } = useForm<PaymentFormInput, unknown, PaymentFormData>({
+    resolver: zodResolver(paymentValidationSchema),
+    defaultValues: {
+      needsTransport: true,
+      studentStatus: '',
+    },
     mode: 'onChange',
   })
+
+  useEffect(() => {
+    if (userRegistration?.tshirtSize) {
+      setValue('tshirtSize', userRegistration.tshirtSize, {
+        shouldValidate: true,
+      })
+    }
+  }, [setValue, userRegistration?.tshirtSize])
 
   // Watch needsTransport value
   const needsTransportValue = watch('needsTransport')
@@ -347,9 +423,21 @@ export default function PaymentPage() {
         emergencyContactNameSurname: paymentData.emergencyContactNameSurname,
         emergencyContactPhone: paymentData.emergencyContactPhone,
         emergencyContactRelation: paymentData.emergencyContactRelation,
-        needsTransport: !paymentData.needsTransport, // Odwracamy logikę: checkbox zaznaczony = dojeżdża sam = NIE potrzebuje transportu
+        needsTransport: paymentData.needsTransport,
+        hasMedicalConditions: paymentData.hasMedicalConditions,
         medicalConditions: paymentData.medicalConditions,
+        takesMedications: paymentData.takesMedications,
         medications: paymentData.medications,
+        hoodieSize: paymentData.hoodieSize,
+        pantsSize: paymentData.pantsSize,
+        tshirtSize: paymentData.tshirtSize,
+        sportsCard: paymentData.sportsCard,
+        sportsCardOther: paymentData.sportsCardOther,
+        invoiceNeeded: paymentData.invoiceNeeded === 'yes',
+        invoiceName: paymentData.invoiceName,
+        invoiceSurname: paymentData.invoiceSurname,
+        invoiceId: paymentData.invoiceId,
+        invoiceAddress: paymentData.invoiceAddress,
         transferConfirmation: paymentData.transferConfirmation,
         ageConfirmation: paymentData.ageConfirmation,
         cancellationPolicy: paymentData.cancellationPolicy,
@@ -390,8 +478,8 @@ export default function PaymentPage() {
       baseAmount += 20
     }
 
-    // Jeśli checkbox zaznaczony (dojeżdża samodzielnie), odlicz 100zł
-    if (needsTransportValue) {
+    // Zniżka przysługuje przy transporcie własnym.
+    if (needsTransportValue === false) {
       baseAmount -= transportDiscount
     }
 
@@ -419,7 +507,7 @@ export default function PaymentPage() {
       })
     }
 
-    if (needsTransportValue) {
+    if (needsTransportValue === false) {
       breakdown.push({
         label: '- Dojeżdżam samodzielnie',
         amount: `-${transportDiscount}zł`,
@@ -614,6 +702,17 @@ export default function PaymentPage() {
                       overflowWrap: 'anywhere',
                     }}
                   >
+                    <span className="text-gray-500">E-mail:</span>{' '}
+                    <span className="font-medium">
+                      {userRegistration?.email ?? '—'}
+                    </span>
+                  </p>
+                  <p
+                    style={{
+                      wordBreak: 'break-word',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
                     <span className="text-gray-500">Transport:</span>{' '}
                     <span className="font-medium">
                       {existingPayment.needsTransport ? 'Tak' : 'Nie'}
@@ -667,8 +766,62 @@ export default function PaymentPage() {
               </div>
             </div>
 
+            <div className="mt-6 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
+              <div className="mb-4 flex items-center">
+                <FileText className="mr-2 h-5 w-5 text-amber-400" />
+                <h3 className="font-semibold text-amber-400">Dodatkowe dane</h3>
+              </div>
+              <div className="grid gap-2 text-gray-300 sm:grid-cols-2">
+                <p>
+                  <span className="text-gray-500">Koszulka:</span>{' '}
+                  {existingPayment.tshirtSize ??
+                    userRegistration?.tshirtSize ??
+                    '—'}
+                </p>
+                <p>
+                  <span className="text-gray-500">Bluza:</span>{' '}
+                  {existingPayment.hoodieSize ?? '—'}
+                </p>
+                <p>
+                  <span className="text-gray-500">Spodnie:</span>{' '}
+                  {existingPayment.pantsSize ?? '—'}
+                </p>
+                <p>
+                  <span className="text-gray-500">Karta sportowa:</span>{' '}
+                  {existingPayment.sportsCard === 'multisport'
+                    ? 'Multisport'
+                    : existingPayment.sportsCard === 'medicover'
+                      ? 'Medicover'
+                      : existingPayment.sportsCard === 'fitprofit'
+                        ? 'Fitprofit'
+                        : existingPayment.sportsCard === 'other'
+                          ? existingPayment.sportsCardOther || 'Inna'
+                          : 'Nie'}
+                </p>
+                <p>
+                  <span className="text-gray-500">Faktura:</span>{' '}
+                  {existingPayment.invoiceNeeded ? 'Tak' : 'Nie'}
+                </p>
+                {existingPayment.invoiceNeeded && (
+                  <p className="sm:col-span-2">
+                    <span className="text-gray-500">Dane faktury:</span>{' '}
+                    {[
+                      existingPayment.invoiceName,
+                      existingPayment.invoiceSurname,
+                      existingPayment.invoiceId,
+                      existingPayment.invoiceAddress,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </p>
+                )}
+              </div>
+            </div>
+
             {/* Medical Information */}
-            {(existingPayment.medicalConditions ||
+            {(existingPayment.hasMedicalConditions ||
+              existingPayment.takesMedications ||
+              existingPayment.medicalConditions ||
               existingPayment.medications) && (
               <div className="mt-6 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
                 <div className="mb-4 flex items-center">
@@ -678,6 +831,14 @@ export default function PaymentPage() {
                   </h3>
                 </div>
                 <div className="space-y-3 text-gray-300">
+                  <p>
+                    <span className="text-gray-500">Choroby lub alergie:</span>{' '}
+                    {existingPayment.hasMedicalConditions === 'yes'
+                      ? 'Tak'
+                      : existingPayment.hasMedicalConditions === 'no'
+                        ? 'Nie'
+                        : 'Brak danych'}
+                  </p>
                   {existingPayment.medicalConditions && (
                     <p
                       style={{
@@ -693,6 +854,14 @@ export default function PaymentPage() {
                       </span>
                     </p>
                   )}
+                  <p>
+                    <span className="text-gray-500">Stałe leki:</span>{' '}
+                    {existingPayment.takesMedications === 'yes'
+                      ? 'Tak'
+                      : existingPayment.takesMedications === 'no'
+                        ? 'Nie'
+                        : 'Brak danych'}
+                  </p>
                   {existingPayment.medications && (
                     <p
                       style={{
@@ -983,33 +1152,34 @@ export default function PaymentPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-red-400">UWAGA!</h3>
                   <p className="text-gray-200">
-                    Podawanie fałszywych informacji (np. osoba niepełnoletnia w
-                    dniu wyjazdu wpisująca fałszywą datę urodzenia) będzie
-                    wiązało się z negatywnymi konsekwencjami - niedopuszczenie
-                    uczestnika do wyjazdu oraz permanentny zakaz uczestniczenia
-                    w przyszłych tego typu wyjazdach.
+                    Wyjazd jest przeznaczony wyłącznie dla osób pełnoletnich.
+                    Podanie nieprawdziwych informacji skutkuje pozbawieniem
+                    możliwości uczestniczenia w tej i kolejnych edycjach
+                    „Wtyczki” oraz zwrotu kosztów.
                   </p>
                 </div>
               </div>
             </div>
 
             <form
-              onSubmit={async (e) => {
-                e.preventDefault()
-                const valid = await trigger()
-                if (!valid) {
-                  return
-                }
-                handleSubmit(onSubmit)(e)
-              }}
-              className="space-y-8"
+              onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+                const blockedFields = Object.keys(validationErrors).join(', ')
+                showLimitedToast(
+                  `Uzupełnij wymagane pola: ${blockedFields || 'sprawdź formularz'}.`,
+                  {
+                    duration: 3500,
+                    icon: <AlertTriangle className="h-5 w-5 text-red-400" />,
+                  },
+                )
+              })}
+              className="flex flex-col space-y-8"
             >
               {/* Student status & emergency contact */}
-              <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+              <div className="order-1 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 <div className="mb-6 flex items-center space-x-2 pb-4">
                   <Shield className="h-6 w-6 text-amber-400" />
                   <h2 className="text-2xl font-bold text-white">
-                    Informacje dodatkowe
+                    Informacje organizacyjne i kontakt alarmowy
                   </h2>
                 </div>
 
@@ -1047,31 +1217,36 @@ export default function PaymentPage() {
                   </div>
 
                   <div>
-                    <label
-                      className="mb-2 block text-sm font-medium text-gray-300"
-                      htmlFor="needsTransport"
-                    >
-                      Czy dojeżdżasz samodzielnie (tam, z powrotem i na
-                      atrakcje)?
-                    </label>
-                    <div className="flex h-10 items-center space-x-2">
-                      <label className="flex cursor-pointer items-center gap-2 select-none">
-                        <span className="custom-checkbox-container">
-                          <input
-                            id="needsTransport"
-                            type="checkbox"
-                            {...register('needsTransport')}
-                            className="custom-checkbox-input"
-                          />
-                          <div className="custom-checkbox-glow"></div>
-                          <div className="custom-checkbox-check">✓</div>
+                    <p className="mb-2 text-sm font-medium text-gray-300">
+                      Czy chcesz skorzystać z transportu zapewnianego przez
+                      organizatorów? <span className="text-red-500">*</span>
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      <label className="flex cursor-pointer items-center gap-2 text-sm text-white">
+                        <input
+                          type="radio"
+                          value="true"
+                          {...register('needsTransport', {
+                            setValueAs: (value) => value === 'true',
+                          })}
+                          className="h-4 w-4 accent-amber-400"
+                        />
+                        Tak (autokar)
+                      </label>
+                      <label className="flex cursor-pointer items-center gap-2 text-sm text-white">
+                        <input
+                          type="radio"
+                          value="false"
+                          {...register('needsTransport', {
+                            setValueAs: (value) => value === 'true',
+                          })}
+                          className="h-4 w-4 accent-amber-400"
+                        />
+                        Nie (transport własny - zniżka{' '}
+                        <span className="font-medium text-green-400">
+                          -{transportDiscount} zł
                         </span>
-                        <span className="text-sm text-white">
-                          Tak, dojeżdżam samodzielnie{' '}
-                          <span className="font-medium text-green-400">
-                            (-{transportDiscount} zł)
-                          </span>
-                        </span>
+                        )
                       </label>
                     </div>
                   </div>
@@ -1156,66 +1331,329 @@ export default function PaymentPage() {
                 <div className="mt-8 border-t border-[#262626] pt-6">
                   <h3 className="mb-4 flex items-center font-semibold text-amber-400">
                     <Ambulance className="mr-2 h-5 w-5" />
-                    Informacje medyczne (opcjonalne)
+                    Informacje medyczne
                   </h3>
 
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     <div>
-                      <label
-                        className="mb-2 block text-sm font-medium text-gray-300"
-                        htmlFor="medicalConditions"
-                      >
-                        Stan zdrowia / choroby
-                      </label>
-                      <textarea
-                        id="medicalConditions"
-                        {...register('medicalConditions')}
-                        rows={3}
-                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        placeholder="Podaj informacje o swoim stanie zdrowia, które mogą być istotne..."
-                        maxLength={512}
-                      ></textarea>
-                      {errors.medicalConditions && (
+                      <p className="mb-2 text-sm font-medium text-gray-300">
+                        Czy posiadasz jakiekolwiek choroby przewlekłe lub
+                        alergie? <span className="text-red-500">*</span>
+                      </p>
+                      <div className="flex gap-6">
+                        {[
+                          { value: 'no', label: 'Nie' },
+                          { value: 'yes', label: 'Tak' },
+                        ].map((option) => (
+                          <label
+                            key={option.value}
+                            className="flex cursor-pointer items-center gap-2 text-gray-300"
+                          >
+                            <input
+                              type="radio"
+                              value={option.value}
+                              {...register('hasMedicalConditions')}
+                              className="h-4 w-4 accent-amber-400"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                      {errors.hasMedicalConditions && (
                         <p className="mt-1 text-sm text-red-500">
-                          {errors.medicalConditions.message}
+                          {errors.hasMedicalConditions.message}
                         </p>
                       )}
-                      <p className="mt-1 text-right text-xs text-gray-500">
-                        <span id="medicalConditionsCharCount">0</span>/512
-                        znaków
-                      </p>
+                      {watch('hasMedicalConditions') === 'yes' && (
+                        <div className="mt-3">
+                          <label
+                            className="mb-2 block text-sm text-gray-300"
+                            htmlFor="medicalConditions"
+                          >
+                            Jakie choroby lub alergie?
+                          </label>
+                          <textarea
+                            id="medicalConditions"
+                            {...register('medicalConditions')}
+                            rows={3}
+                            className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                            maxLength={512}
+                          />
+                          {errors.medicalConditions && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {errors.medicalConditions.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div>
-                      <label
-                        className="mb-2 block text-sm font-medium text-gray-300"
-                        htmlFor="medications"
-                      >
-                        Przyjmowane leki
-                      </label>
-                      <textarea
-                        id="medications"
-                        {...register('medications')}
-                        rows={2}
-                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                        placeholder="Podaj leki, które regularnie przyjmujesz..."
-                        maxLength={512}
-                      ></textarea>
-                      {errors.medications && (
+                      <p className="mb-2 text-sm font-medium text-gray-300">
+                        Czy przyjmujesz leki na stałe?{' '}
+                        <span className="text-red-500">*</span>
+                      </p>
+                      <div className="flex gap-6">
+                        {[
+                          { value: 'no', label: 'Nie' },
+                          { value: 'yes', label: 'Tak' },
+                        ].map((option) => (
+                          <label
+                            key={option.value}
+                            className="flex cursor-pointer items-center gap-2 text-gray-300"
+                          >
+                            <input
+                              type="radio"
+                              value={option.value}
+                              {...register('takesMedications')}
+                              className="h-4 w-4 accent-amber-400"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                      {errors.takesMedications && (
                         <p className="mt-1 text-sm text-red-500">
-                          {errors.medications.message}
+                          {errors.takesMedications.message}
                         </p>
                       )}
-                      <p className="mt-1 text-right text-xs text-gray-500">
-                        <span id="medicationsCharCount">0</span>/512 znaków
-                      </p>
+                      {watch('takesMedications') === 'yes' && (
+                        <div className="mt-3">
+                          <label
+                            className="mb-2 block text-sm text-gray-300"
+                            htmlFor="medications"
+                          >
+                            Jakie leki i w jakiej dawce?
+                          </label>
+                          <textarea
+                            id="medications"
+                            {...register('medications')}
+                            rows={3}
+                            className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                            maxLength={512}
+                          />
+                          {errors.medications && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {errors.medications.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
+              {/* Sizes, sports card and invoice */}
+              <div className="order-2 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+                <div className="mb-6 flex items-center space-x-2 pb-4">
+                  <FileText className="h-6 w-6 text-amber-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Rozmiary, karta sportowa i faktura
+                  </h2>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="tshirtSize"
+                    >
+                      Rozmiar koszulki
+                    </label>
+                    <select
+                      id="tshirtSize"
+                      {...register('tshirtSize')}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    >
+                      <option value="">Wybierz rozmiar</option>
+                      {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.tshirtSize && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.tshirtSize.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="hoodieSize"
+                    >
+                      Jaki masz rozmiar bluzy?{' '}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="hoodieSize"
+                      {...register('hoodieSize')}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    >
+                      <option value="">Wybierz rozmiar</option>
+                      {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.hoodieSize && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.hoodieSize.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="pantsSize"
+                    >
+                      Jaki masz rozmiar spodni?{' '}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="pantsSize"
+                      {...register('pantsSize')}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    >
+                      <option value="">Wybierz rozmiar</option>
+                      {['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.pantsSize && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.pantsSize.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="sportsCard"
+                    >
+                      Czy posiadasz kartę sportową?{' '}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="sportsCard"
+                      {...register('sportsCard')}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    >
+                      <option value="">Wybierz odpowiedź</option>
+                      <option value="multisport">Multisport</option>
+                      <option value="medicover">Medicover</option>
+                      <option value="fitprofit">Fitprofit</option>
+                      <option value="other">Inna</option>
+                      <option value="none">Nie</option>
+                    </select>
+                    {errors.sportsCard && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.sportsCard.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {watch('sportsCard') === 'other' && (
+                    <div className="md:col-span-2">
+                      <label
+                        className="mb-2 block text-sm font-medium text-gray-300"
+                        htmlFor="sportsCardOther"
+                      >
+                        Jaka karta?
+                      </label>
+                      <input
+                        id="sportsCardOther"
+                        {...register('sportsCardOther')}
+                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                      />
+                      {errors.sportsCardOther && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.sportsCardOther.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="md:col-span-2">
+                    <p className="mb-2 text-sm font-medium text-gray-300">
+                      Czy potrzebujesz faktury?{' '}
+                      <span className="text-red-500">*</span>
+                    </p>
+                    <div className="flex gap-6">
+                      <label className="flex cursor-pointer items-center gap-2 text-gray-300">
+                        <input
+                          type="radio"
+                          value="yes"
+                          {...register('invoiceNeeded')}
+                          className="h-4 w-4 accent-amber-400"
+                        />
+                        Tak
+                      </label>
+                      <label className="flex cursor-pointer items-center gap-2 text-gray-300">
+                        <input
+                          type="radio"
+                          value="no"
+                          {...register('invoiceNeeded')}
+                          className="h-4 w-4 accent-amber-400"
+                        />
+                        Nie
+                      </label>
+                    </div>
+                    {errors.invoiceNeeded && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.invoiceNeeded.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {watch('invoiceNeeded') === 'yes' && (
+                    <>
+                      {[
+                        ['invoiceName', 'Imię'],
+                        ['invoiceSurname', 'Nazwisko'],
+                        ['invoiceId', 'NIP/PESEL'],
+                        ['invoiceAddress', 'Adres'],
+                      ].map(([field, label]) => (
+                        <div key={field}>
+                          <label
+                            className="mb-2 block text-sm font-medium text-gray-300"
+                            htmlFor={field}
+                          >
+                            {label} <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            id={field}
+                            {...register(
+                              field as
+                                | 'invoiceName'
+                                | 'invoiceSurname'
+                                | 'invoiceId'
+                                | 'invoiceAddress',
+                            )}
+                            className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                          />
+                          {errors[field as keyof PaymentFormData] && (
+                            <p className="mt-1 text-sm text-red-500">
+                              To pole jest wymagane przy fakturze
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+
               {/* Terms and conditions */}
-              <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+              <div className="order-4 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 <div className="mb-6 flex items-center space-x-2 pb-4">
                   <AlertTriangle className="h-6 w-6 text-red-400" />
                   <h2 className="text-2xl font-bold text-white">
@@ -1305,7 +1743,7 @@ export default function PaymentPage() {
               </div>
 
               {/* Payment Information and Upload confirmation - moved to bottom */}
-              <div className="rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+              <div className="order-3 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 {/* Payment Information FIRST */}
                 <div className="mb-6 flex items-center space-x-2 pb-4">
                   <CreditCard className="h-6 w-6 text-amber-400" />
@@ -1512,7 +1950,7 @@ export default function PaymentPage() {
               </div>
 
               {/* Submit button */}
-              <div className="flex justify-end">
+              <div className="order-5 flex justify-end">
                 <button
                   type="submit"
                   className={`payment-submit-button inline-flex items-center rounded-xl px-8 py-3 font-semibold shadow-md transition-colors ${isSubmitting ? 'cursor-not-allowed opacity-60' : ''} ${uploadedFile && isValid ? 'payment-submit-button--ready' : ''}`}
@@ -1561,7 +1999,7 @@ export default function PaymentPage() {
                     <span className="mt-1 mr-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400"></span>
                     <span>
                       Rezygnacja możliwa{' '}
-                      <strong>{`nie później niż po 13 października ${year} r.`}</strong>
+                      <strong>{`do 4 października ${year} r.`}</strong>
                     </span>
                   </li>
                   <li className="flex items-start">
@@ -1569,7 +2007,11 @@ export default function PaymentPage() {
                     <span>
                       <strong>Po tym terminie</strong> wymagane jest wskazanie{' '}
                       <strong>zastępcy</strong> na {`"Wtyczkę ${year}"`} w
-                      miejsce rezygnującego
+                      miejsce rezygnującego,{' '}
+                      <strong className="text-red-400">
+                        który musi być uprzednio zaakceptowany przez
+                        Koordynatora wyjazdu
+                      </strong>
                     </span>
                   </li>
                   <li className="flex items-start">
@@ -1604,10 +2046,10 @@ export default function PaymentPage() {
                   <div className="flex items-center">
                     <span className="mr-2">📧</span>
                     <a
-                      href="mailto:l.wilczura@samorzad.p.lodz.pl"
+                      href="mailto:a.gdula@samorzad.p.lodz.pl"
                       className="break-all text-amber-400 hover:text-amber-500"
                     >
-                      l.wilczura@samorzad.p.lodz.pl
+                      a.gdula@samorzad.p.lodz.pl
                     </a>
                   </div>
                   <div className="flex items-center">

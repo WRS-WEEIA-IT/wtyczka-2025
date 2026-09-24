@@ -10,8 +10,20 @@ export interface PaymentRecord {
   emergencyContactRelation: string
 
   needsTransport: boolean
+  hasMedicalConditions?: 'yes' | 'no'
   medicalConditions?: string
+  takesMedications?: 'yes' | 'no'
   medications?: string
+  tshirtSize?: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'
+  hoodieSize?: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'
+  pantsSize?: 'S' | 'M' | 'L' | 'XL' | 'XXL'
+  sportsCard?: 'multisport' | 'medicover' | 'fitprofit' | 'other' | 'none'
+  sportsCardOther?: string
+  invoiceNeeded?: boolean
+  invoiceName?: string
+  invoiceSurname?: string
+  invoiceId?: string
+  invoiceAddress?: string
 
   paymentConfirmationFile: {
     url: string
@@ -41,19 +53,18 @@ export async function createPayment(
       .insert([
         {
           ...paymentData,
-          needsTransport: !paymentData.needsTransport, // Invert the boolean value
           userId: user.id,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
       ])
       .select()
-    if (error || !data || !data[0])
-      throw error || new Error('No payment created')
+    if (error) throw error
+    if (!data || !data[0]) throw new Error('No payment created')
     return data[0].id
   } catch (error) {
     console.error('Error creating payment:', error)
-    throw new Error('Failed to create payment')
+    throw error instanceof Error ? error : new Error('Failed to create payment')
   }
 }
 
