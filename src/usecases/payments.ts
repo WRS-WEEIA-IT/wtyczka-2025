@@ -25,6 +25,9 @@ export interface PaymentRecord {
   invoiceId?: string
   invoiceAddress?: string
 
+  regAccept: boolean
+  regRejectionReason?: string
+
   paymentConfirmationFile: {
     url: string
     fileName: string

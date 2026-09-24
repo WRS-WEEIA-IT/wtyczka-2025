@@ -120,6 +120,8 @@ const paymentSchema = z.object({
   invoiceSurname: z.string().optional(),
   invoiceId: z.string().optional(),
   invoiceAddress: z.string().optional(),
+  regDecision: z.enum(['yes', 'no'], 'Wybierz odpowiedź'),
+  regRejectionReason: z.string().optional(),
   transferConfirmation: z.boolean().refine((val) => val === true, {
     message: 'Musisz potwierdzić wykonanie przelewu',
   }),
@@ -132,6 +134,13 @@ const paymentSchema = z.object({
 })
 
 const paymentValidationSchema = paymentSchema.superRefine((data, context) => {
+  if (data.regDecision === 'no' && !data.regRejectionReason?.trim()) {
+    context.addIssue({
+      code: 'custom',
+      path: ['regRejectionReason'],
+      message: 'Napisz, dlaczego nie akceptujesz regulaminu',
+    })
+  }
   if (data.hasMedicalConditions === 'yes' && !data.medicalConditions?.trim()) {
     context.addIssue({
       code: 'custom',
@@ -438,6 +447,8 @@ export default function PaymentPage() {
         invoiceSurname: paymentData.invoiceSurname,
         invoiceId: paymentData.invoiceId,
         invoiceAddress: paymentData.invoiceAddress,
+        regAccept: paymentData.regDecision === 'yes',
+        regRejectionReason: paymentData.regRejectionReason,
         transferConfirmation: paymentData.transferConfirmation,
         ageConfirmation: paymentData.ageConfirmation,
         cancellationPolicy: paymentData.cancellationPolicy,
@@ -1258,6 +1269,10 @@ export default function PaymentPage() {
                     <Phone className="mr-2 h-5 w-5" />
                     Kontakt w razie wypadku
                   </h3>
+                  <p className="mb-4 text-sm font-semibold text-red-400">
+                    Osoba wskazana jako kontakt alarmowy nie może być innym
+                    uczestnikiem Wtyczki.
+                  </p>
 
                   <div className="space-y-4">
                     <div>
@@ -1662,6 +1677,66 @@ export default function PaymentPage() {
                 </div>
 
                 <div className="space-y-4">
+                  <div>
+                    <p className="mb-3 text-gray-300">
+                      Czy akceptujesz regulamin wyjazdu?{' '}
+                      <a
+                        href={process.env.NEXT_PUBLIC_REGULATIONS_LINK}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-amber-400 underline hover:text-amber-500"
+                      >
+                        Otwórz regulamin
+                      </a>{' '}
+                      <span className="text-red-500">*</span>
+                    </p>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
+                      {[
+                        { value: 'yes', label: 'Tak' },
+                        { value: 'no', label: 'Nie' },
+                      ].map((option) => (
+                        <label
+                          key={option.value}
+                          className="flex cursor-pointer items-center gap-3 text-gray-300"
+                        >
+                          <input
+                            type="radio"
+                            value={option.value}
+                            {...register('regDecision')}
+                            className="h-4 w-4 accent-amber-400"
+                          />
+                          {option.label}
+                        </label>
+                      ))}
+                    </div>
+                    {errors.regDecision && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.regDecision.message}
+                      </p>
+                    )}
+                  </div>
+                  {watch('regDecision') === 'no' && (
+                    <div>
+                      <label
+                        htmlFor="regRejectionReason"
+                        className="mb-2 block text-sm font-medium text-gray-300"
+                      >
+                        Dlaczego nie? <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        id="regRejectionReason"
+                        rows={3}
+                        {...register('regRejectionReason')}
+                        className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                      />
+                      {errors.regRejectionReason && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.regRejectionReason.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   <div className="flex items-start">
                     <label className="flex cursor-pointer items-center select-none">
                       <span className="custom-checkbox-container">

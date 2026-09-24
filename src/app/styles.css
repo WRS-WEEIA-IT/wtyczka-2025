@@ -1235,6 +1235,10 @@ html, body {
   pointer-events: none;
 }
 
+body:has(.contactsContainer) .pageOverlay {
+  display: none;
+}
+
 body:has(.partners-page) .pageOverlay {
   display: none;
 }

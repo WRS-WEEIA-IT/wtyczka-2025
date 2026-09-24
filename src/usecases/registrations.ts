@@ -36,8 +36,6 @@ export interface RegistrationRecord {
     | 'other'
   aboutWtyczkaInfo?: string
 
-  regAccept: boolean
-  regRejectionReason?: string
   rodoAccept: boolean
 
   qualified?: boolean
@@ -87,8 +85,6 @@ export const createRegistration = async (
           aboutWtyczka: registrationData.aboutWtyczka,
           aboutWtyczkaInfo: registrationData.aboutWtyczkaInfo,
 
-          regAccept: registrationData.regAccept,
-          regRejectionReason: registrationData.regRejectionReason,
           rodoAccept: registrationData.rodoAccept,
 
           createdAt: new Date().toISOString(),
