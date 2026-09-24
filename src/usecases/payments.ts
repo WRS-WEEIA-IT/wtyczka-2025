@@ -5,6 +5,7 @@ export interface PaymentRecord {
   userId: string
 
   studentStatus: 'politechnika' | 'other' | 'not-student'
+  dietName: 'standard' | 'vegan'
   emergencyContactNameSurname: string
   emergencyContactPhone: string
   emergencyContactRelation: string

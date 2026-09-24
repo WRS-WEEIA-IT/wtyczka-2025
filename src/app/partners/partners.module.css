@@ -99,7 +99,7 @@
   width: 100% !important;
   height: 100% !important;
   aspect-ratio: 1;
-  background: rgba(248, 248, 244, 0.98) !important;
+  background: #ffffff !important;
   border: 2px solid rgba(230, 142, 0, 0.85) !important;
   color: #171717;
   border-radius: 999px !important;
@@ -110,6 +110,7 @@
 .partner-logo-card img {
   max-width: 70% !important;
   max-height: 70% !important;
+  mix-blend-mode: multiply;
 }
 
 .gridItem:hover .partner-logo-card {

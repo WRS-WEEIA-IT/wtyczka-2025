@@ -71,6 +71,7 @@ const paymentSchema = z.object({
     .refine((val) => ['politechnika', 'other', 'not-student'].includes(val), {
       message: 'Status studenta jest wymagany',
     }),
+  dietName: z.enum(['standard', 'vegan'], 'Wybierz rodzaj diety'),
   emergencyContactNameSurname: z
     .string()
     .min(2, 'Imię i nazwisko jest wymagane')
@@ -299,8 +300,9 @@ export default function PaymentPage() {
   } = useForm<PaymentFormInput, unknown, PaymentFormData>({
     resolver: zodResolver(paymentValidationSchema),
     defaultValues: {
-      needsTransport: true,
+      needsTransport: undefined,
       studentStatus: '',
+      dietName: 'standard',
     },
     mode: 'onChange',
   })
@@ -315,6 +317,9 @@ export default function PaymentPage() {
 
   // Watch needsTransport value
   const needsTransportValue = watch('needsTransport')
+  const dietNameValue = watch('dietName')
+  const usesOwnTransport =
+    needsTransportValue === false || needsTransportValue === 'false'
 
   // Character count for textareas
   useEffect(() => {
@@ -429,6 +434,7 @@ export default function PaymentPage() {
 
       const mappedPaymentRecord = {
         studentStatus: paymentData.studentStatus,
+        dietName: paymentData.dietName,
         emergencyContactNameSurname: paymentData.emergencyContactNameSurname,
         emergencyContactPhone: paymentData.emergencyContactPhone,
         emergencyContactRelation: paymentData.emergencyContactRelation,
@@ -485,22 +491,17 @@ export default function PaymentPage() {
     let baseAmount = defaultPrice
 
     // Jeśli dieta wegetariańska, dodaj 20zł
-    if (userRegistration?.dietName === 'vegetarian') {
+    if (dietNameValue === 'vegan') {
       baseAmount += 20
     }
 
     // Zniżka przysługuje przy transporcie własnym.
-    if (needsTransportValue === false) {
+    if (usesOwnTransport) {
       baseAmount -= transportDiscount
     }
 
     return baseAmount
-  }, [
-    defaultPrice,
-    transportDiscount,
-    userRegistration?.dietName,
-    needsTransportValue,
-  ])
+  }, [defaultPrice, transportDiscount, dietNameValue, usesOwnTransport])
 
   const getAmountBreakdown = () => {
     const breakdown = []
@@ -510,15 +511,15 @@ export default function PaymentPage() {
       color: 'text-gray-500',
     })
 
-    if (userRegistration?.dietName === 'vegetarian') {
+    if (dietNameValue === 'vegan') {
       breakdown.push({
-        label: '+ Dieta wegetariańska',
+        label: '+ Dieta wegańska',
         amount: '+20zł',
-        color: 'text-amber-400',
+        color: 'text-yellow-400',
       })
     }
 
-    if (needsTransportValue === false) {
+    if (usesOwnTransport) {
       breakdown.push({
         label: '- Dojeżdżam samodzielnie',
         amount: `-${transportDiscount}zł`,
@@ -1228,6 +1229,28 @@ export default function PaymentPage() {
                   </div>
 
                   <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="dietName"
+                    >
+                      Rodzaj diety <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="dietName"
+                      {...register('dietName')}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    >
+                      <option value="standard">Standardowa</option>
+                      <option value="vegan">Wegańska (+20 zł)</option>
+                    </select>
+                    {errors.dietName && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.dietName.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
                     <p className="mb-2 text-sm font-medium text-gray-300">
                       Czy chcesz skorzystać z transportu zapewnianego przez
                       organizatorów? <span className="text-red-500">*</span>
@@ -1237,9 +1260,7 @@ export default function PaymentPage() {
                         <input
                           type="radio"
                           value="true"
-                          {...register('needsTransport', {
-                            setValueAs: (value) => value === 'true',
-                          })}
+                          {...register('needsTransport')}
                           className="h-4 w-4 accent-amber-400"
                         />
                         Tak (autokar)
@@ -1248,9 +1269,7 @@ export default function PaymentPage() {
                         <input
                           type="radio"
                           value="false"
-                          {...register('needsTransport', {
-                            setValueAs: (value) => value === 'true',
-                          })}
+                          {...register('needsTransport')}
                           className="h-4 w-4 accent-amber-400"
                         />
                         Nie (transport własny - zniżka{' '}

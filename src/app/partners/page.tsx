@@ -450,6 +450,28 @@ export default function PartnersPage() {
                             const randomOffsetX = Math.random() * 60 - 30 // -30px to +30px
                             // ...existing code...
                             const randomRotation = Math.random() * 180 - 90 // -90deg to +90deg
+                            const PartnerWrapper = partner.website ? 'a' : 'div'
+                            const partnerWrapperProps = partner.website
+                              ? {
+                                  href: partner.website,
+                                  target: '_blank',
+                                  rel: 'noopener noreferrer',
+                                  title: `Przejdź do strony ${
+                                    category === 'partner'
+                                      ? 'partnera'
+                                      : category === 'patronat'
+                                        ? 'patrona'
+                                        : 'koła naukowego'
+                                  }: ${partner.name}`,
+                                  'aria-label': `Przejdź do strony ${
+                                    category === 'partner'
+                                      ? 'partnera'
+                                      : category === 'patronat'
+                                        ? 'patrona'
+                                        : 'koła naukowego'
+                                  }: ${partner.name}`,
+                                }
+                              : {}
 
                             return (
                               <motion.div
@@ -489,26 +511,9 @@ export default function PartnersPage() {
                                   transition: { duration: 0.2 },
                                 }}
                               >
-                                {/* Use an anchor tag that covers the entire gold bar to ensure full clickability */}
-                                <a
-                                  href={partner.website || '#'}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <PartnerWrapper
                                   className="block h-full w-full"
-                                  title={`Przejdź do strony ${
-                                    category === 'partner'
-                                      ? 'partnera'
-                                      : category === 'patronat'
-                                        ? 'patrona'
-                                        : 'koła naukowego'
-                                  }: ${partner.name}`}
-                                  aria-label={`Przejdź do strony ${
-                                    category === 'partner'
-                                      ? 'partnera'
-                                      : category === 'patronat'
-                                        ? 'patrona'
-                                        : 'koła naukowego'
-                                  }: ${partner.name}`}
+                                  {...partnerWrapperProps}
                                   style={{
                                     cursor: partner.website
                                       ? 'pointer'
@@ -531,10 +536,6 @@ export default function PartnersPage() {
                                               className="h-auto max-h-[85%] w-auto max-w-[85%] object-contain"
                                               width={100}
                                               height={60}
-                                              style={{
-                                                filter:
-                                                  'drop-shadow(0 1px 2px rgba(0,0,0,0.1))',
-                                              }}
                                             />
                                           ) : (
                                             <div
@@ -551,7 +552,7 @@ export default function PartnersPage() {
                                       </div>
                                     </div>
                                   </div>
-                                </a>
+                                </PartnerWrapper>
                               </motion.div>
                             )
                           })}

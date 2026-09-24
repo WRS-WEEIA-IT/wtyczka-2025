@@ -250,10 +250,7 @@ export default function RegistrationPage() {
 
     setIsSubmitting(true)
     try {
-      const {
-        adultStatus: _adultStatus,
-        ...formValues
-      } = data
+      const { adultStatus: _adultStatus, ...formValues } = data
       const formData = {
         ...formValues,
         dob: undefined,
