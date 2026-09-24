@@ -90,6 +90,7 @@ export default function PartnersPage() {
           setError(null)
         } else {
           // If no partners were found, set an appropriate message
+          setPartnersByCategory(categorizedPartnersData)
           console.warn('No partners data received from API')
           setError('Nie znaleziono partnerów w bazie danych')
         }
@@ -200,14 +201,11 @@ export default function PartnersPage() {
   return (
     <div
       ref={containerRef}
-      className="partners-page relative flex min-h-screen flex-col items-center justify-start overflow-x-hidden px-4 py-4"
+      className="partners-page cosmos-news relative flex min-h-screen flex-col items-center justify-start overflow-x-hidden px-4 py-4"
     >
-      {/* Add blurred background overlay similar to navbar */}
-      <div className="pageOverlay"></div>
-
       {/* Cosmos-themed header */}
       <div className="relative z-10 mb-6 w-full max-w-5xl text-center">
-        <h1 className="goldRushTitle cosmos-partners-heading mb-3 text-4xl font-bold md:text-6xl">
+        <h1 className="cosmos-heading mb-3 text-4xl font-bold md:text-6xl">
           Nasi Partnerzy
         </h1>
 

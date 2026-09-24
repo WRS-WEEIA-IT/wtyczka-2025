@@ -42,28 +42,7 @@ export async function getPartners(): Promise<Partner[]> {
 
     if (error) {
       console.error('Error fetching from partners table:', error)
-
-      // If there was an error, try with the alternative spelling 'parnters' from the constraint
-      const alternativeResult = await supabase
-        .from('parnters') // Try alternative spelling based on constraint name
-        .select('*')
-        .order('id')
-
-      if (alternativeResult.error) {
-        console.error(
-          'Error fetching from parnters table:',
-          alternativeResult.error,
-        )
-        throw new Error(
-          `Failed to fetch partners data: ${alternativeResult.error.message}`,
-        )
-      }
-
-      console.log(
-        'Partners data received from parnters table:',
-        alternativeResult.data,
-      )
-      return alternativeResult.data || []
+      throw new Error(`Failed to fetch partners data: ${error.message}`)
     }
 
     console.log('Partners data received from partners table:', data)

@@ -143,26 +143,6 @@ body, p, span, li, label, a, button, input, textarea, th, td, div, section, arti
   z-index: 1;
 }
 
-/* Keep the partners constellation on one consistent gray backdrop. */
-body:has(.partners-page) .background-overlay-top,
-body:has(.partners-page) .background-overlay-bottom {
-  display: none;
-}
-
-body:has(.partners-page) .background-svg {
-  opacity: 0.38;
-  filter: contrast(1.05) brightness(0.8) saturate(0.8);
-}
-
-body:has(.partners-page) .background-content::after {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  content: '';
-  background: rgba(20, 20, 23, 0.64);
-  pointer-events: none;
-}
-
 body {
   background-color: transparent !important;
   color: var(--foreground);
@@ -1253,6 +1233,14 @@ html, body {
   backdrop-filter: blur(8px);
   z-index: -1;
   pointer-events: none;
+}
+
+body:has(.partners-page) .pageOverlay {
+  display: none;
+}
+
+body:has(.partners-page) .partners-page {
+  background: transparent;
 }
 
 .treasureChest {
