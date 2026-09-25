@@ -228,10 +228,8 @@ export default function Navbar() {
                       gap: '0',
                     }}
                   >
-                    <a
-                      href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href="/regulamin"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
                         backgroundSize: '145% 135%',
@@ -247,7 +245,7 @@ export default function Navbar() {
                       <div style={{ marginTop: '8px' }}>
                         {t.nav.regulations}
                       </div>
-                    </a>
+                    </Link>
                     <a
                       href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
                       target="_blank"
@@ -372,10 +370,8 @@ export default function Navbar() {
                         <div className="western-parent-chain-link"></div>
                       </div>
                       {/* Przycisk regulamin */}
-                      <a
-                        href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        href="/regulamin"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
                           backgroundSize: '145% 135%',
@@ -393,7 +389,7 @@ export default function Navbar() {
                         <div style={{ marginTop: '8px' }}>
                           {t.nav.regulations}
                         </div>
-                      </a>
+                      </Link>
                       <a
                         href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
                         target="_blank"
@@ -658,10 +654,8 @@ export default function Navbar() {
                 </Link>
 
                 <div className="space-y-3">
-                  <a
-                    href={process.env.NEXT_PUBLIC_REGULATIONS_LINK!}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href="/regulamin"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
                       backgroundSize: '100% 100%',
@@ -683,7 +677,7 @@ export default function Navbar() {
                     }}
                   >
                     {t.nav.regulations}
-                  </a>
+                  </Link>
                   <a
                     href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
                     target="_blank"
