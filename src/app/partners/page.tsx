@@ -121,7 +121,7 @@ export default function PartnersPage() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsCompactLayout(window.innerWidth <= 480)
+      setIsCompactLayout(window.innerWidth <= 1100)
     }
 
     handleResize()
@@ -382,6 +382,12 @@ export default function PartnersPage() {
                   // Skip empty categories
                   if (partners.length === 0) return null
 
+                  const columns = Math.min(
+                    partners.length,
+                    isCompactLayout ? 2 : 3,
+                  )
+                  const gap = isCompactLayout ? 24 : 28
+
                   // Get the styling for this category
                   const categoryStyle = CATEGORY_STYLES[category]
 
@@ -411,18 +417,17 @@ export default function PartnersPage() {
                       {/* Partners Grid for this category */}
                       <div className="flex w-full justify-center">
                         <motion.div
-                          className={`${styles.gridItemsContainer} gridItemsContainer mt-4 h-full`}
+                          className={`${styles.gridItemsContainer} gridItemsContainer partner-count-${columns} mt-4 h-full`}
                           style={{
-                            display: 'grid',
-                            gridTemplateColumns: `repeat(${Math.min(
-                              partners.length,
-                              isCompactLayout ? 2 : 3,
-                            )}, minmax(0, 1fr))`,
-                            gap: isCompactLayout ? '24px' : '28px',
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap,
                             width: '100%',
                             maxWidth:
                               partners.length === 1
-                                ? '240px'
+                                ? isCompactLayout
+                                  ? '220px'
+                                  : '280px'
                                 : partners.length === 2
                                   ? isCompactLayout
                                     ? '240px'
@@ -477,6 +482,9 @@ export default function PartnersPage() {
                               <motion.div
                                 key={partner.id || `${category}-${idx}`}
                                 className={`${styles.gridItem} gridItem`}
+                                style={{
+                                  flex: `0 0 calc((100% - ${(columns - 1) * gap}px) / ${columns})`,
+                                }}
                                 initial={{
                                   y: -200, // Start from chest position
                                   x: randomOffsetX,
