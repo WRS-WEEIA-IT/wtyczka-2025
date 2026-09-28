@@ -23,10 +23,6 @@ export interface RegistrationRecord {
   tshirtSize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'
 
   invoice: boolean
-  invoiceName?: string
-  invoiceSurname?: string
-  invoiceId?: string
-  invoiceAddress?: string
 
   aboutWtyczka:
     | 'social-media'
@@ -75,12 +71,6 @@ export const createRegistration = async (
 
           dietName: registrationData.dietName,
           tshirtSize: registrationData.tshirtSize,
-
-          invoice: registrationData.invoice,
-          invoiceName: registrationData.invoiceName,
-          invoiceSurname: registrationData.invoiceSurname,
-          invoiceId: registrationData.invoiceId,
-          invoiceAddress: registrationData.invoiceAddress,
 
           aboutWtyczka: registrationData.aboutWtyczka,
           aboutWtyczkaInfo: registrationData.aboutWtyczkaInfo,

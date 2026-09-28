@@ -103,13 +103,6 @@ const registrationSchema = z.object({
   ),
   aboutWtyczkaInfo: z.string().optional(),
 
-  // Dane do faktury - opcjonalne
-  invoice: z.boolean(),
-  invoiceName: z.string().optional(),
-  invoiceSurname: z.string().optional(),
-  invoiceId: z.string().optional(),
-  invoiceAddress: z.string().optional(),
-
   // Zgoda na przetwarzanie danych - wymagana
   rodoAccept: z.boolean().refine((val) => val === true, {
     message: 'Musisz wyrazić zgodę na przetwarzanie danych',
@@ -123,23 +116,6 @@ const registrationValidationSchema = registrationSchema.superRefine(
         code: 'custom',
         path: ['aboutWtyczkaInfo'],
         message: 'Podaj dodatkowe informacje',
-      })
-    }
-    if (data.invoice) {
-      const invoiceFields = [
-        ['invoiceName', data.invoiceName],
-        ['invoiceSurname', data.invoiceSurname],
-        ['invoiceId', data.invoiceId],
-        ['invoiceAddress', data.invoiceAddress],
-      ] as const
-      invoiceFields.forEach(([field, value]) => {
-        if (!value?.trim()) {
-          context.addIssue({
-            code: 'custom',
-            path: [field],
-            message: 'To pole jest wymagane przy fakturze',
-          })
-        }
       })
     }
   },
@@ -173,7 +149,6 @@ export default function RegistrationPage() {
   const { year } = useYear()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isInvoice, setIsInvoice] = useState(false)
   const [existingRegistration, setExistingRegistration] =
     useState<RegistrationRecord | null>(null)
 
@@ -186,7 +161,6 @@ export default function RegistrationPage() {
     resolver: zodResolver(registrationValidationSchema),
   })
   const adultStatus = watch('adultStatus')
-  const invoiceField = register('invoice')
 
   useEffect(() => {
     const checkExistingRegistration = async () => {
@@ -396,33 +370,6 @@ export default function RegistrationPage() {
                 )}
               </div>
 
-              {existingRegistration.invoice && (
-                <div>
-                  <h3 className="mb-2 text-lg font-semibold text-gray-200">
-                    Dane do faktury
-                  </h3>
-                  {existingRegistration.invoiceName && (
-                    <p className="text-base text-gray-400">
-                      Imię: {existingRegistration.invoiceName}
-                    </p>
-                  )}
-                  {existingRegistration.invoiceSurname && (
-                    <p className="text-base text-gray-400">
-                      Nazwisko: {existingRegistration.invoiceSurname}
-                    </p>
-                  )}
-                  {existingRegistration.invoiceId && (
-                    <p className="text-base text-gray-400">
-                      NIP/PESEL: {existingRegistration.invoiceId}
-                    </p>
-                  )}
-                  {existingRegistration.invoiceAddress && (
-                    <p className="text-base text-gray-400">
-                      Adres: {existingRegistration.invoiceAddress}
-                    </p>
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="mt-6 grid gap-6 border-t border-[#262626] pt-6 md:grid-cols-2">
@@ -867,101 +814,6 @@ export default function RegistrationPage() {
                   </p>
                 )}
               </div>
-              <div className="md:col-span-2">
-                <div className="flex items-start">
-                  <label className="flex cursor-pointer items-center select-none">
-                    <span className="custom-checkbox-container">
-                      <input
-                        type="checkbox"
-                        {...invoiceField}
-                        className="custom-checkbox-input"
-                        onChange={(event) => {
-                          invoiceField.onChange(event)
-                          setIsInvoice(event.target.checked)
-                        }}
-                      />
-                      <div className="custom-checkbox-glow"></div>
-                      <div className="custom-checkbox-check">✓</div>
-                    </span>
-                    <span className="ml-3 text-gray-300">
-                      {t.forms.invoice}
-                    </span>
-                  </label>
-                </div>
-              </div>
-              {isInvoice && (
-                <>
-                  <div>
-                    <label
-                      className="mb-2 block text-sm font-medium text-gray-300"
-                      htmlFor="invoiceName"
-                    >
-                      Imię do faktury <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="invoiceName"
-                      type="text"
-                      {...register('invoiceName')}
-                      className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                    />
-                    {errors.invoiceName && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.invoiceName.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-300">
-                      Nazwisko do faktury{' '}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      {...register('invoiceSurname')}
-                      className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                    />
-                    {errors.invoiceSurname && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.invoiceSurname.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-300">
-                      NIP/PESEL do faktury{' '}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={20}
-                      {...register('invoiceId')}
-                      className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                    />
-                    {errors.invoiceId && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.invoiceId.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-300">
-                      Adres odbiorcy faktury{' '}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={100}
-                      {...register('invoiceAddress')}
-                      className="w-full rounded-md border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                    />
-                    {errors.invoiceAddress && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.invoiceAddress.message}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-gray-300">
                   {t.forms.howDidYouKnow}{' '}
