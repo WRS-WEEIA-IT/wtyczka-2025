@@ -21,7 +21,7 @@ export async function GET() {
     }
 
     // Get team members data
-    const teamMembers = getTeamMembers()
+    const teamMembers = await getTeamMembers()
 
     // Return the data
     return NextResponse.json({ teamMembers })
