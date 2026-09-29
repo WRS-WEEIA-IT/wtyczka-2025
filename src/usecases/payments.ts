@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 export interface PaymentRecord {
   userId: string
 
-  studentStatus: 'politechnika' | 'other' | 'not-student'
+  tulStudent: boolean
   dietName: 'standard' | 'vegan' | 'vegetarian' | 'gluten-free'
   emergencyContactNameSurname: string
   emergencyContactPhone: string
@@ -27,8 +27,11 @@ export interface PaymentRecord {
   invoiceAddress?: string
   street: string
   houseNumber: string
+  apartmentNumber?: string | null
   postalCode: string
   locality: string
+  birthDate?: string | null
+  pesel?: string | null
 
   regAccept: boolean
   regRejectionReason?: string
@@ -71,8 +74,20 @@ export async function createPayment(
     if (!data || !data[0]) throw new Error('No payment created')
     return data[0].id
   } catch (error) {
-    console.error('Error creating payment:', error)
-    throw error instanceof Error ? error : new Error('Failed to create payment')
+    const errorRecord =
+      typeof error === 'object' && error !== null
+        ? (error as Record<string, unknown>)
+        : null
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof errorRecord?.message === 'string'
+          ? errorRecord.message
+          : String(error)
+    const code = typeof errorRecord?.code === 'string' ? errorRecord.code : undefined
+
+    console.error('Error creating payment:', { message, code })
+    throw new Error(code ? `${message} (${code})` : message)
   }
 }
 

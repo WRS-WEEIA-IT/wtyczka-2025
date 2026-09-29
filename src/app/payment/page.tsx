@@ -22,11 +22,16 @@ import {
   Ambulance,
   ArrowRight,
   House,
+  CalendarDays,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { createPayment, getPayment, PaymentRecord } from '@/usecases/payments'
-import { getRegistration, RegistrationRecord } from '@/usecases/registrations'
+import {
+  getRegistration,
+  RegistrationRecord,
+} from '@/usecases/registrations'
+import { validatePeselAgainstBirthDate } from '@/lib/paymentIdentity'
 import { getDataValue, handleSupabaseError } from '@/lib/supabase'
 import Image from 'next/image'
 import {
@@ -66,12 +71,9 @@ const showLimitedToast = (
 const paymentSchema = z.object({
   adminPassword: z.string().min(1, 'Hasło administratora jest wymagane'),
 
-  studentStatus: z
-    .string()
-    .min(1, 'Status studenta jest wymagany')
-    .refine((val) => ['politechnika', 'other', 'not-student'].includes(val), {
-      message: 'Status studenta jest wymagany',
-    }),
+  tulStudent: z.boolean().refine((value) => value, {
+    message: 'Musisz potwierdzić, że jesteś studentem Politechniki Łódzkiej',
+  }),
   dietName: z.enum(
     ['standard', 'vegan', 'vegetarian', 'gluten-free'],
     'Wybierz rodzaj diety',
@@ -127,8 +129,11 @@ const paymentSchema = z.object({
   invoiceAddress: z.string().optional(),
   street: z.string().min(1, 'Ulica jest wymagana'),
   houseNumber: z.string().min(1, 'Numer domu jest wymagany'),
+  apartmentNumber: z.string().max(20).optional(),
   postalCode: z.string().min(1, 'Kod pocztowy jest wymagany'),
   locality: z.string().min(1, 'Miejscowość jest wymagana'),
+  birthDate: z.string().min(1, 'Data urodzenia jest wymagana.'),
+  pesel: z.string().regex(/^\d{11}$/, 'PESEL musi składać się z 11 cyfr.'),
   regAccept: z.boolean().refine((val) => val === true, {
     message: 'Musisz zaakceptować regulamin wyjazdu',
   }),
@@ -144,6 +149,15 @@ const paymentSchema = z.object({
 })
 
 const paymentValidationSchema = paymentSchema.superRefine((data, context) => {
+  const identityError = validatePeselAgainstBirthDate(data.pesel, data.birthDate)
+  if (identityError) {
+    context.addIssue({
+      code: 'custom',
+      path: identityError.includes('datą urodzenia') ? ['birthDate'] : ['pesel'],
+      message: identityError,
+    })
+  }
+
   if (data.hasMedicalConditions === 'yes' && !data.medicalConditions?.trim()) {
     context.addIssue({
       code: 'custom',
@@ -211,6 +225,8 @@ export default function PaymentPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] =
     useState(false)
+  const [identityAgeError, setIdentityAgeError] = useState<string | null>(null)
+  const identityValidationRequest = useRef(0)
 
   // Payment open date logic
   const [isPaymentOpen, setIsPaymentOpen] = useState(false) // Start with closed
@@ -293,15 +309,87 @@ export default function PaymentPage() {
     watch,
     setValue,
     setError,
+    getValues,
+    trigger,
   } = useForm<PaymentFormInput, unknown, PaymentFormData>({
     resolver: zodResolver(paymentValidationSchema),
     defaultValues: {
       needsTransport: undefined,
-      studentStatus: '',
+      tulStudent: false,
       dietName: 'standard',
     },
     mode: 'onChange',
   })
+
+  const birthDateValue = watch('birthDate')
+  const peselValue = watch('pesel')
+  const previousIdentityValues = useRef({
+    birthDate: birthDateValue,
+    pesel: peselValue,
+  })
+
+  useEffect(() => {
+    if (
+      previousIdentityValues.current.birthDate === birthDateValue &&
+      previousIdentityValues.current.pesel === peselValue
+    ) {
+      return
+    }
+
+    previousIdentityValues.current = {
+      birthDate: birthDateValue,
+      pesel: peselValue,
+    }
+    identityValidationRequest.current += 1
+    setIdentityAgeError(null)
+    void trigger(['birthDate', 'pesel'])
+  }, [birthDateValue, peselValue, trigger])
+
+  const validateIdentityAgeOnBlur = async () => {
+    const birthDate = getValues('birthDate')
+    const pesel = getValues('pesel')
+    const identityError = validatePeselAgainstBirthDate(pesel, birthDate)
+    if (identityError) {
+      setIdentityAgeError(identityError)
+      return
+    }
+
+    const requestId = ++identityValidationRequest.current
+    setIdentityAgeError(null)
+
+    try {
+      const response = await fetch('/api/validate-payment-identity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ birthDate, pesel }),
+      })
+      const result = (await response.json()) as {
+        valid?: boolean
+        error?: string
+      }
+
+      if (
+        requestId !== identityValidationRequest.current ||
+        getValues('birthDate') !== birthDate ||
+        getValues('pesel') !== pesel
+      ) {
+        return
+      }
+
+      if (!response.ok || !result.valid) {
+        setIdentityAgeError(
+          result.error || 'Nie udało się sprawdzić pełnoletności.',
+        )
+      }
+    } catch (error) {
+      console.error('Error validating age on blur:', error)
+      if (requestId === identityValidationRequest.current) {
+        setIdentityAgeError(
+          'Nie udało się sprawdzić pełnoletności. Formularz sprawdzi ją przy wysyłaniu.',
+        )
+      }
+    }
+  }
 
   useEffect(() => {
     if (userRegistration?.tshirtSize) {
@@ -310,6 +398,17 @@ export default function PaymentPage() {
       })
     }
   }, [setValue, userRegistration?.tshirtSize])
+
+  useEffect(() => {
+    if (userRegistration?.dob && !Number.isNaN(userRegistration.dob.getTime())) {
+      setValue('birthDate', userRegistration.dob.toISOString().slice(0, 10), {
+        shouldValidate: true,
+      })
+    }
+    if (userRegistration?.pesel) {
+      setValue('pesel', userRegistration.pesel, { shouldValidate: true })
+    }
+  }, [setValue, userRegistration?.dob, userRegistration?.pesel])
 
   // Watch needsTransport value
   const needsTransportValue = watch('needsTransport')
@@ -425,11 +524,28 @@ export default function PaymentPage() {
 
     setIsSubmitting(true)
     try {
+      const identityResponse = await fetch('/api/validate-payment-identity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ birthDate: data.birthDate, pesel: data.pesel }),
+      })
+      const identityResult = (await identityResponse.json()) as {
+        valid?: boolean
+        error?: string
+      }
+
+      if (!identityResponse.ok || !identityResult.valid) {
+        const message = identityResult.error || 'Nie udało się zweryfikować danych.'
+        setError('pesel', { type: 'server', message })
+        toast.error(message)
+        return
+      }
+
       // Usuwamy adminPassword z danych, które wysyłamy
       const { adminPassword: _, ...paymentData } = data
 
       const mappedPaymentRecord = {
-        studentStatus: paymentData.studentStatus,
+        tulStudent: paymentData.tulStudent,
         dietName: paymentData.dietName,
         emergencyContactNameSurname: paymentData.emergencyContactNameSurname,
         emergencyContactPhone: paymentData.emergencyContactPhone,
@@ -451,8 +567,11 @@ export default function PaymentPage() {
         invoiceAddress: paymentData.invoiceAddress,
         street: paymentData.street,
         houseNumber: paymentData.houseNumber,
+        apartmentNumber: paymentData.apartmentNumber?.trim() || null,
         postalCode: paymentData.postalCode,
         locality: paymentData.locality,
+        birthDate: paymentData.birthDate,
+        pesel: paymentData.pesel,
         regAccept: paymentData.regAccept,
         transferConfirmation: paymentData.transferConfirmation,
         ageConfirmation: paymentData.ageConfirmation,
@@ -717,13 +836,9 @@ export default function PaymentPage() {
                       overflowWrap: 'anywhere',
                     }}
                   >
-                    <span className="text-gray-500">Status studenta:</span>{' '}
+                    <span className="text-gray-500">Student Politechniki Łódzkiej:</span>{' '}
                     <span className="font-medium">
-                      {existingPayment.studentStatus === 'politechnika'
-                        ? 'Politechnika Łódzka'
-                        : existingPayment.studentStatus === 'other'
-                          ? 'Inna uczelnia'
-                          : 'Nie student'}
+                      {existingPayment.tulStudent ? 'Tak' : 'Nie'}
                     </span>
                   </p>
                   <p
@@ -746,6 +861,18 @@ export default function PaymentPage() {
                     <span className="text-gray-500">Transport:</span>{' '}
                     <span className="font-medium">
                       {existingPayment.needsTransport ? 'Tak' : 'Nie'}
+                    </span>
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Dieta:</span>{' '}
+                    <span className="font-medium">
+                      {existingPayment.dietName === 'vegan'
+                        ? 'Wegańska'
+                        : existingPayment.dietName === 'vegetarian'
+                          ? 'Wegetariańska'
+                          : existingPayment.dietName === 'gluten-free'
+                            ? 'Bezglutenowa'
+                            : 'Standardowa'}
                     </span>
                   </p>
                 </div>
@@ -796,30 +923,60 @@ export default function PaymentPage() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
-              <div className="mb-4 flex items-center">
-                <House className="mr-2 h-5 w-5 text-amber-400" />
-                <h3 className="font-semibold text-amber-400">
-                  Adres zamieszkania
-                </h3>
+            <div className="mt-6 flex flex-col gap-6">
+              <div className="order-2 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
+                <div className="mb-4 flex items-center">
+                  <House className="mr-2 h-5 w-5 text-amber-400" />
+                  <h3 className="font-semibold text-amber-400">
+                    Adres zamieszkania
+                  </h3>
+                </div>
+                <div className="grid gap-2 text-gray-300 sm:grid-cols-2">
+                  <p>
+                    <span className="text-gray-500">Ulica:</span>{' '}
+                    {existingPayment.street || '—'}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <p>
+                      <span className="text-gray-500">Numer domu:</span>{' '}
+                      {existingPayment.houseNumber || '—'}
+                    </p>
+                    <p>
+                      <span className="text-gray-500">Numer mieszkania:</span>{' '}
+                      {existingPayment.apartmentNumber || '—'}
+                    </p>
+                  </div>
+                  <p>
+                    <span className="text-gray-500">Kod pocztowy:</span>{' '}
+                    {existingPayment.postalCode || '—'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">Miejscowość:</span>{' '}
+                    {existingPayment.locality || '—'}
+                  </p>
+                </div>
               </div>
-              <div className="grid gap-2 text-gray-300 sm:grid-cols-2">
-                <p>
-                  <span className="text-gray-500">Ulica:</span>{' '}
-                  {existingPayment.street || '—'}
-                </p>
-                <p>
-                  <span className="text-gray-500">Numer domu:</span>{' '}
-                  {existingPayment.houseNumber || '—'}
-                </p>
-                <p>
-                  <span className="text-gray-500">Kod pocztowy:</span>{' '}
-                  {existingPayment.postalCode || '—'}
-                </p>
-                <p>
-                  <span className="text-gray-500">Miejscowość:</span>{' '}
-                  {existingPayment.locality || '—'}
-                </p>
+
+              <div className="order-1 rounded-xl border border-[#262626] bg-[#0F0F0F] p-6">
+                <div className="mb-4 flex items-center">
+                  <CalendarDays className="mr-2 h-5 w-5 text-amber-400" />
+                  <h3 className="font-semibold text-amber-400">
+                    Data urodzenia i PESEL
+                  </h3>
+                </div>
+                <div className="grid gap-2 text-gray-300 sm:grid-cols-2">
+                  <p>
+                    <span className="text-gray-500">Data urodzenia:</span>{' '}
+                    {existingPayment.birthDate
+                      ? existingPayment.birthDate.split('-').reverse().join('.')
+                      : userRegistration?.dob?.toLocaleDateString('pl-PL') ??
+                        '—'}
+                  </p>
+                  <p>
+                    <span className="text-gray-500">PESEL:</span>{' '}
+                    {existingPayment.pesel ?? userRegistration?.pesel ?? '—'}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -1241,36 +1398,31 @@ export default function PaymentPage() {
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                  <div className="flex h-full flex-col justify-end">
-                    <div className="mb-2">
-                      <label
-                        className="mb-2 block text-sm font-medium text-gray-300"
-                        htmlFor="studentStatus"
-                      >
-                        Status studenta <span className="text-red-500">*</span>
+                  <div className="md:col-span-2">
+                    <div className="flex items-start rounded-xl border border-[#262626] bg-[#232323] p-4">
+                      <label className="flex cursor-pointer items-center select-none">
+                        <span className="custom-checkbox-container">
+                          <input
+                            id="tulStudent"
+                            type="checkbox"
+                            required
+                            {...register('tulStudent')}
+                            className="custom-checkbox-input"
+                          />
+                          <div className="custom-checkbox-glow"></div>
+                          <div className="custom-checkbox-check">✓</div>
+                        </span>
+                        <span className="ml-3 text-gray-300">
+                          Czy potwierdzasz, że jesteś studentem Politechniki
+                          Łódzkiej? <span className="text-red-500">*</span>
+                        </span>
                       </label>
                     </div>
-                    <div>
-                      <select
-                        id="studentStatus"
-                        {...register('studentStatus')}
-                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                      >
-                        <option value="">Wybierz...</option>
-                        <option value="politechnika">
-                          Politechnika Łódzka
-                        </option>
-                        <option value="other">Inna uczelnia</option>
-                        <option value="not-student">
-                          Nie jestem studentem
-                        </option>
-                      </select>
-                      {errors.studentStatus && (
-                        <p className="mt-1 text-sm text-red-500">
-                          Status studenta jest wymagany
-                        </p>
-                      )}
-                    </div>
+                    {errors.tulStudent && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.tulStudent.message}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -1301,7 +1453,7 @@ export default function PaymentPage() {
                     )}
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <p className="mb-2 text-sm font-medium text-gray-300">
                       Czy chcesz skorzystać z transportu zapewnianego przez
                       organizatorów? <span className="text-red-500">*</span>
@@ -1529,8 +1681,166 @@ export default function PaymentPage() {
                 </div>
               </div>
 
-              {/* Sizes, sports card and invoice */}
+              {/* Residential address */}
               <div className="order-2 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+                <div className="mb-6 flex items-center space-x-2 pb-4">
+                  <CalendarDays className="h-6 w-6 text-amber-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Data urodzenia i PESEL
+                  </h2>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="birthDate"
+                    >
+                      Data urodzenia <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="birthDate"
+                      type="date"
+                      {...register('birthDate', {
+                        onChange: () => setIdentityAgeError(null),
+                        onBlur: () => {
+                          void validateIdentityAgeOnBlur()
+                        },
+                      })}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                    {errors.birthDate && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.birthDate.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="pesel"
+                    >
+                      PESEL <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="pesel"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={11}
+                      {...register('pesel', {
+                        onChange: () => setIdentityAgeError(null),
+                        onBlur: () => {
+                          void validateIdentityAgeOnBlur()
+                        },
+                      })}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                    {errors.pesel && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.pesel.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {identityAgeError &&
+                  identityAgeError !== errors.pesel?.message &&
+                  identityAgeError !== errors.birthDate?.message && (
+                  <p role="alert" className="mt-4 text-sm text-red-500">
+                    {identityAgeError}
+                  </p>
+                  )}
+              </div>
+
+              <div className="order-3 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+                <div className="mb-6 flex items-center space-x-2 pb-4">
+                  <House className="h-6 w-6 text-amber-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Adres zamieszkania
+                  </h2>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label
+                      className="mb-2 block text-sm font-medium text-gray-300"
+                      htmlFor="street"
+                    >
+                      Ulica <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="street"
+                      {...register('street')}
+                      className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                    {errors.street && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.street.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        className="mb-2 block text-sm font-medium text-gray-300"
+                        htmlFor="houseNumber"
+                      >
+                        Numer domu <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="houseNumber"
+                        {...register('houseNumber')}
+                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                      />
+                      {errors.houseNumber && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.houseNumber.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        className="mb-2 block text-sm font-medium text-gray-300"
+                        htmlFor="apartmentNumber"
+                      >
+                        Numer mieszkania
+                      </label>
+                      <input
+                        id="apartmentNumber"
+                        {...register('apartmentNumber')}
+                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {(['postalCode', 'locality'] as const).map((field) => (
+                    <div key={field}>
+                      <label
+                        className="mb-2 block text-sm font-medium text-gray-300"
+                        htmlFor={field}
+                      >
+                        {field === 'postalCode' ? 'Kod pocztowy' : 'Miejscowość'}{' '}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id={field}
+                        {...register(field)}
+                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                      />
+                      {errors[field] && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors[field]?.message}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sizes, sports card and invoice */}
+              <div className="order-4 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 <div className="mb-6 flex items-center space-x-2 pb-4">
                   <FileText className="h-6 w-6 text-amber-400" />
                   <h2 className="text-2xl font-bold text-white">
@@ -1737,52 +2047,8 @@ export default function PaymentPage() {
                 </div>
               </div>
 
-              {/* Residential address */}
-              <div className="order-3 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
-                <div className="mb-6 flex items-center space-x-2 pb-4">
-                  <House className="h-6 w-6 text-amber-400" />
-                  <h2 className="text-2xl font-bold text-white">
-                    Adres zamieszkania
-                  </h2>
-                </div>
-
-                <div className="grid gap-6 md:grid-cols-2">
-                  {[
-                    ['street', 'Ulica'],
-                    ['houseNumber', 'Numer domu'],
-                    ['postalCode', 'Kod pocztowy'],
-                    ['locality', 'Miejscowość'],
-                  ].map(([field, label]) => (
-                    <div key={field}>
-                      <label
-                        className="mb-2 block text-sm font-medium text-gray-300"
-                        htmlFor={field}
-                      >
-                        {label} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id={field}
-                        {...register(
-                          field as
-                            | 'street'
-                            | 'houseNumber'
-                            | 'postalCode'
-                            | 'locality',
-                        )}
-                        className="w-full rounded-xl border border-[#262626] bg-[#232323] px-3 py-2 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                      />
-                      {errors[field as keyof PaymentFormData] && (
-                        <p className="mt-1 text-sm text-red-500">
-                          {errors[field as keyof PaymentFormData]?.message}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Terms and conditions */}
-              <div className="order-4 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+              <div className="order-6 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 <div className="mb-6 flex items-center space-x-2 pb-4">
                   <AlertTriangle className="h-6 w-6 text-red-400" />
                   <h2 className="text-2xl font-bold text-white">
@@ -1905,7 +2171,7 @@ export default function PaymentPage() {
               </div>
 
               {/* Payment Information and Upload confirmation - moved to bottom */}
-              <div className="order-3 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
+              <div className="order-5 rounded-2xl border border-[#262626] bg-[#18181b] p-8 shadow-xl">
                 {/* Payment Information FIRST */}
                 <div className="mb-6 flex items-center space-x-2 pb-4">
                   <CreditCard className="h-6 w-6 text-amber-400" />
@@ -2112,7 +2378,7 @@ export default function PaymentPage() {
               </div>
 
               {/* Submit button */}
-              <div className="order-5 flex justify-end">
+              <div className="order-7 flex justify-end">
                 <button
                   type="submit"
                   className={`payment-submit-button inline-flex items-center rounded-xl px-8 py-3 font-semibold shadow-md transition-colors ${isSubmitting ? 'cursor-not-allowed opacity-60' : ''} ${uploadedFile && isValid ? 'payment-submit-button--ready' : ''}`}

@@ -2,6 +2,7 @@ import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 
 export interface RegistrationRecord {
+  id: string
   userId: string
   over18?: boolean
 
@@ -108,7 +109,7 @@ export const getRegistration = async (
 
     return {
       ...data,
-      dob: new Date(data.dob),
+      dob: data.dob ? new Date(data.dob) : undefined,
       createdAt: new Date(data.createdAt),
       updatedAt: new Date(data.updatedAt),
     } as RegistrationRecord

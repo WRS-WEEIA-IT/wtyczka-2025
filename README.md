@@ -149,7 +149,7 @@ musi pozostać sekretem.
   userId: string; // UID użytkownika
   registrationId: string; // ID rejestracji
   amount: number; // Kwota do zapłaty
-  studentStatus: string; // Status studenta
+  tulStudent: boolean; // Potwierdzenie statusu studenta Politechniki Łódzkiej
   paymentStatus: "pending" | "confirmed" | "failed";
   createdAt: Date; // Data utworzenia
   // ... więcej pól
