@@ -81,6 +81,9 @@ export default function Navbar() {
     }
   }
 
+  const regulationsHref =
+    process.env.NEXT_PUBLIC_REGULATIONS_LINK || '/regulamin'
+
   // Toggle dla opcji uczestnika
   const [showParticipantDropdown, setShowParticipantDropdown] = useState(false)
   // Usuwam isParticipantHovered, dodaję funkcję sprawdzającą widoczność hover menu
@@ -228,8 +231,10 @@ export default function Navbar() {
                       gap: '0',
                     }}
                   >
-                    <Link
-                      href="/regulamin"
+                    <a
+                      href={process.env.NEXT_PUBLIC_REGULATIONS_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="western-button western-button--sign186 western-dropdown-animated"
                       style={{
                         backgroundSize: '145% 135%',
@@ -245,7 +250,7 @@ export default function Navbar() {
                       <div style={{ marginTop: '8px' }}>
                         {t.nav.regulations}
                       </div>
-                    </Link>
+                    </a>
                     <a
                       href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
                       target="_blank"
@@ -370,8 +375,10 @@ export default function Navbar() {
                         <div className="western-parent-chain-link"></div>
                       </div>
                       {/* Przycisk regulamin */}
-                      <Link
-                        href="/regulamin"
+                      <a
+                        href={regulationsHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="western-button western-button--sign186 western-dropdown-animated"
                         style={{
                           backgroundSize: '145% 135%',
@@ -389,7 +396,7 @@ export default function Navbar() {
                         <div style={{ marginTop: '8px' }}>
                           {t.nav.regulations}
                         </div>
-                      </Link>
+                      </a>
                       <a
                         href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
                         target="_blank"
@@ -654,8 +661,10 @@ export default function Navbar() {
                 </Link>
 
                 <div className="space-y-3">
-                  <Link
-                    href="/regulamin"
+                  <a
+                    href={regulationsHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="western-dropdown-item mobile-dropdown-item"
                     style={{
                       backgroundSize: '100% 100%',
@@ -677,7 +686,7 @@ export default function Navbar() {
                     }}
                   >
                     {t.nav.regulations}
-                  </Link>
+                  </a>
                   <a
                     href="https://bvzdouqtahdyiaaxywsw.supabase.co/storage/v1/object/public/dokumenty/oswiadczenie.pdf"
                     target="_blank"
