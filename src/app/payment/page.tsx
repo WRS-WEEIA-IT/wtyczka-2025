@@ -27,10 +27,7 @@ import {
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { createPayment, getPayment, PaymentRecord } from '@/usecases/payments'
-import {
-  getRegistration,
-  RegistrationRecord,
-} from '@/usecases/registrations'
+import { getRegistration, RegistrationRecord } from '@/usecases/registrations'
 import { validatePeselAgainstBirthDate } from '@/lib/paymentIdentity'
 import { getDataValue, handleSupabaseError } from '@/lib/supabase'
 import Image from 'next/image'
@@ -149,11 +146,16 @@ const paymentSchema = z.object({
 })
 
 const paymentValidationSchema = paymentSchema.superRefine((data, context) => {
-  const identityError = validatePeselAgainstBirthDate(data.pesel, data.birthDate)
+  const identityError = validatePeselAgainstBirthDate(
+    data.pesel,
+    data.birthDate,
+  )
   if (identityError) {
     context.addIssue({
       code: 'custom',
-      path: identityError.includes('datą urodzenia') ? ['birthDate'] : ['pesel'],
+      path: identityError.includes('datą urodzenia')
+        ? ['birthDate']
+        : ['pesel'],
       message: identityError,
     })
   }
@@ -400,7 +402,10 @@ export default function PaymentPage() {
   }, [setValue, userRegistration?.tshirtSize])
 
   useEffect(() => {
-    if (userRegistration?.dob && !Number.isNaN(userRegistration.dob.getTime())) {
+    if (
+      userRegistration?.dob &&
+      !Number.isNaN(userRegistration.dob.getTime())
+    ) {
       setValue('birthDate', userRegistration.dob.toISOString().slice(0, 10), {
         shouldValidate: true,
       })
@@ -535,7 +540,8 @@ export default function PaymentPage() {
       }
 
       if (!identityResponse.ok || !identityResult.valid) {
-        const message = identityResult.error || 'Nie udało się zweryfikować danych.'
+        const message =
+          identityResult.error || 'Nie udało się zweryfikować danych.'
         setError('pesel', { type: 'server', message })
         toast.error(message)
         return
@@ -836,7 +842,9 @@ export default function PaymentPage() {
                       overflowWrap: 'anywhere',
                     }}
                   >
-                    <span className="text-gray-500">Student Politechniki Łódzkiej:</span>{' '}
+                    <span className="text-gray-500">
+                      Student Politechniki Łódzkiej:
+                    </span>{' '}
                     <span className="font-medium">
                       {existingPayment.tulStudent ? 'Tak' : 'Nie'}
                     </span>
@@ -969,8 +977,8 @@ export default function PaymentPage() {
                     <span className="text-gray-500">Data urodzenia:</span>{' '}
                     {existingPayment.birthDate
                       ? existingPayment.birthDate.split('-').reverse().join('.')
-                      : userRegistration?.dob?.toLocaleDateString('pl-PL') ??
-                        '—'}
+                      : (userRegistration?.dob?.toLocaleDateString('pl-PL') ??
+                        '—')}
                   </p>
                   <p>
                     <span className="text-gray-500">PESEL:</span>{' '}
@@ -1439,12 +1447,8 @@ export default function PaymentPage() {
                     >
                       <option value="standard">Standardowa</option>
                       <option value="vegan">Wegańska (+20 zł)</option>
-                      <option value="vegetarian">
-                        Wegetariańska (+20 zł)
-                      </option>
-                      <option value="gluten-free">
-                        Bezglutenowa (+20 zł)
-                      </option>
+                      <option value="vegetarian">Wegetariańska (+20 zł)</option>
+                      <option value="gluten-free">Bezglutenowa (+20 zł)</option>
                     </select>
                     {errors.dietName && (
                       <p className="mt-1 text-sm text-red-500">
@@ -1746,9 +1750,9 @@ export default function PaymentPage() {
                 {identityAgeError &&
                   identityAgeError !== errors.pesel?.message &&
                   identityAgeError !== errors.birthDate?.message && (
-                  <p role="alert" className="mt-4 text-sm text-red-500">
-                    {identityAgeError}
-                  </p>
+                    <p role="alert" className="mt-4 text-sm text-red-500">
+                      {identityAgeError}
+                    </p>
                   )}
               </div>
 
@@ -1821,7 +1825,9 @@ export default function PaymentPage() {
                         className="mb-2 block text-sm font-medium text-gray-300"
                         htmlFor={field}
                       >
-                        {field === 'postalCode' ? 'Kod pocztowy' : 'Miejscowość'}{' '}
+                        {field === 'postalCode'
+                          ? 'Kod pocztowy'
+                          : 'Miejscowość'}{' '}
                         <span className="text-red-500">*</span>
                       </label>
                       <input

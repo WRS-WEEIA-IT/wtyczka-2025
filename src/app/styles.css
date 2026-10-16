@@ -1646,14 +1646,14 @@ a:focus-visible,
 }
 
 /* Facebook card styling */
-a[href*="facebook.com"]:not(.cosmos-footer-button):not(.cosmos-primary-btn) {
+a[href*="facebook.com"]:not(.cosmos-footer-button):not(.cosmos-primary-btn):not(.partner-link) {
   background-color: rgba(24, 24, 27, 0.75) !important;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(150, 193, 255, 0.2);
   transition: all 0.3s ease;
 }
 
-a[href*="facebook.com"]:not(.cosmos-footer-button):not(.cosmos-primary-btn):hover {
+a[href*="facebook.com"]:not(.cosmos-footer-button):not(.cosmos-primary-btn):not(.partner-link):hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(150, 193, 255, 0.15) !important;
   border: 1px solid rgba(150, 193, 255, 0.4);
@@ -1690,4 +1690,3 @@ button[class*="hover:bg-[#232323]"]:hover {
     background-color: rgba(32, 30, 16, 0.94) !important;
   }
 }
-

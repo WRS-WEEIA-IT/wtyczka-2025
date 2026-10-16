@@ -520,7 +520,7 @@ export default function PartnersPage() {
                                 }}
                               >
                                 <PartnerWrapper
-                                  className="block h-full w-full"
+                                  className={`${styles.partnerLink} partner-link`}
                                   {...partnerWrapperProps}
                                   style={{
                                     cursor: partner.website

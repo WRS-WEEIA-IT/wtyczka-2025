@@ -16,7 +16,7 @@ export default function RegulationsPage() {
           className="mx-auto mb-6 h-10 w-10 text-amber-400"
           strokeWidth={1.5}
         />
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-amber-300">
+        <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-amber-300 uppercase">
           Informacja
         </p>
         <h1 className="text-3xl font-bold text-amber-400 sm:text-4xl">

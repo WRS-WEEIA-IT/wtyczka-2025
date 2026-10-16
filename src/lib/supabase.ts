@@ -1,24 +1,30 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-// Check if environment variables are defined
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+let client: SupabaseClient | undefined
 
-// Log for debugging (only in development)
-if (process.env.NODE_ENV !== 'production') {
-  console.log('Supabase URL available:', !!supabaseUrl)
-  console.log('Supabase key available:', !!supabaseKey)
+function getSupabaseClient(): SupabaseClient {
+  if (client) return client
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      'Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.',
+    )
+  }
+
+  client = createClient(supabaseUrl, supabaseKey)
+  return client
 }
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase environment variables')
-}
-
-// Create the client
-export const supabase = createClient(
-  supabaseUrl || 'https://bvzdouqtahdyiaaxywsw.supabase.co', // Fallback URL from your example
-  supabaseKey || '', // Empty fallback will trigger auth errors which is good for debugging
-)
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, property) {
+    const supabaseClient = getSupabaseClient()
+    const value = Reflect.get(supabaseClient, property, supabaseClient)
+    return typeof value === 'function' ? value.bind(supabaseClient) : value
+  },
+})
 
 import { translations } from './translations'
 

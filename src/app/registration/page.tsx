@@ -369,7 +369,6 @@ export default function RegistrationPage() {
                   </p>
                 )}
               </div>
-
             </div>
 
             <div className="mt-6 grid gap-6 border-t border-[#262626] pt-6 md:grid-cols-2">

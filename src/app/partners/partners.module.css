@@ -118,6 +118,14 @@
   box-shadow: 0 8px 20px rgba(150, 193, 255, 0.22);
 }
 
+.partnerLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
 @media (min-width: 481px) {
   .gridItemsContainer:global(.partner-count-1) .gridItem {
     flex-basis: 100% !important;

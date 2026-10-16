@@ -9,6 +9,15 @@ export interface TeamMember {
   facebookUrl: string
 }
 
+interface OrganizerRow {
+  id: unknown
+  name: unknown
+  role: unknown
+  photoUrl: unknown
+  email: unknown
+  facebookUrl: unknown
+}
+
 // Fetch team members (organizers) from Supabase
 export const getTeamMembers = async (): Promise<TeamMember[]> => {
   try {
@@ -23,14 +32,13 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
 
     if (!data || data.length === 0) return []
 
-    // Ensure proper typing
-    return data.map((row: any) => ({
-      id: String(row.id),
-      name: row.name || '',
-      role: row.role || undefined,
-      photoUrl: row.photoUrl || '',
-      email: row.email || '',
-      facebookUrl: row.facebookUrl || '',
+    return data.map((row: OrganizerRow) => ({
+      id: String(row.id ?? ''),
+      name: typeof row.name === 'string' ? row.name : '',
+      role: typeof row.role === 'string' ? row.role : undefined,
+      photoUrl: typeof row.photoUrl === 'string' ? row.photoUrl : '',
+      email: typeof row.email === 'string' ? row.email : '',
+      facebookUrl: typeof row.facebookUrl === 'string' ? row.facebookUrl : '',
     }))
   } catch (err) {
     console.error('Unexpected error fetching organizers:', err)

@@ -84,7 +84,8 @@ export async function createPayment(
         : typeof errorRecord?.message === 'string'
           ? errorRecord.message
           : String(error)
-    const code = typeof errorRecord?.code === 'string' ? errorRecord.code : undefined
+    const code =
+      typeof errorRecord?.code === 'string' ? errorRecord.code : undefined
 
     console.error('Error creating payment:', { message, code })
     throw new Error(code ? `${message} (${code})` : message)
