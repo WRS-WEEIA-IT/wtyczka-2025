@@ -17,6 +17,7 @@ export async function getFacebookPostsInQuantity(
       .from('facebookPosts')
       .select('id, text, imageUrl, link, timeCreated')
       .order('timeCreated', { ascending: false })
+      .order('id', { ascending: false })
       .range(page * quantity, (page + 1) * quantity - 1)
 
     if (error) throw error

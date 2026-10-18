@@ -10,7 +10,7 @@ import {
 } from '@/usecases/facebookPosts'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function NewsPage() {
   const { t } = useLanguage()
@@ -25,10 +25,14 @@ export default function NewsPage() {
   const [noMorePosts, setNoMorePosts] = useState<boolean>(false)
   const [facebookPosts, setFacebookPosts] = useState<FacebookPost[]>([])
   const [loading, setLoading] = useState(false)
+  const isLoadingRef = useRef(false)
   const postsPerPage = 5
   const [page, setPage] = useState(0)
 
   const loadPosts = async (isInitial: boolean = false) => {
+    if (isLoadingRef.current) return
+
+    isLoadingRef.current = true
     setLoading(true)
     try {
       const posts = await getFacebookPostsInQuantity(postsPerPage, page)
@@ -45,6 +49,7 @@ export default function NewsPage() {
     } catch (error) {
       console.error('Error loading posts:', error)
     } finally {
+      isLoadingRef.current = false
       setLoading(false)
     }
   }
@@ -94,8 +99,10 @@ export default function NewsPage() {
             ))}
             {!noMorePosts && (
               <Card className="card-hover mb-12 inline-flex items-center justify-center border-none shadow-none">
-                <div
-                  className={`card-blur-btn w-full cursor-pointer rounded-xl p-6 text-center font-bold tracking-wider uppercase shadow-md transition-all duration-200 ${
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={`card-blur-btn w-full cursor-pointer rounded-xl p-6 text-center font-bold tracking-wider uppercase shadow-md transition-all duration-200 disabled:cursor-wait ${
                     loading ? 'opacity-70' : ''
                   }`}
                   style={{
@@ -110,7 +117,7 @@ export default function NewsPage() {
                   onClick={handleShowMore}
                 >
                   {loading ? 'Ładuję...' : 'Pokaż więcej'}
-                </div>
+                </button>
               </Card>
             )}
             {noMorePosts && facebookPosts.length > 0 && (
